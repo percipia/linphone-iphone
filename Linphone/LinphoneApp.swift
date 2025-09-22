@@ -179,15 +179,7 @@ struct RootView: View {
 	var body: some View {
 		Group {
 			if coreContext.coreHasStartedOnce {
-				if showWelcome {
-					ZStack {
-						WelcomeView()
-						ToastView().zIndex(3)
-					}
-					.onAppear {
-						appDelegate.coreContext = coreContext
-					}
-				} else if showAssistant {
+				if showAssistant {
 					ZStack {
 						AssistantView()
 						ToastView().zIndex(3)
@@ -240,11 +232,6 @@ struct RootView: View {
 				pendingURL = url
 			}
 		}
-	}
-	
-	
-	var showWelcome: Bool {
-		!sharedMainViewModel.welcomeViewDisplayed
 	}
 
 	var showAssistant: Bool {

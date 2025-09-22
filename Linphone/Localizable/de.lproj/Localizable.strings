@@ -11,7 +11,6 @@
 "settings_calls_calibrate_echo_canceller_in_progress" = "im Gange";
 "uri_handler_config_success_toast" = "Konfiguration erfolgreich angewendet";
 "username" = "Benutzername";
-"welcome_page_2_title" = "Gesichert";
 "account_settings_audio_video_conference_factory_uri_title" = "Audio-Video Konferenzfabrik URI";
 "account_settings_avpf_title" = "AVPF";
 "account_settings_bundle_mode_title" = "Bundle Modus";
@@ -359,8 +358,6 @@
 "sip_address_domain" = "Domäne";
 "start" = "Start";
 "web_platform_register_email_url" = "";
-"welcome_page_3_title" = "Open source";
-"welcome_page_title" = "Willkommen";
 "conversation_end_to_end_encrypted_event_subtitle" = "Nachrichten in dieser Gespr sind Ende-zu-Ende verschlüsselt. Nur Ihr Gesprächspartner kann sie entschlüsseln.";
 "conversation_end_to_end_encrypted_event_title" = "Ende-zu-Ende verschlüsselte Gespräch";
 "assistant_permissions_post_notifications_title" = "**Postbenachrichtigungen:** Um informiert zu werden, wenn Sie eine Nachricht oder einen Anruf erhalten.";
@@ -382,9 +379,6 @@
 "drawer_menu_account_connection_status_refreshing" = "Aktualisieren...";
 "failed_meeting_ics_invitation_not_sent_toast" = "ICS-Besprechungseinladungen an Teilnehmer konnten nicht gesendet werden";
 "You will change this mode later" = "Sie werden diesen Modus später ändern";
-"welcome_carousel_skip" = "Überspringen";
-"welcome_page_2_message" = "Ihre Kommunikation ist dank unserer **Ende-zu-Ende-Verschlüsselung** sicher.";
-"welcome_page_subtitle" = "in %@";
 "conversation_event_participant_removed" = "%@ hat verlassen";
 "username_error" = "Benutzername-Fehler";
 ": %@" = ": %@";
@@ -501,8 +495,6 @@
 "uri_handler_call_failed_toast" = "Anruf fehlgeschlagen";
 "uri_handler_config_failed_toast" = "Konfiguration fehlgeschlagen";
 "ZRTP" = "ZRTP";
-"welcome_page_1_message" = "Eine **sichere** **Open Source** Kommunikations-App aus Frankreich.";
-"welcome_page_3_message" = "Eine **kostenlose** Open-Source Anwendung seit **2001**.";
 "help_about_contribute_translations_title" = "Zur Übersetzung von Linphone beitragen";
 "help_about_privacy_policy_subtitle" = "Welche Informationen Linphone sammelt und nutzt";
 "help_about_title" = "Über Linphone";

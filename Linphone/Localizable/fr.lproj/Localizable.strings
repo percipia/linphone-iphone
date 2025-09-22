@@ -519,13 +519,5 @@
 "website_privacy_policy_url" = "https://linphone.org/en/privacy-policy";
 "website_terms_and_conditions_url" = "https://www.linphone.org/en/terms-of-use";
 "website_translate_weblate_url" = "https://weblate.linphone.org/";
-"welcome_carousel_skip" = "Passer";
-"welcome_page_1_message" = "Une application de communication **sécurisée**, **open source** et **française**.";
-"welcome_page_2_message" = "Vos communications sont en sécurité grâce au **chiffrement de bout en bout**.";
-"welcome_page_2_title" = "Sécurisé";
-"welcome_page_3_message" = "Une application open source et un **service gratuit** depuis **2001**.";
-"welcome_page_3_title" = "Open source";
-"welcome_page_subtitle" = "sur %@";
-"welcome_page_title" = "Bienvenue";
 "You will change this mode later" = "You will change this mode later";
 "ZRTP" = "ZRTP";

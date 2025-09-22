@@ -261,8 +261,6 @@
 "start" = "Старт";
 "uri_handler_config_success_toast" = "Конфігурацію успішно застосовано";
 "username" = "Ім'я користувача";
-"welcome_page_2_title" = "Захищений";
-"welcome_page_3_title" = "Відкритий код";
 "call_not_encrypted" = "Дзвінок не зашифровано";
 "contacts_list_all_contacts_title" = "Усі контакти";
 "dialog_accept" = "Прийняти";
@@ -378,7 +376,6 @@
 "conversation_ephemeral_messages_duration_three_days" = "3 доби";
 "conversation_ephemeral_messages_duration_one_day" = "1 доба";
 "dialog_ok" = "ОК";
-"welcome_page_title" = "Ласкаво просимо";
 ": %@" = ": %@";
 "[https://sip.linphone.org](https://sip.linphone.org)" = "[https://sip.linphone.org](https://sip.linphone.org)";
 "bottom_navigation_calls_label" = "Дзвінки";
@@ -409,12 +406,9 @@
 "account_settings_mwi_uri_title" = "URI сервера MWI (індикатор очікування повідомлення)";
 "help_about_title" = "Про Linphone";
 "settings_calls_calibrate_echo_canceller_done" = "%@ мс";
-"welcome_page_1_message" = "**Захищений**, **з відкритим вихідним кодом** та **французький** застосунок для спілкування.";
 "help_dialog_update_available_message" = "Доступна нова версія %@. Бажаєте оновити?";
 "website_user_guide_url" = "https://linphone.org/en/docs/";
 "website_privacy_policy_url" = "https://linphone.org/en/privacy-policy";
-"welcome_page_3_message" = "**Безкоштовний** застосунок з відкритим кодом з **2001 року**.";
-"welcome_page_subtitle" = "в %@";
 "Chiffrement de bout en bout de tous vos échanges, grâce au mode default vos communications sont à l’abri des regards." = "Наскрізне шифрування всіх ваших повідомлень, завдяки режиму за замовчуванням ваші повідомлення захищені від сторонніх очей.";
 "conference_name_error" = "Помилка назви конференції";
 "contact_details_numbers_and_addresses_title" = "Номери телефонів та SIP-адреси";
@@ -511,8 +505,6 @@
 "IM_MSG" = "Ви отримали повідомлення";
 "Interoperable" = "Сумісний";
 "website_terms_and_conditions_url" = "https://www.linphone.org/en/terms-of-use";
-"welcome_carousel_skip" = "Пропустити";
-"welcome_page_2_message" = "Ваше спілкування убезпечене завдяки нашому **наскрізному шифруванню**.";
 "You will change this mode later" = "Ви зміните цей режим пізніше";
 "ZRTP" = "ZRTP";
 "conversation_take_picture_label" = "Зробити фото";

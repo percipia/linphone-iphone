@@ -8,7 +8,6 @@
 "settings_contacts_carddav_name_title" = "Zobrazené jméno";
 "settings_meetings_layout_active_speaker_label" = "Aktivní mluvčí";
 "sip_address_display_name" = "Zobrazené jméno";
-"welcome_page_title" = "Vítejte";
 "assistant_dialog_general_terms_and_privacy_policy_title" = "Obecné podmínky a zásady ochrany soukromí";
 "drawer_menu_account_connection_status_progress" = "Připojování…";
 "conference_participant_joining_text" = "Připojování…";
@@ -321,7 +320,6 @@
 "manage_account_no_device" = "Zařízení nenalezeno…";
 "manage_account_remove_picture" = "Odebrat obrázek";
 "manage_account_settings" = "Nastavení účtu";
-"welcome_page_3_title" = "Otevřená";
 "manage_account_status_failed_summary" = "Připojení účtu selhalo, zkontrolujte nastavení.";
 "manage_account_status_progress_summary" = "Účet se připojuje, prosím počkejte…";
 "manage_account_title" = "Spravovat účet";
@@ -357,7 +355,6 @@
 "sip_address_copied_to_clipboard_toast" = "SIP adresa zkopírována do schránky";
 "sip_address_domain" = "Doména";
 "start" = "Začít";
-"welcome_page_2_title" = "Zabezpečená";
 "conversation_take_picture_label" = "Pořídit snímek";
 "conversation_pick_file_from_gallery_label" = "Otevřít galerii";
 "conversation_pick_any_file_label" = "Vybrat soubor";
@@ -448,8 +445,6 @@
 "settings_contacts_ldap_max_results_title" = "Maximální počet výsledků";
 "settings_contacts_ldap_search_filter_title" = "Filtr";
 "sip_address" = "SIP adresa";
-"welcome_page_2_message" = "Vaše komunikace je bezpečná díky našemu **koncovému šifrování**.";
-"welcome_page_subtitle" = "v %@";
 "conversation_message_meeting_cancelled_label" = "Schůzka byla zrušena!";
 "failed_meeting_ics_invitation_not_sent_toast" = "Pozvánky ICS na schůzku nelze odeslat žádnému účastníkovi";
 "help_about_open_source_licenses_title" = "GNU General Public License v3.0";
@@ -514,9 +509,6 @@
 "website_privacy_policy_url" = "https://linphone.org/en/privacy-policy";
 "website_terms_and_conditions_url" = "https://www.linphone.org/en/terms-of-use";
 "website_translate_weblate_url" = "https://weblate.linphone.org/";
-"welcome_carousel_skip" = "Přeskočit";
-"welcome_page_1_message" = "**Bezpečná**, **otevřená** a **francouzská** komunikační aplikace.";
-"welcome_page_3_message" = "**Bezplatná** a otevřená aplikace již od roku **2001**.";
 "Personnalize your profil mode" = "Přizpůsobte si svůj profilový režim";
 "website_contact_url" = "https://linphone.org/contact";
 "conversations_files_waiting_to_be_shared_single" = "1 soubor čekající na sdílení";

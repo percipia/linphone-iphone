@@ -351,9 +351,6 @@
 "start" = "开始";
 "uri_handler_config_success_toast" = "配置已成功应用";
 "username" = "用户名";
-"welcome_page_2_title" = "安全";
-"welcome_page_3_title" = "开源";
-"welcome_page_title" = "欢迎";
 "account_settings_dialog_invalid_password_title" = "需要身份验证";
 "account_settings_dialog_invalid_password_hint" = "密码";
 "connection_error_for_non_default_account" = "账户连接错误";

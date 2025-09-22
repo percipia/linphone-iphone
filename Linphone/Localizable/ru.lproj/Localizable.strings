@@ -4,9 +4,6 @@
 "manage_account_status_cleared_summary" = "Аккаунт отключен, вы не получите никаких звонков или сообщений.";
 "manage_account_status_connected_summary" = "Этот аккаунт в сети, каждый может вам позвонить.";
 "manage_account_status_failed_summary" = "Не удалось подключиться к аккаунту, проверьте настройки.";
-"welcome_page_2_title" = "Безопасный";
-"welcome_page_3_title" = "Открытый исходный код";
-"welcome_page_title" = "Добро пожаловать";
 "account_settings_audio_video_conference_factory_uri_title" = "URI фабрики аудио/видео конференции";
 "account_settings_avpf_title" = "AVPF";
 "account_settings_bundle_mode_title" = "Режим объединения";
