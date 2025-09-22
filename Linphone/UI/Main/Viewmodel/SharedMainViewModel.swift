@@ -46,6 +46,7 @@ class SharedMainViewModel: ObservableObject {
     @Published var missedCallsCount: Int = 0
 	
 	@Published var disableChatFeature: Bool = false
+	@Published var disableMeetingFeature: Bool = false
 	
 	let generalTermsKey = "general_terms"
 	let displayProfileModeKey = "display_profile_mode"
@@ -86,6 +87,7 @@ class SharedMainViewModel: ObservableObject {
         updateMissedCallsCount()
         updateUnreadMessagesCount()
 		updateDisableChatFeature()
+		updateDisableMeetingFeature()
 	}
 	
 	func changeGeneralTerms() {
@@ -206,6 +208,16 @@ class SharedMainViewModel: ObservableObject {
 			
 			DispatchQueue.main.async {
 				self.disableChatFeature = disableChatFeatureTmp
+			}
+		}
+	}
+	
+	func updateDisableMeetingFeature() {
+		CoreContext.shared.doOnCoreQueue { core in
+			let disableMeetingFeatureTmp = CorePreferences.disableMeetings ||
+			!LinphoneUtils.isRemoteConferencingAvailable(core: core)
+			DispatchQueue.main.async {
+				self.disableMeetingFeature = disableMeetingFeatureTmp
 			}
 		}
 	}
