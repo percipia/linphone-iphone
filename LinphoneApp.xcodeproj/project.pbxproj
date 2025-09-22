@@ -110,10 +110,6 @@
 		D737AEEF2DA011F2005C1280 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D737AEED2DA011F2005C1280 /* Localizable.strings */; };
 		D7458F392E0BDCF4000C957A /* linphoneExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7458F2F2E0BDCF4000C957A /* linphoneExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D748BF2C2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D748BF2B2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift */; };
-		D748BF2E2ACD82E7004844EB /* ThirdPartySipAccountWarningFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D748BF2D2ACD82E7004844EB /* ThirdPartySipAccountWarningFragment.swift */; };
-		D74C9CF82ACACECE0021626A /* WelcomePage1Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C9CF72ACACECE0021626A /* WelcomePage1Fragment.swift */; };
-		D74C9CFA2ACACF2D0021626A /* WelcomePage2Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C9CF92ACACF2D0021626A /* WelcomePage2Fragment.swift */; };
-		D74C9CFC2ACACF370021626A /* WelcomePage3Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C9CFB2ACACF370021626A /* WelcomePage3Fragment.swift */; };
 		D74C9CFF2ACAEC5E0021626A /* PopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C9CFE2ACAEC5E0021626A /* PopupView.swift */; };
 		D74C9D012ACB098C0021626A /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C9D002ACB098C0021626A /* PermissionManager.swift */; };
 		D74DA0122C047F0700A8561D /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74DA0112C047F0700A8561D /* HistoryModel.swift */; };
@@ -125,7 +121,6 @@
 		D759CB642C3FBD4200AC35E8 /* StartConversationFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D759CB632C3FBD4200AC35E8 /* StartConversationFragment.swift */; };
 		D759CB662C3FBE1D00AC35E8 /* StartConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D759CB652C3FBE1D00AC35E8 /* StartConversationViewModel.swift */; };
 		D76005F62B0798B00054B79A /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76005F52B0798B00054B79A /* IntExtension.swift */; };
-		D7702EF22AC7205000557C00 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7702EF12AC7205000557C00 /* WelcomeView.swift */; };
 		D777DBB32AE12C5900565A99 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D777DBB22AE12C5900565A99 /* ContactsManager.swift */; };
 		D77A080E2CB6BCAF0095D589 /* MessageConferenceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77A080D2CB6BCA10095D589 /* MessageConferenceInfo.swift */; };
 		D78290B82ADD3910004AA85C /* ContactsFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78290B72ADD3910004AA85C /* ContactsFragment.swift */; };
@@ -336,10 +331,6 @@
 		D737AEF02DA01203005C1280 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable/fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D7458F2F2E0BDCF4000C957A /* linphoneExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = linphoneExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D748BF2B2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdPartySipAccountLoginFragment.swift; sourceTree = "<group>"; };
-		D748BF2D2ACD82E7004844EB /* ThirdPartySipAccountWarningFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdPartySipAccountWarningFragment.swift; sourceTree = "<group>"; };
-		D74C9CF72ACACECE0021626A /* WelcomePage1Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage1Fragment.swift; sourceTree = "<group>"; };
-		D74C9CF92ACACF2D0021626A /* WelcomePage2Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage2Fragment.swift; sourceTree = "<group>"; };
-		D74C9CFB2ACACF370021626A /* WelcomePage3Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage3Fragment.swift; sourceTree = "<group>"; };
 		D74C9CFE2ACAEC5E0021626A /* PopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
 		D74C9D002ACB098C0021626A /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		D74DA0112C047F0700A8561D /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
@@ -350,7 +341,6 @@
 		D759CB632C3FBD4200AC35E8 /* StartConversationFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartConversationFragment.swift; sourceTree = "<group>"; };
 		D759CB652C3FBE1D00AC35E8 /* StartConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartConversationViewModel.swift; sourceTree = "<group>"; };
 		D76005F52B0798B00054B79A /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
-		D7702EF12AC7205000557C00 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		D777DBB22AE12C5900565A99 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
 		D77A080D2CB6BCA10095D589 /* MessageConferenceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageConferenceInfo.swift; sourceTree = "<group>"; };
 		D78290B72ADD3910004AA85C /* ContactsFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFragment.swift; sourceTree = "<group>"; };
@@ -661,7 +651,6 @@
 				D719ABCA2ABC761800B41C10 /* Assistant */,
 				D7B5678C2B28883700DE63EB /* Call */,
 				D719ABC62ABC6F0200B41C10 /* Main */,
-				D7702EF02AC7200600557C00 /* Welcome */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -781,16 +770,6 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		D74C9CF62ACACEB70021626A /* Fragments */ = {
-			isa = PBXGroup;
-			children = (
-				D74C9CF72ACACECE0021626A /* WelcomePage1Fragment.swift */,
-				D74C9CF92ACACF2D0021626A /* WelcomePage2Fragment.swift */,
-				D74C9CFB2ACACF370021626A /* WelcomePage3Fragment.swift */,
-			);
-			path = Fragments;
-			sourceTree = "<group>";
-		};
 		D74C9CFD2ACAEC150021626A /* Fragments */ = {
 			isa = PBXGroup;
 			children = (
@@ -830,15 +809,6 @@
 				D78E062F2BEA6A4A00CE3783 /* ChangeLayoutBottomSheet.swift */,
 			);
 			path = Fragments;
-			sourceTree = "<group>";
-		};
-		D7702EF02AC7200600557C00 /* Welcome */ = {
-			isa = PBXGroup;
-			children = (
-				D74C9CF62ACACEB70021626A /* Fragments */,
-				D7702EF12AC7205000557C00 /* WelcomeView.swift */,
-			);
-			path = Welcome;
 			sourceTree = "<group>";
 		};
 		D777DBB12AE12C4000565A99 /* Contacts */ = {
@@ -1004,7 +974,6 @@
 				D723432F2ACEFEF8009AA24E /* QrCodeScannerFragment.swift */,
 				D7FB55102AD447FD00A5AB15 /* RegisterFragment.swift */,
 				D748BF2B2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift */,
-				D748BF2D2ACD82E7004844EB /* ThirdPartySipAccountWarningFragment.swift */,
 				D714DE612C1C4636006C1F1D /* RegisterCodeConfirmationFragment.swift */,
 			);
 			path = Fragments;
@@ -1321,7 +1290,6 @@
 				C62817322C1C400A00DBA646 /* StringExtension.swift in Sources */,
 				D74C9D012ACB098C0021626A /* PermissionManager.swift in Sources */,
 				D7B99E992B29B39000BE7BF2 /* CallViewModel.swift in Sources */,
-				D7702EF22AC7205000557C00 /* WelcomeView.swift in Sources */,
 				D732A9152B04C7FE00DB42BA /* HistoryListViewModel.swift in Sources */,
 				6646A7A32BB2E224006B842A /* ScheduleMeetingFragment.swift in Sources */,
 				D7C500402D27F16C00DD53EC /* AccountSettingsFragment.swift in Sources */,
@@ -1349,7 +1317,6 @@
 				D70C82A52C85EDCA0087F43F /* ConversationForwardMessageFragment.swift in Sources */,
 				D7E6ADF52B9876ED0009A2BC /* Attachment.swift in Sources */,
 				D7A03FC02ACC2E390081A588 /* HistoryView.swift in Sources */,
-				D748BF2E2ACD82E7004844EB /* ThirdPartySipAccountWarningFragment.swift in Sources */,
 				6613A0B42BAEBE3F008923A4 /* MeetingViewModel.swift in Sources */,
 				D7173EBE2B7A5C0A00BCC481 /* LinphoneUtils.swift in Sources */,
 				66C492012B24DB6900CEA16D /* Log.swift in Sources */,
@@ -1358,7 +1325,6 @@
 				D714035B2BE11E00004BD8CA /* CallMediaEncryptionModel.swift in Sources */,
 				D748BF2C2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift in Sources */,
 				D7CEE0382B7A214F00FD79B7 /* ConversationsListViewModel.swift in Sources */,
-				D74C9CF82ACACECE0021626A /* WelcomePage1Fragment.swift in Sources */,
 				66E56BCE2BA9A1F8006CE56F /* MeetingModel.swift in Sources */,
 				D7DC09712CFDBF9A00A6D47C /* AccountProfileViewModel.swift in Sources */,
 				D7E6D0552AEBFCCE00A57AAF /* ContactsInnerFragment.swift in Sources */,
@@ -1400,7 +1366,6 @@
 				D78290B82ADD3910004AA85C /* ContactsFragment.swift in Sources */,
 				D7DA67642ACCB31700E95002 /* ProfileModeFragment.swift in Sources */,
 				D7CEE03D2B7A23B200FD79B7 /* ConversationsListFragment.swift in Sources */,
-				D74C9CFC2ACACF370021626A /* WelcomePage3Fragment.swift in Sources */,
 				D7343FE82D3FA2000059D784 /* CodecModel.swift in Sources */,
 				D77A080E2CB6BCAF0095D589 /* MessageConferenceInfo.swift in Sources */,
 				C6A5A9412C10B5D50070FEA4 /* EncodableExtension.swift in Sources */,
@@ -1408,7 +1373,6 @@
 				C62817342C1C7C7400DBA646 /* HelpView.swift in Sources */,
 				D78E062C2BEA69BC00CE3783 /* CallStatisticsSheetBottomSheet.swift in Sources */,
 				D7C365082AEFAB7F00FE6142 /* ContactListBottomSheet.swift in Sources */,
-				D74C9CFA2ACACF2D0021626A /* WelcomePage2Fragment.swift in Sources */,
 				D74C9CFF2ACAEC5E0021626A /* PopupView.swift in Sources */,
 				D7DA67622ACCB2FA00E95002 /* LoginFragment.swift in Sources */,
 			);

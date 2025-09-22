@@ -42,13 +42,6 @@ struct PermissionsFragment: View {
 		.navigationBarHidden(true)
 		.edgesIgnoringSafeArea(.bottom)
 		.edgesIgnoringSafeArea(.horizontal)
-		.onReceive(permissionManager.$allPermissionsHaveBeenDisplayed, perform: { (granted) in
-			if granted {
-				withAnimation {
-					SharedMainViewModel.shared.changeWelcomeView()
-				}
-			}
-		})
 	}
 	
 	func innerScrollView(geometry: GeometryProxy) -> some View {
@@ -159,27 +152,6 @@ struct PermissionsFragment: View {
 			.padding(.horizontal, 20)
 			
 			Spacer()
-			
-			Button(action: {
-				withAnimation {
-					SharedMainViewModel.shared.changeWelcomeView()
-				}
-			}, label: {
-				Text("assistant_permissions_skip_permissions")
-					.default_text_style_orange_600(styleSize: 20)
-					.frame(height: 35)
-					.frame(maxWidth: .infinity)
-			})
-			.padding(.horizontal, 20)
-			.padding(.vertical, 10)
-			.cornerRadius(60)
-			.overlay(
-				RoundedRectangle(cornerRadius: 60)
-					.inset(by: 0.5)
-					.stroke(Color.orangeMain500, lineWidth: 1)
-			)
-			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
-			.padding(.horizontal)
 			
 			Button {
 				permissionManager.getPermissions()

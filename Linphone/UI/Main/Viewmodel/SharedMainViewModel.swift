@@ -24,7 +24,6 @@ class SharedMainViewModel: ObservableObject {
 	
 	static let shared = SharedMainViewModel()
 	
-	@Published var welcomeViewDisplayed = false
 	@Published var generalTermsAccepted = false
 	@Published var displayProfileMode = false
 	@Published var defaultAvatar: URL?
@@ -49,7 +48,6 @@ class SharedMainViewModel: ObservableObject {
 	@Published var disableChatFeature: Bool = false
 	@Published var disableMeetingFeature: Bool = false
 	
-	let welcomeViewKey = "welcome_view"
 	let generalTermsKey = "general_terms"
 	let displayProfileModeKey = "display_profile_mode"
 	let defaultAvatarKey = "default_avatar"
@@ -64,12 +62,6 @@ class SharedMainViewModel: ObservableObject {
 			preferences.set(indexView, forKey: indexViewKey)
 		} else {
 			indexView = preferences.integer(forKey: indexViewKey)
-		}
-		
-		if preferences.object(forKey: welcomeViewKey) == nil {
-			preferences.set(welcomeViewDisplayed, forKey: welcomeViewKey)
-		} else {
-			welcomeViewDisplayed = preferences.bool(forKey: welcomeViewKey)
 		}
 		
 		if preferences.object(forKey: generalTermsKey) == nil {
@@ -96,13 +88,6 @@ class SharedMainViewModel: ObservableObject {
         updateUnreadMessagesCount()
 		updateDisableChatFeature()
 		updateDisableMeetingFeature()
-	}
-	
-	func changeWelcomeView() {
-		let preferences = UserDefaults.standard
-		
-		welcomeViewDisplayed = true
-		preferences.set(welcomeViewDisplayed, forKey: welcomeViewKey)
 	}
 	
 	func changeGeneralTerms() {
