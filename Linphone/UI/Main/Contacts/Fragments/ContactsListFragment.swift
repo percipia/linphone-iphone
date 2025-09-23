@@ -85,7 +85,7 @@ struct ContactRow: View {
 				Text(contactAvatarModel.name)
 					.default_text_style(styleSize: 16)
 					.frame(maxWidth: .infinity, alignment: .leading)
-					.foregroundStyle(Color.orangeMain500)
+					.foregroundStyle(Color.percipiaGreen)
 			}
 		}
 		.frame(height: 50)

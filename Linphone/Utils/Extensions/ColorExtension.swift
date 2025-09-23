@@ -25,9 +25,11 @@ extension Color {
 	static let transparentColor = Color(hex: "#00000000")
 	static let black = Color(hex: "#000000")
 	static let white = Color(hex: "#FFFFFF")
+    
+    static let percipiaGreen = Color(hex: "#33cc66")
 	
 	static let orangeMain700 = Color(hex: "#B72D00")
-	static let orangeMain500 = Color(hex: "#FF5E00")
+    static let orangeMain500 = Color(hex: "#FF5E00")
 	static let orangeMain300 = Color(hex: "#FFB266")
 	static let orangeMain100 = Color(hex: "#FFEACB")
 	static let orangeMain100Alpha50 = Color(hex: "#80FFEACB")

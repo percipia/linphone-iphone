@@ -40,7 +40,7 @@ struct HelpFragment: View {
 				VStack(spacing: 1) {
 					if !showAssistant {
 						Rectangle()
-							.foregroundColor(Color.orangeMain500)
+							.foregroundColor(Color.percipiaGreen)
 							.edgesIgnoringSafeArea(.top)
 							.frame(height: 0)
 					}
@@ -49,7 +49,7 @@ struct HelpFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 4)
@@ -91,7 +91,7 @@ struct HelpFragment: View {
 										Image("book-open-text")
 											.renderingMode(.template)
 											.resizable()
-											.foregroundStyle(Color.orangeMain500)
+											.foregroundStyle(Color.percipiaGreen)
 											.frame(width: 30, height: 30)
 										
 										VStack {
@@ -124,7 +124,7 @@ struct HelpFragment: View {
 										Image("detective")
 											.renderingMode(.template)
 											.resizable()
-											.foregroundStyle(Color.orangeMain500)
+											.foregroundStyle(Color.percipiaGreen)
 											.frame(width: 30, height: 30)
 										
 										VStack {
@@ -152,7 +152,7 @@ struct HelpFragment: View {
 									Image("info")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.orangeMain500)
+										.foregroundStyle(Color.percipiaGreen)
 										.frame(width: 30, height: 30)
 									
 									VStack {
@@ -179,7 +179,7 @@ struct HelpFragment: View {
 									)
 									.padding(.horizontal, 15)
 									.padding(.vertical, 10)
-									.background(Color.orangeMain100)
+									.background(Color.percipiaGreen)
 									.cornerRadius(60)
 								}
 								
@@ -192,7 +192,7 @@ struct HelpFragment: View {
 										Image("check-square-offset")
 											.renderingMode(.template)
 											.resizable()
-											.foregroundStyle(Color.orangeMain500)
+											.foregroundStyle(Color.percipiaGreen)
 											.frame(width: 30, height: 30)
 										
 										VStack {
@@ -225,7 +225,7 @@ struct HelpFragment: View {
 										Image("earth")
 											.renderingMode(.template)
 											.resizable()
-											.foregroundStyle(Color.orangeMain500)
+											.foregroundStyle(Color.percipiaGreen)
 											.frame(width: 30, height: 30)
 										
 										Text("help_about_contribute_translations_title")
@@ -255,7 +255,7 @@ struct HelpFragment: View {
 										Image("wrench")
 											.renderingMode(.template)
 											.resizable()
-											.foregroundStyle(Color.orangeMain500)
+											.foregroundStyle(Color.percipiaGreen)
 											.frame(width: 30, height: 30)
 										
 										Text("help_troubleshooting_title")

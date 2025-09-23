@@ -122,7 +122,7 @@ struct MeetingsFragment: View {
 											.fontWeight(.bold)
 											.frame(width: 30, height: 30)
 											.foregroundStyle(.white)
-											.background(Color.orangeMain500)
+											.background(Color.percipiaGreen)
 											.clipShape(Circle())
 											.default_text_style_300(styleSize: 20)
 									} else {

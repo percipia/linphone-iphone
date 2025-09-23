@@ -42,7 +42,7 @@ struct HistoryContactFragment: View {
 		NavigationView {
 			VStack(spacing: 1) {
 				Rectangle()
-					.foregroundColor(Color.orangeMain500)
+					.foregroundColor(Color.percipiaGreen)
 					.edgesIgnoringSafeArea(.top)
 					.frame(height: 0)
 				
@@ -52,7 +52,7 @@ struct HistoryContactFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 2)
@@ -150,7 +150,7 @@ struct HistoryContactFragment: View {
 						Image("dots-three-vertical")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 					}
@@ -310,7 +310,7 @@ struct HistoryContactFragment: View {
 								} else {
 									Button(action: {
 										withAnimation {
-											if historyModel.address.hasPrefix("sip:conference-focus@sip.linphone.org") {
+											if historyModel.address.hasPrefix("sip:conference-focus@pbx.percipia.net") {
 												do {
 													let meetingAddress = try Factory.Instance.createAddress(addr: historyModel.address)
 													

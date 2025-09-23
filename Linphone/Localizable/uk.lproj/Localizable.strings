@@ -138,7 +138,7 @@
 "manage_account_device_last_connection" = "Останнє з'єднання:";
 "manage_account_device_remove" = "Видалити";
 "manage_account_devices_title" = "Пристрої";
-"manage_account_dialog_remove_account_message" = "Якщо ви хочете видалити свій обліковий запис назавжди, перейдіть за посиланням: https://sip.linphone.org";
+"manage_account_dialog_remove_account_message" = "Якщо ви хочете видалити свій обліковий запис назавжди, перейдіть за посиланням: https://pbx.percipia.net";
 "manage_account_dialog_remove_account_title" = "Вийти з облікового запису?";
 "manage_account_edit_picture" = "Редагувати зображення";
 "manage_account_international_prefix" = "Міжнародний префікс";
@@ -377,7 +377,7 @@
 "conversation_ephemeral_messages_duration_one_day" = "1 доба";
 "dialog_ok" = "ОК";
 ": %@" = ": %@";
-"[https://sip.linphone.org](https://sip.linphone.org)" = "[https://sip.linphone.org](https://sip.linphone.org)";
+"[https://pbx.percipia.net](https://pbx.percipia.net)" = "[https://pbx.percipia.net](https://pbx.percipia.net)";
 "bottom_navigation_calls_label" = "Дзвінки";
 "bottom_navigation_contacts_label" = "Контакти";
 "assistant_dialog_general_terms_and_privacy_policy_title" = "Загальні умови та політика конфіденційності";
@@ -473,7 +473,7 @@
 "settings_contacts_ldap_search_filter_title" = "Фільтр";
 "settings_contacts_carddav_sync_successful_toast" = "Синхронізацію виконано";
 "sip_address" = "SIP-адреса";
-"sip.linphone.org" = "sip.linphone.org";
+"pbx.percipia.net" = "pbx.percipia.net";
 "SRTP" = "SRTP";
 "TCP" = "TCP";
 "Temp Help" = "Тимчасова допомога";

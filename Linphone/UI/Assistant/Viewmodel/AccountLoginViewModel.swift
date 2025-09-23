@@ -26,7 +26,7 @@ class AccountLoginViewModel: ObservableObject {
 	
 	@Published var username: String = ""
 	@Published var passwd: String = ""
-	@Published var domain: String = "sip.linphone.org"
+	@Published var domain: String = "pbx.percipia.net"
 	@Published var displayName: String = ""
 	@Published var transportType: String = "TLS"
 	
@@ -54,7 +54,7 @@ class AccountLoginViewModel: ObservableObject {
 					}
 				}
 				
-				if self.domain != "sip.linphone.org" {
+				if self.domain != "pbx.percipia.net" {
 					if let assistantLinphone = Bundle.main.path(forResource: "assistant_third_party_default_values", ofType: nil) {
 						core.loadConfigFromXml(xmlUri: assistantLinphone)
 					}
@@ -154,7 +154,7 @@ class AccountLoginViewModel: ObservableObject {
 				core.defaultAccount = account
 				
 				DispatchQueue.main.async {
-					self.domain = "sip.linphone.org"
+					self.domain = "pbx.percipia.net"
 					self.transportType = "TLS"
 				}
 				

@@ -51,7 +51,7 @@ struct ParticipantsListFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 2)
@@ -94,7 +94,7 @@ struct ParticipantsListFragment: View {
 									.frame(width: 25, height: 25)
 									.foregroundStyle(.white)
 									.padding()
-									.background(Color.orangeMain500)
+									.background(Color.percipiaGreen)
 									.clipShape(Circle())
 									.shadow(color: .black.opacity(0.2), radius: 4)
 								
@@ -132,7 +132,7 @@ struct ParticipantsListFragment: View {
 	
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
-		delayedColor = Color.orangeMain500
+		delayedColor = Color.percipiaGreen
 	}
 	
 	func delayColorDismiss() {

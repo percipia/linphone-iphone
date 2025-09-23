@@ -64,7 +64,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 						.padding(.all, 10)
 						.onTapGesture {
 							withAnimation {
-								accountLoginViewModel.domain = "sip.linphone.org"
+								accountLoginViewModel.domain = "pbx.percipia.net"
 								accountLoginViewModel.transportType = "TLS"
 								dismiss()
 							}
@@ -95,7 +95,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isNameFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+							.stroke(isNameFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 					)
 					.padding(.bottom)
 					.focused($isNameFocused)
@@ -136,7 +136,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
 						.inset(by: 0.5)
-						.stroke(isPasswordFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+						.stroke(isPasswordFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 				)
 				.padding(.bottom)
 				
@@ -144,7 +144,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.default_text_style_700(styleSize: 15)
 					.padding(.bottom, -5)
 				
-				TextField("sip.linphone.org", text: $accountLoginViewModel.domain)
+				TextField("pbx.percipia.net", text: $accountLoginViewModel.domain)
 					.default_text_style(styleSize: 15)
 					.disableAutocorrection(true)
 					.autocapitalization(.none)
@@ -155,7 +155,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isDomainFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+							.stroke(isDomainFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 					)
 					.padding(.bottom)
 					.focused($isDomainFocused)
@@ -175,7 +175,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isDisplayNameFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+							.stroke(isDisplayNameFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 					)
 					.padding(.bottom)
 					.focused($isDisplayNameFocused)
@@ -226,8 +226,8 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.padding(.vertical, 10)
 			.background(
 				(accountLoginViewModel.username.isEmpty || accountLoginViewModel.passwd.isEmpty || accountLoginViewModel.domain.isEmpty)
-				? Color.orangeMain100
-				: Color.orangeMain500)
+				? Color.percipiaGreen
+				: Color.percipiaGreen)
 			.cornerRadius(60)
 			.disabled(accountLoginViewModel.username.isEmpty || accountLoginViewModel.passwd.isEmpty || accountLoginViewModel.domain.isEmpty)
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)

@@ -85,7 +85,7 @@ struct StartCallFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.orangeMain500)
+						.foregroundStyle(Color.percipiaGreen)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 2)
@@ -190,7 +190,7 @@ struct StartCallFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isSearchFieldFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+							.stroke(isSearchFieldFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 					)
 					.padding(.vertical)
 					.padding(.horizontal)
@@ -210,7 +210,7 @@ struct StartCallFragment: View {
 										.frame(width: 28, height: 28)
 								}
 								.padding(10)
-								.background(Color.orangeMain500)
+								.background(Color.percipiaGreen)
 								.cornerRadius(40)
 								
 								Text("history_call_start_create_group_call")
@@ -323,7 +323,7 @@ struct StartCallFragment: View {
 	
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
-		delayedColor = Color.orangeMain500
+		delayedColor = Color.percipiaGreen
 	}
 	
 	func delayColorDismiss() {
@@ -396,7 +396,7 @@ struct StartCallFragment: View {
 								.default_text_style(styleSize: 16)
                                 .lineLimit(1)
 								.frame(maxWidth: .infinity, alignment: .leading)
-								.foregroundStyle(Color.orangeMain500)
+								.foregroundStyle(Color.percipiaGreen)
 					} else {
 						Image("profil-picture-default")
 							.resizable()
@@ -406,7 +406,7 @@ struct StartCallFragment: View {
 						Text("username_error")
 							.default_text_style(styleSize: 16)
 							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 					}
 				}
 				.padding(.horizontal)

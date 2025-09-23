@@ -99,7 +99,7 @@ struct MediaEncryptedSheetBottomSheet: View {
 			})
 			.padding(.horizontal, 20)
 			.padding(.vertical, 10)
-			.background(Color.orangeMain500)
+			.background(Color.percipiaGreen)
 			.cornerRadius(60)
 			.padding(.bottom)
 			.padding(.horizontal, 10)

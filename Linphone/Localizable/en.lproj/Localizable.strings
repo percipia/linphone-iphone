@@ -6,7 +6,7 @@
 
 "" = "";
 ": %@" = ": %@";
-"[https://sip.linphone.org](https://sip.linphone.org)" = "[https://sip.linphone.org](https://sip.linphone.org)";
+"[https://pbx.percipia.net](https://pbx.percipia.net)" = "[https://pbx.percipia.net](https://pbx.percipia.net)";
 "[linphone.org/contact](https://linphone.org/contact)" = "[linphone.org/contact](https://linphone.org/contact)";
 "*" = "*";
 "**%@**" = "**%@**";
@@ -331,7 +331,7 @@
 "manage_account_device_remove" = "Remove";
 "manage_account_devices_title" = "Devices";
 "manage_account_dialog_international_prefix_help_message" = "Pick your country to allow Linphone to match your contacts.";
-"manage_account_dialog_remove_account_message" = "If you wish to delete your account permanently, go to: https://sip.linphone.org";
+"manage_account_dialog_remove_account_message" = "If you wish to delete your account permanently, go to: https://pbx.percipia.net";
 "manage_account_dialog_remove_account_title" = "Sign out of your account?";
 "manage_account_edit_picture" = "Edit picture";
 "manage_account_international_prefix" = "International Prefix";
@@ -494,8 +494,8 @@
 "sip_address" = "SIP Address";
 "sip_address_copied_to_clipboard_toast" = "SIP address copied into clipboard";
 "sip_address_display_name" = "Display name";
-"sip_address_domain" = "Domain";
-"sip.linphone.org" = "sip.linphone.org";
+"sip_address_domain" = "Domain & port";
+"pbx.percipia.net" = "pbx.percipia.net";
 "SRTP" = "SRTP";
 "start" = "Start";
 "TCP" = "TCP";

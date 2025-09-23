@@ -201,7 +201,7 @@
 "help_troubleshooting_clear_native_friends_in_database" = "Smazat importované kontakty z adresáře zařízení";
 "help_troubleshooting_debug_logs_cleaned_toast_message" = "Ladící logy byly vyčištěny";
 "help_troubleshooting_debug_logs_upload_error_toast_message" = "Chyba při nahrávání ladících logů";
-"manage_account_dialog_remove_account_message" = "Pokud si přejete nevratně smazat svůj účet, navštivte: https://sip.linphone.org";
+"manage_account_dialog_remove_account_message" = "Pokud si přejete nevratně smazat svůj účet, navštivte: https://pbx.percipia.net";
 "manage_account_dialog_remove_account_title" = "Odhlásit se z účtu?";
 "history_call_start_search_bar_filter_hint" = "Hledat kontakt nebo historii hovorů";
 "history_dialog_delete_all_call_logs_message" = "Z historie bodou odstraněny všechny hovory";
@@ -435,7 +435,7 @@
 "**%@**" = "**%@**";
 "👍" = "👍";
 "meeting_waiting_room_joining_subtitle" = "Připojení proběhne za malý moment";
-"[https://sip.linphone.org](https://sip.linphone.org)" = "[https://sip.linphone.org](https://sip.linphone.org)";
+"[https://pbx.percipia.net](https://pbx.percipia.net)" = "[https://pbx.percipia.net](https://pbx.percipia.net)";
 "%lld" = "%lld";
 "%lld %@" = "%1$lld %2$@";
 "[linphone.org/contact](https://linphone.org/contact)" = "[linphone.org/contact](https://linphone.org/contact)";
@@ -493,7 +493,7 @@
 "username_error" = "Chybné uživatelské jméno";
 "web_platform_forgotten_password_url" = "https://subscribe.linphone.org/";
 "web_platform_register_email_url" = "https://subscribe.linphone.org/register/email";
-"sip.linphone.org" = "sip.linphone.org";
+"pbx.percipia.net" = "pbx.percipia.net";
 "SRTP" = "SRTP";
 "TCP" = "TCP";
 "Temp Help" = "Nápověda";

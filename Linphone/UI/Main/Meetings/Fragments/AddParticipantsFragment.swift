@@ -42,13 +42,13 @@ struct AddParticipantsFragment: View {
 			VStack(spacing: 16) {
 				if #available(iOS 16.0, *) {
 					Rectangle()
-						.foregroundColor(Color.orangeMain500)
+						.foregroundColor(Color.percipiaGreen)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 0)
 				} else if idiom != .pad && !(orientation == .landscapeLeft || orientation == .landscapeRight
 											 || UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height) {
 					Rectangle()
-						.foregroundColor(Color.orangeMain500)
+						.foregroundColor(Color.percipiaGreen)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 1)
 				}
@@ -56,7 +56,7 @@ struct AddParticipantsFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.orangeMain500)
+						.foregroundStyle(Color.percipiaGreen)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 2)
@@ -162,7 +162,7 @@ struct AddParticipantsFragment: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
 						.inset(by: 0.5)
-						.stroke(isSearchFieldFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+						.stroke(isSearchFieldFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 				)
 				.padding(.bottom)
 				.padding(.horizontal)
@@ -203,7 +203,7 @@ struct AddParticipantsFragment: View {
 								Text(contactsManager.avatarListModel[index].name)
 									.default_text_style(styleSize: 16)
 									.frame(maxWidth: .infinity, alignment: .leading)
-									.foregroundStyle(Color.orangeMain500)
+									.foregroundStyle(Color.percipiaGreen)
 								
 								if addParticipantsViewModel.participantsToAdd.contains(where: {
 									$0.address.asStringUriOnly() == contactsManager.avatarListModel[index].address
@@ -211,7 +211,7 @@ struct AddParticipantsFragment: View {
 									Image("check")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.orangeMain500)
+										.foregroundStyle(Color.percipiaGreen)
 										.frame(width: 25, height: 25)
 										.padding(.horizontal)
 								}
@@ -255,7 +255,7 @@ struct AddParticipantsFragment: View {
 					.renderingMode(.template)
 					.foregroundStyle(.white)
 					.padding()
-					.background(Color.orangeMain500)
+					.background(Color.percipiaGreen)
 					.clipShape(Circle())
 					.shadow(color: .black.opacity(0.2), radius: 4)
 				
@@ -294,7 +294,7 @@ struct AddParticipantsFragment: View {
                                .lineLimit(1)
 							   .lineLimit(1)
 							   .frame(maxWidth: .infinity, alignment: .leading)
-							   .foregroundStyle(Color.orangeMain500)
+							   .foregroundStyle(Color.percipiaGreen)
 						
 						if let searchAddress = contactsManager.lastSearchSuggestions[index].address?.asStringUriOnly() {
 							if addParticipantsViewModel.participantsToAdd.contains(where: {
@@ -303,7 +303,7 @@ struct AddParticipantsFragment: View {
 								Image("check")
 									.renderingMode(.template)
 									.resizable()
-									.foregroundStyle(Color.orangeMain500)
+									.foregroundStyle(Color.percipiaGreen)
 									.frame(width: 25, height: 25)
 									.padding(.horizontal)
 							}
@@ -317,7 +317,7 @@ struct AddParticipantsFragment: View {
 						Text("username_error")
 							.default_text_style(styleSize: 16)
 							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundStyle(Color.orangeMain500)
+							.foregroundStyle(Color.percipiaGreen)
 					}
 				}
 				.padding(.horizontal)

@@ -42,7 +42,7 @@ struct ContactsView: View {
 						.renderingMode(.template)
 						.foregroundStyle(.white)
 						.padding()
-						.background(Color.orangeMain500)
+						.background(Color.percipiaGreen)
 						.clipShape(Circle())
 						.shadow(color: .black.opacity(0.2), radius: 4)
 					

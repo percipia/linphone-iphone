@@ -49,7 +49,7 @@ struct CallsListFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.orangeMain500)
+						.foregroundStyle(Color.percipiaGreen)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 2)
@@ -74,7 +74,7 @@ struct CallsListFragment: View {
 							Image("arrows-merge")
 								.renderingMode(.template)
 								.resizable()
-								.foregroundStyle(Color.orangeMain500)
+								.foregroundStyle(Color.percipiaGreen)
 								.frame(width: 25, height: 25, alignment: .leading)
 								.padding(.all, 10)
 						}
@@ -228,7 +228,7 @@ struct CallsListFragment: View {
 	
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
-		delayedColor = Color.orangeMain500
+		delayedColor = Color.percipiaGreen
 	}
 	
 	func delayColorDismiss() {

@@ -85,7 +85,7 @@ struct StartGroupConversationFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isMessageTextFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+							.stroke(isMessageTextFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
 					)
 					.padding(.bottom)
 					.focused($isMessageTextFocused)
@@ -104,7 +104,7 @@ struct StartGroupConversationFragment: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
 						.inset(by: 0.5)
-						.stroke(Color.orangeMain500, lineWidth: 1)
+						.stroke(Color.percipiaGreen, lineWidth: 1)
 				)
 				.padding(.bottom, 10)
 				
@@ -118,7 +118,7 @@ struct StartGroupConversationFragment: View {
 				})
 				.padding(.horizontal, 20)
 				.padding(.vertical, 10)
-				.background(startConversationViewModel.messageText.isEmpty ? Color.orangeMain100 : Color.orangeMain500)
+				.background(startConversationViewModel.messageText.isEmpty ? Color.percipiaGreen : Color.percipiaGreen)
 				.cornerRadius(60)
 				.disabled(startConversationViewModel.messageText.isEmpty)
 			}
@@ -128,7 +128,7 @@ struct StartGroupConversationFragment: View {
 			.cornerRadius(20)
 			.padding(.horizontal)
 			.frame(maxHeight: .infinity)
-			.shadow(color: Color.orangeMain500, radius: 0, x: 0, y: 2)
+			.shadow(color: Color.percipiaGreen, radius: 0, x: 0, y: 2)
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 			.position(x: geometry.size.width / 2, y: geometry.size.height / 2)
 			.onDisappear {
