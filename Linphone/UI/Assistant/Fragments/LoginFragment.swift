@@ -18,12 +18,14 @@
  */
 
 import SwiftUI
+import Combine
 
 struct LoginFragment: View {
 	
 	@ObservedObject private var coreContext = CoreContext.shared
 	
 	@StateObject private var accountLoginViewModel = AccountLoginViewModel()
+	@StateObject private var keyboard = KeyboardResponder()
 	
 	@State private var isSecured: Bool = true
 	
@@ -231,6 +233,7 @@ struct LoginFragment: View {
 			Spacer()
 		}
 		.frame(minHeight: geometry.size.height)
+		.padding(.bottom, keyboard.currentHeight)
 	}
 	
 	func acceptGeneralTerms() {
