@@ -34,7 +34,7 @@ class SharedMainViewModel: ObservableObject {
 	@Published var displayedConversation: ConversationModel?
 	@Published var displayedMeeting: MeetingModel?
 	
-	@Published var dialPlansList: [DialPlan] = []
+	@Published var dialPlansList: [DialPlan?] = []
 	@Published var dialPlansLabelList: [String] = []
 	@Published var dialPlansShortLabelList: [String] = []
 	
@@ -128,9 +128,13 @@ class SharedMainViewModel: ObservableObject {
 	func getDialPlansList() {
 		CoreContext.shared.doOnCoreQueue { _ in
 			let dialPlans = Factory.Instance.dialPlans
-			var dialPlansListTmp: [DialPlan] = []
+			var dialPlansListTmp: [DialPlan?] = []
 			var dialPlansLabelListTmp: [String] = []
 			var dialPlansShortLabelListTmp: [String] = []
+			
+			dialPlansListTmp.append(nil)
+			dialPlansLabelListTmp.append("No country code")
+			dialPlansShortLabelListTmp.append("---")
 			
 			dialPlans.forEach { dialPlan in
 				dialPlansListTmp.append(dialPlan)
