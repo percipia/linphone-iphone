@@ -233,12 +233,6 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 			.padding(.horizontal)
 			.padding(.bottom)
-			
-			Image("mountain2")
-				.resizable()
-				.scaledToFill()
-				.frame(width: geometry.size.width, height: 60)
-				.clipped()
 		}
 		.frame(minHeight: geometry.size.height)
 	}

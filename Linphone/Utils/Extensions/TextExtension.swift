@@ -106,7 +106,7 @@ extension View {
 	
 	func default_text_style_orange_500(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-Medium", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.white)
 	}
 	
 	func default_text_style_orange_600(styleSize: CGFloat) -> some View {

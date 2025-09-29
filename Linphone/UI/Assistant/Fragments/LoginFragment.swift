@@ -59,18 +59,15 @@ struct LoginFragment: View {
 					}
 					
 					if self.isShowPopup {
-						let generalTerms = String(format: "[%@](%@)", String(localized: "assistant_dialog_general_terms_label"), "https://www.linphone.org/en/terms-of-use/")
-						let privacyPolicy = String(format: "[%@](%@)", String(localized: "assistant_dialog_privacy_policy_label"), "https://linphone.org/en/privacy-policy")
+						let privacyPolicy = String(format: "[%@](%@)", String(localized: "assistant_dialog_privacy_policy_label"), "https://percipia.com/privacy")
 						let splitMsg = String(localized: "assistant_dialog_general_terms_and_privacy_policy_message").components(separatedBy: "%@")
-						if splitMsg.count == 3 { // We expect form of  STRING %A STRING %@ STRING
+						if splitMsg.count == 2 { // Expecting STRING %@ STRING
 							let contentPopup1 = Text(.init(splitMsg[0]))
-							let contentPopup2 = Text(.init(generalTerms)).underline()
+							let contentPopup2 = Text(.init(privacyPolicy)).underline()
 							let contentPopup3 = Text(.init(splitMsg[1]))
-							let contentPopup4 = Text(.init(privacyPolicy)).underline()
-							let contentPopup5 = Text(.init(splitMsg[2]))
 							PopupView(isShowPopup: $isShowPopup,
 									  title: Text("assistant_dialog_general_terms_and_privacy_policy_title"),
-									  content: contentPopup1 + contentPopup2 + contentPopup3 + contentPopup4 + contentPopup5,
+									  content: contentPopup1 + contentPopup2 + contentPopup3,
 									  titleFirstButton: Text("dialog_deny"),
 									  actionFirstButton: {self.isShowPopup.toggle()},
 									  titleSecondButton: Text("dialog_accept"),
@@ -82,7 +79,7 @@ struct LoginFragment: View {
 						} else {  // backup just in case
 							PopupView(isShowPopup: $isShowPopup,
 									  title: Text("assistant_dialog_general_terms_and_privacy_policy_title"),
-									  content: Text(.init(String(format: String(localized: "assistant_dialog_general_terms_and_privacy_policy_message"), generalTerms, privacyPolicy))),
+									  content: Text(.init(String(format: String(localized: "assistant_dialog_general_terms_and_privacy_policy_message"), privacyPolicy))),
 									  titleFirstButton: Text("dialog_deny"),
 									  actionFirstButton: {self.isShowPopup.toggle()},
 									  titleSecondButton: Text("dialog_accept"),
@@ -232,12 +229,6 @@ struct LoginFragment: View {
 			.padding(.horizontal, 20)
 			
 			Spacer()
-			
-			Image("mountain2")
-				.resizable()
-				.scaledToFill()
-				.frame(width: geometry.size.width, height: 60)
-				.clipped()
 		}
 		.frame(minHeight: geometry.size.height)
 	}

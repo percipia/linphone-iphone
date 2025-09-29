@@ -366,7 +366,7 @@
 "account_settings_dialog_invalid_password_message" = "Verbindung fehlgeschlagen, da die Authentifizierung für das Konto fehlt oder ungültig ist.\n%@.\n\nSie können Ihr Passwort erneut eingeben oder Ihre Kontokonfiguration in den Einstellungen überprüfen.";
 "assistant_account_creation_sms_confirmation_explanation" = "Wir haben einen Bestätigungscode an Ihre Telefonnummer %@ gesendet. Bitte geben Sie unten den Bestätigungscode ein:";
 "assistant_dialog_confirm_phone_number_message" = "Möchten Sie wirklich die Telefonnummer %@ verwenden?";
-"assistant_dialog_general_terms_and_privacy_policy_message" = "Indem Sie fortfahren, akzeptieren Sie unsere %@ und %@.";
+"assistant_dialog_general_terms_and_privacy_policy_message" = "Indem Sie fortfahren, akzeptieren Sie unsere %@.";
 "assistant_forgotten_password" = "Passwort vergessen?";
 "assistant_invalid_uri_toast" = "Ungültige URI";
 "assistant_permissions_record_audio_title" = "**Audio aufnehmen:** Damit Ihr Gesprächspartner Sie hören kann und um Sprachnachrichten aufzunehmen.";
@@ -445,7 +445,7 @@
 "DTLS" = "DTLS";
 "GC_MSG" = "Sie wurden zu einem Chatroom hinzugefügt";
 "help_dialog_update_available_message" = "Eine neue Version %@ ist verfügbar. Möchten Sie aktualisieren?";
-"manage_account_dialog_international_prefix_help_message" = "Wählen Sie Ihr Land aus, um Linphone die Zuordnung Ihrer Kontakte zuzulassen.";
+"manage_account_dialog_international_prefix_help_message" = "Wählen Sie Ihr Land aus, um Frequency Connect die Zuordnung Ihrer Kontakte zuzulassen.";
 "meeting_call_remove_no_participants" = "Zur Zeit kein Teilnehmer…";
 "meeting_call_remove_participant_confirmation_message" = "Sind Sie sicher, dass Sie %@ entfernen möchten?";
 "meeting_call_remove_participant_confirmation_title" = "Einen Teilnehmer entfernen";
@@ -495,7 +495,7 @@
 "uri_handler_call_failed_toast" = "Anruf fehlgeschlagen";
 "uri_handler_config_failed_toast" = "Konfiguration fehlgeschlagen";
 "ZRTP" = "ZRTP";
-"help_about_contribute_translations_title" = "Zur Übersetzung von Linphone beitragen";
-"help_about_privacy_policy_subtitle" = "Welche Informationen Linphone sammelt und nutzt";
-"help_about_title" = "Über Linphone";
-"help_about_user_guide_title" = "Linphone Benutzerhandbuch";
+"help_about_contribute_translations_title" = "Zur Übersetzung von Frequency Connect beitragen";
+"help_about_privacy_policy_subtitle" = "Welche Informationen Frequency Connect sammelt und nutzt";
+"help_about_title" = "Über Frequency Connect";
+"help_about_user_guide_title" = "Frequency Connect Benutzerhandbuch";
