@@ -48,7 +48,7 @@ struct SideMenu: View {
 			VStack {
 				VStack {
 					HStack {
-						Image("linphone")
+						Image("connect_nobgd")
 							.renderingMode(.template)
 							.resizable()
 							.foregroundStyle(Color.percipiaGreen)

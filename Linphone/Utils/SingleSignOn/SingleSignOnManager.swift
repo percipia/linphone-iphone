@@ -26,7 +26,7 @@ class SingleSignOnManager {
 	static let shared = SingleSignOnManager()
 
 	private let TAG = "[SSO]"
-	private let clientId = "linphone"
+	private let clientId = "frequencyconnect"
 	private let userDefaultSSOKey = "sso-authstate"
 	let ssoRedirectUri = URL(string: "org.linphone:/openidcallback")!
 	private var singleSignOnUrl = ""
