@@ -97,13 +97,13 @@ struct MeetingWaitingRoomFragment: View {
 		VStack {
 			if #available(iOS 16.0, *) {
 				Rectangle()
-					.foregroundColor(Color.percipiaGreen)
+					.foregroundColor(Color.orangeMain500)
 					.edgesIgnoringSafeArea(.top)
 					.frame(height: 0)
 			} else if idiom != .pad && !(orientation == .landscapeLeft || orientation == .landscapeRight
 										 || UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height) {
 				Rectangle()
-					.foregroundColor(Color.percipiaGreen)
+					.foregroundColor(Color.orangeMain500)
 					.edgesIgnoringSafeArea(.top)
 					.frame(height: 1)
 			}
@@ -119,7 +119,7 @@ struct MeetingWaitingRoomFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.percipiaGreen)
+						.foregroundStyle(Color.orangeMain500)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 				}
@@ -138,7 +138,7 @@ struct MeetingWaitingRoomFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.percipiaGreen)
+						.foregroundStyle(Color.orangeMain500)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 				}
@@ -345,7 +345,7 @@ struct MeetingWaitingRoomFragment: View {
 						})
 						.padding(.horizontal, 20)
 						.padding(.vertical, 10)
-						.background(Color.percipiaGreen)
+						.background(Color.orangeMain500)
 						.cornerRadius(60)
 						.padding(.horizontal, 10)
 						.frame(width: (geometry.size.width - 20) / 2)
@@ -366,7 +366,7 @@ struct MeetingWaitingRoomFragment: View {
 					})
 					.padding(.horizontal, 20)
 					.padding(.vertical, 10)
-					.background(Color.percipiaGreen)
+					.background(Color.orangeMain500)
 					.cornerRadius(60)
 					.padding(.bottom)
 					.padding(.horizontal, 10)
@@ -386,7 +386,7 @@ struct MeetingWaitingRoomFragment: View {
 						.multilineTextAlignment(.center)
 						.padding(.bottom, 20)
 					
-					ActivityIndicator(color: Color.percipiaGreen)
+					ActivityIndicator(color: Color.orangeMain500)
 						.frame(width: 35, height: 35)
 					
 					Spacer()
@@ -401,7 +401,7 @@ struct MeetingWaitingRoomFragment: View {
 					})
 					.padding(.horizontal, 20)
 					.padding(.vertical, 10)
-					.background(Color.percipiaGreen)
+					.background(Color.orangeMain500)
 					.cornerRadius(60)
 					.padding(.bottom)
 					.padding(.horizontal, 10)

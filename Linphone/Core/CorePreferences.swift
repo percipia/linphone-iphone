@@ -180,11 +180,17 @@ class CorePreferences {
 	
 	static var themeMainColor: String {
 		get {
-			let raw = Config.get().getString(section: "ui", key: "theme_main_color", defaultString: "orange")
-			return safeString(raw, defaultValue: "orange")
+			let raw = Config.get().getString(section: "ui", key: "theme_main_color", defaultString: "percipia")
+			return safeString(raw, defaultValue: "percipia")
 		}
 		set {
 			Config.get().setString(section: "ui", key: "theme_main_color", value: newValue)
+		}
+	}
+	
+	static var themeAboutPictureUrl: String? {
+		get {
+			return Config.get().getString(section: "ui", key: "theme_about_picture_url", defaultString: nil)
 		}
 	}
 	

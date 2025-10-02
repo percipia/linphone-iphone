@@ -85,7 +85,7 @@ struct StartCallFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.percipiaGreen)
+						.foregroundStyle(Color.orangeMain500)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 2)
@@ -190,7 +190,7 @@ struct StartCallFragment: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(isSearchFieldFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
+							.stroke(isSearchFieldFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
 					)
 					.padding(.vertical)
 					.padding(.horizontal)
@@ -210,7 +210,7 @@ struct StartCallFragment: View {
 										.frame(width: 28, height: 28)
 								}
 								.padding(10)
-								.background(Color.percipiaGreen)
+								.background(Color.orangeMain500)
 								.cornerRadius(40)
 								
 								Text("history_call_start_create_group_call")
@@ -323,7 +323,7 @@ struct StartCallFragment: View {
 	
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
-		delayedColor = Color.percipiaGreen
+		delayedColor = Color.orangeMain500
 	}
 	
 	func delayColorDismiss() {
@@ -397,7 +397,7 @@ struct StartCallFragment: View {
 								.default_text_style(styleSize: 16)
 								.lineLimit(1)
 								.frame(maxWidth: .infinity, alignment: .leading)
-								.foregroundStyle(Color.percipiaGreen)
+								.foregroundStyle(Color.orangeMain500)
 						} else {
 							if let address = contactsManager.lastSearchSuggestions[index].address {
 								let nameTmp = address.displayName
@@ -415,7 +415,7 @@ struct StartCallFragment: View {
 									.default_text_style(styleSize: 16)
 									.lineLimit(1)
 									.frame(maxWidth: .infinity, alignment: .leading)
-									.foregroundStyle(Color.percipiaGreen)
+									.foregroundStyle(Color.orangeMain500)
 							}
 						}
 					} else {
@@ -427,7 +427,7 @@ struct StartCallFragment: View {
 						Text("username_error")
 							.default_text_style(styleSize: 16)
 							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 					}
 				}
 				.padding(.horizontal)

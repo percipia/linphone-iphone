@@ -34,7 +34,7 @@ struct DebugFragment: View {
 		ZStack {
 			VStack(spacing: 1) {
 				Rectangle()
-					.foregroundColor(Color.percipiaGreen)
+					.foregroundColor(Color.orangeMain500)
 					.edgesIgnoringSafeArea(.top)
 					.frame(height: 0)
 				
@@ -42,7 +42,7 @@ struct DebugFragment: View {
 					Image("caret-left")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(Color.percipiaGreen)
+						.foregroundStyle(Color.orangeMain500)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 4)
@@ -82,7 +82,7 @@ struct DebugFragment: View {
 								)
 								.padding(.horizontal, 15)
 								.padding(.vertical, 10)
-								.background(Color.percipiaGreen)
+								.background(Color.orangeMain500)
 								.cornerRadius(60)
 								
 								Spacer()
@@ -98,7 +98,7 @@ struct DebugFragment: View {
 								)
 								.padding(.horizontal, 15)
 								.padding(.vertical, 10)
-								.background(Color.percipiaGreen)
+								.background(Color.orangeMain500)
 								.cornerRadius(60)
 								
 								Spacer()
@@ -116,7 +116,7 @@ struct DebugFragment: View {
 									Image("app-store-logo")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.percipiaGreen)
+										.foregroundStyle(Color.orangeMain500)
 										.frame(width: 30, height: 30)
 									
 									VStack {
@@ -152,7 +152,7 @@ struct DebugFragment: View {
 									Image("package")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.percipiaGreen)
+										.foregroundStyle(Color.orangeMain500)
 										.frame(width: 30, height: 30)
 									
 									VStack {
@@ -182,7 +182,7 @@ struct DebugFragment: View {
 									Image("fire")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.percipiaGreen)
+										.foregroundStyle(Color.orangeMain500)
 										.frame(width: 30, height: 30)
 									
 									VStack {
@@ -212,7 +212,7 @@ struct DebugFragment: View {
 								)
 								.padding(.horizontal, 15)
 								.padding(.vertical, 10)
-								.background(Color.percipiaGreen)
+								.background(Color.orangeMain500)
 								.cornerRadius(60)
 								
 								Spacer()

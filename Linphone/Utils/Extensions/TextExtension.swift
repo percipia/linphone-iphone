@@ -96,12 +96,12 @@ extension View {
 	
 	func default_text_style_orange_300(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-Light", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.orangeMain500)
 	}
 	
 	func default_text_style_orange(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-Regular", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.orangeMain500)
 	}
 	
 	func default_text_style_orange_500(styleSize: CGFloat) -> some View {
@@ -111,17 +111,17 @@ extension View {
 	
 	func default_text_style_orange_600(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-SemiBold", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.orangeMain500)
 	}
 	
 	func default_text_style_orange_700(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-Bold", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.orangeMain500)
 	}
 	
 	func default_text_style_orange_800(styleSize: CGFloat) -> some View {
 		self.font(Font.custom("NotoSans-ExtraBold", size: styleSize))
-			.foregroundStyle(Color.percipiaGreen)
+			.foregroundStyle(Color.orangeMain500)
 	}
 	
 	func profile_mode_text_style_gray_800(styleSize: CGFloat) -> some View {

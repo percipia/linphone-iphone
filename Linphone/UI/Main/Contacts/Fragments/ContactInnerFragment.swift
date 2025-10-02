@@ -48,7 +48,7 @@ struct ContactInnerFragment: View {
 			ZStack {
 				VStack(spacing: 1) {
 					Rectangle()
-						.foregroundColor(Color.percipiaGreen)
+						.foregroundColor(Color.orangeMain500)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 0)
 					
@@ -58,7 +58,7 @@ struct ContactInnerFragment: View {
 							Image("caret-left")
 								.renderingMode(.template)
 								.resizable()
-								.foregroundStyle(Color.percipiaGreen)
+								.foregroundStyle(Color.orangeMain500)
 								.frame(width: 25, height: 25, alignment: .leading)
 								.padding(.all, 10)
 								.padding(.top, 2)
@@ -79,7 +79,7 @@ struct ContactInnerFragment: View {
 								Image("pencil-simple")
 									.renderingMode(.template)
 									.resizable()
-									.foregroundStyle(Color.percipiaGreen)
+									.foregroundStyle(Color.orangeMain500)
 									.frame(width: 25, height: 25, alignment: .leading)
 									.padding(.all, 10)
 									.padding(.top, 2)
@@ -92,7 +92,7 @@ struct ContactInnerFragment: View {
 									Image("pencil-simple")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.percipiaGreen)
+										.foregroundStyle(Color.orangeMain500)
 										.frame(width: 25, height: 25, alignment: .leading)
 										.padding(.all, 10)
 										.padding(.top, 2)

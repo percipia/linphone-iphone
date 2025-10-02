@@ -55,7 +55,7 @@ struct ConversationInfoFragment: View {
 				if SharedMainViewModel.shared.displayedConversation != nil {
 					VStack(spacing: 1) {
 						Rectangle()
-							.foregroundColor(Color.percipiaGreen)
+							.foregroundColor(Color.orangeMain500)
 							.edgesIgnoringSafeArea(.top)
 							.frame(height: 0)
 						
@@ -63,7 +63,7 @@ struct ConversationInfoFragment: View {
 							Image("caret-left")
 								.renderingMode(.template)
 								.resizable()
-								.foregroundStyle(Color.percipiaGreen)
+								.foregroundStyle(Color.orangeMain500)
 								.frame(width: 25, height: 25, alignment: .leading)
 								.padding(.all, 10)
 								.padding(.top, 2)
@@ -150,7 +150,7 @@ struct ConversationInfoFragment: View {
 															Image("pencil-simple")
 																.renderingMode(.template)
 																.resizable()
-																.foregroundStyle(Color.percipiaGreen)
+																.foregroundStyle(Color.orangeMain500)
 																.frame(width: 20, height: 20)
 														}
 													)
@@ -468,7 +468,7 @@ struct ConversationInfoFragment: View {
 															Image("plus-circle")
 																.renderingMode(.template)
 																.resizable()
-																.foregroundStyle(Color.percipiaGreen)
+																.foregroundStyle(Color.orangeMain500)
 																.frame(width: 20, height: 20)
 															
 															Text("conversation_info_add_participants_label")
@@ -479,7 +479,7 @@ struct ConversationInfoFragment: View {
 													})
 													.padding(.horizontal, 20)
 													.padding(.vertical, 5)
-													.background(Color.percipiaGreen)
+													.background(Color.orangeMain500)
 													.cornerRadius(60)
 													.padding(.top, 10)
 													.padding(.bottom, 20)
@@ -493,7 +493,7 @@ struct ConversationInfoFragment: View {
 																Image("plus-circle")
 																	.renderingMode(.template)
 																	.resizable()
-																	.foregroundStyle(Color.percipiaGreen)
+																	.foregroundStyle(Color.orangeMain500)
 																	.frame(width: 20, height: 20)
 																
 																Text("conversation_info_add_participants_label")
@@ -504,7 +504,7 @@ struct ConversationInfoFragment: View {
 													)
 													.padding(.horizontal, 20)
 													.padding(.vertical, 5)
-													.background(Color.percipiaGreen)
+													.background(Color.orangeMain500)
 													.cornerRadius(60)
 													.padding(.top, 10)
 													.padding(.bottom, 20)

@@ -62,7 +62,7 @@ class FloatingButton: UIButton {
 			self.setImage(resizedImage, for: .normal)
 			self.tintColor = .white
 		}
-		self.backgroundColor = UIColor(Color.percipiaGreen)
+		self.backgroundColor = UIColor(Color.orangeMain500)
 		self.layer.cornerRadius = 30
 		self.layer.shadowColor = UIColor.black.withAlphaComponent(0.2).cgColor
 		self.layer.shadowOffset = CGSize(width: 0, height: 2)

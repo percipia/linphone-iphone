@@ -52,7 +52,7 @@ struct StartConversationFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 2)
@@ -125,7 +125,7 @@ struct StartConversationFragment: View {
 						.overlay(
 							RoundedRectangle(cornerRadius: 60)
 								.inset(by: 0.5)
-								.stroke(isSearchFieldFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
+								.stroke(isSearchFieldFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
 						)
 						.padding(.vertical)
 						.padding(.horizontal)
@@ -144,7 +144,7 @@ struct StartConversationFragment: View {
 											.frame(width: 28, height: 28)
 									}
 									.padding(10)
-									.background(Color.percipiaGreen)
+									.background(Color.orangeMain500)
 									.cornerRadius(40)
 									
 									Text("new_conversation_create_group")
@@ -237,7 +237,7 @@ struct StartConversationFragment: View {
 	
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
-		delayedColor = Color.percipiaGreen
+		delayedColor = Color.orangeMain500
 	}
 	
 	func delayColorDismiss() {
@@ -269,7 +269,7 @@ struct StartConversationFragment: View {
 								.default_text_style(styleSize: 16)
 								.lineLimit(1)
 								.frame(maxWidth: .infinity, alignment: .leading)
-								.foregroundStyle(Color.percipiaGreen)
+								.foregroundStyle(Color.orangeMain500)
 						} else {
 							if let address = contactsManager.lastSearchSuggestions[index].address {
 								let nameTmp = address.displayName
@@ -287,7 +287,7 @@ struct StartConversationFragment: View {
 									.default_text_style(styleSize: 16)
 									.lineLimit(1)
 									.frame(maxWidth: .infinity, alignment: .leading)
-									.foregroundStyle(Color.percipiaGreen)
+									.foregroundStyle(Color.orangeMain500)
 							}
 						}
 					} else {
@@ -299,7 +299,7 @@ struct StartConversationFragment: View {
 						Text("username_error")
 							.default_text_style(styleSize: 16)
 							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 					}
 				}
 				.padding(.horizontal)

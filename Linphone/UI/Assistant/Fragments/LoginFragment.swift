@@ -175,7 +175,7 @@ struct LoginFragment: View {
 						Image("qr-code")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 20, height: 20)
 						
 						Text("assistant_scan_qr_code")
@@ -191,7 +191,7 @@ struct LoginFragment: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
 						.inset(by: 0.5)
-						.stroke(Color.percipiaGreen, lineWidth: 1)
+						.stroke(Color.orangeMain500, lineWidth: 1)
 				)
 				.padding(.bottom)
 				
@@ -211,7 +211,7 @@ struct LoginFragment: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
 						.inset(by: 0.5)
-						.stroke(Color.percipiaGreen, lineWidth: 1)
+						.stroke(Color.orangeMain500, lineWidth: 1)
 				)
 				.padding(.bottom)
 				.simultaneousGesture(

@@ -170,7 +170,7 @@ struct ConversationRow: View {
 						Image(imageName)
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 18, height: 18, alignment: .trailing)
 					}
 					

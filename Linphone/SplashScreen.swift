@@ -28,10 +28,13 @@ struct SplashScreen: View {
 				HStack {
 					Spacer()
 					Image("connect_nobgd")
+						.renderingMode(.template)
+						.foregroundColor(ThemeManager.shared.currentTheme.main500)
 					Spacer()
 				}
 				Spacer()
 			}
+
 			
 		}
 		.ignoresSafeArea(.all)

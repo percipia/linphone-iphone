@@ -51,7 +51,7 @@ struct SideMenu: View {
 						Image("connect_nobgd")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 32, height: 32)
 							.padding(10)
 						Text(Bundle.main.displayName)
@@ -89,7 +89,7 @@ struct SideMenu: View {
 						Image("plus-circle")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 20, height: 20)
 						
 						Text("drawer_menu_add_account")
@@ -103,7 +103,7 @@ struct SideMenu: View {
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
 							.inset(by: 0.5)
-							.stroke(Color.percipiaGreen, lineWidth: 1)
+							.stroke(Color.orangeMain500, lineWidth: 1)
 					)
 					.padding(.leading, 16)
 					.padding(.trailing, 16)

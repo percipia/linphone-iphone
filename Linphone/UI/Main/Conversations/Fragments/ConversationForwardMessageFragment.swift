@@ -48,7 +48,7 @@ struct ConversationForwardMessageFragment: View {
 				VStack(spacing: 1) {
 					
 					Rectangle()
-						.foregroundStyle(Color.percipiaGreen)
+						.foregroundStyle(Color.orangeMain500)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 0)
 					
@@ -56,7 +56,7 @@ struct ConversationForwardMessageFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 2)
@@ -136,7 +136,7 @@ struct ConversationForwardMessageFragment: View {
 						.overlay(
 							RoundedRectangle(cornerRadius: 60)
 								.inset(by: 0.5)
-								.stroke(isSearchFieldFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
+								.stroke(isSearchFieldFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
 						)
 						.padding(.vertical)
 						.padding(.horizontal)
@@ -287,7 +287,7 @@ struct ConversationForwardMessageFragment: View {
 								.default_text_style(styleSize: 16)
 								.lineLimit(1)
 								.frame(maxWidth: .infinity, alignment: .leading)
-								.foregroundStyle(Color.percipiaGreen)
+								.foregroundStyle(Color.orangeMain500)
 						} else {
 							if let address = contactsManager.lastSearchSuggestions[index].address {
 								let nameTmp = address.displayName
@@ -305,7 +305,7 @@ struct ConversationForwardMessageFragment: View {
 									.default_text_style(styleSize: 16)
 									.lineLimit(1)
 									.frame(maxWidth: .infinity, alignment: .leading)
-									.foregroundStyle(Color.percipiaGreen)
+									.foregroundStyle(Color.orangeMain500)
 							}
 						}
 					} else {
@@ -317,7 +317,7 @@ struct ConversationForwardMessageFragment: View {
 						Text("username_error")
 							.default_text_style(styleSize: 16)
 							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 					}
 				}
 				.padding(.horizontal)

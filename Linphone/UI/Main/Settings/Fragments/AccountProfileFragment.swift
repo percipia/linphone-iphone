@@ -48,7 +48,7 @@ struct AccountProfileFragment: View {
 			ZStack {
 				VStack(spacing: 1) {
 					Rectangle()
-						.foregroundColor(Color.percipiaGreen)
+						.foregroundColor(Color.orangeMain500)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 0)
 					
@@ -56,7 +56,7 @@ struct AccountProfileFragment: View {
 						Image("caret-left")
 							.renderingMode(.template)
 							.resizable()
-							.foregroundStyle(Color.percipiaGreen)
+							.foregroundStyle(Color.orangeMain500)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.padding(.all, 10)
 							.padding(.top, 4)
@@ -317,7 +317,7 @@ struct AccountProfileFragment: View {
 														.overlay(
 															RoundedRectangle(cornerRadius: 60)
 																.inset(by: 0.5)
-																.stroke(isDisplayNameFocused ? Color.percipiaGreen : Color.gray200, lineWidth: 1)
+																.stroke(isDisplayNameFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
 														)
 														.focused($isDisplayNameFocused)
 													}
@@ -463,7 +463,7 @@ struct AccountProfileFragment: View {
 																	Image("trash-simple")
 																		.renderingMode(.template)
 																		.resizable()
-																		.foregroundStyle(Color.percipiaGreen)
+																		.foregroundStyle(Color.orangeMain500)
 																		.frame(width: 20, height: 20)
 																	
 																	Text("manage_account_device_remove")
@@ -473,7 +473,7 @@ struct AccountProfileFragment: View {
 																
 															})
 															.padding(.horizontal, 10)
-															.background(Color.percipiaGreen)
+															.background(Color.orangeMain500)
 															.cornerRadius(60)
 														}
 														.padding(.bottom, 10)

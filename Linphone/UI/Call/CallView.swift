@@ -301,7 +301,7 @@ struct CallView: View {
 									Image("pause")
 										.renderingMode(.template)
 										.resizable()
-										.foregroundStyle(Color.percipiaGreen)
+										.foregroundStyle(Color.orangeMain500)
 										.frame(width: 30, height: 30)
 										.padding(.all, 10)
 								}
