@@ -246,6 +246,7 @@ struct MainViewSwitcher: View {
 	let sharedMainViewModel: SharedMainViewModel
 	@Binding var pendingURL: URL?
 	let appDelegate: AppDelegate
+	@ObservedObject private var colors = ColorProvider.shared
 
 	var body: some View {
 		selectedMainView()
@@ -264,5 +265,6 @@ struct MainViewSwitcher: View {
 					navigationManager.openChatRoom(callId: callId, peerAddr: peerAddr, localAddr: localAddr)
 				}
 			}
+			.id(colors.theme.name)
 	}
 }
