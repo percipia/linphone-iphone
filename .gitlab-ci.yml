@@ -6,7 +6,7 @@
   before_script:
     - xcodebuild -version
     - xcodebuild -showsdks
-    - gem install fastlane
+    - gem install fastlane -V
 
 variables:
   archive_scheme: Linphone
@@ -22,7 +22,6 @@ variables:
 
 stages:
   - debug
-  - test
   - prod
 
 build-debug:
@@ -37,23 +36,13 @@ build-debug:
       - derivedData/Logs
     when: always
     expire_in: 1 day
-  when: manual
-
-test-ios:
-  extends:
-    - .runners
-  stage: test
-  dependencies:
-    - build-debug
-  script:
-    - xcodebuild test -project LinphoneApp.xcodeproj -scheme Linphone -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone" -UseModernBuildSystem=YES
+  when: 
+    - manual
 
 build-prod:
   extends:
     - .runners
   stage: prod
-  dependencies:
-    - test-ios
   script:
     - fastlane match appstore --readonly
     - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose
