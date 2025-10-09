@@ -43,7 +43,7 @@ test-ios:
   dependencies:
     - build-debug
   script:
-    - xcodebuild test -project LinphoneApp.xcworkspace -scheme Linphone -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone" -UseModernBuildSystem=YES
+    - xcodebuild test -project LinphoneApp.xcodeproj -scheme Linphone -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone" -UseModernBuildSystem=YES
 
 build-prod:
   extends:
