@@ -2,8 +2,7 @@
 
 .runners:
   tags:
-    - saas-macos-medium-m1 # GitLab hosted runner
-    - majs-macbook-runner # Self-hosted fallback
+    - majs-macbook-runner
   before_script:
     - xcodebuild -version
     - xcodebuild -showsdks
@@ -33,7 +32,7 @@ build-debug:
     - xcodebuild build -scheme $archive_scheme -workspace ./Linphone.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug
   artifacts:
     paths:
-      - derivedData/Build
+      - derivedData/Logs
     when: always
     expire_in: 1 day
 
@@ -52,10 +51,6 @@ build-prod:
   stage: prod
   dependencies:
     - test-ios
-  before_script:
-    - gem install fastlane
-    - fastlane match development --readonly
-    - fastlane match adhoc --readonly
   script:
     - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -workspace ./Linphone.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
