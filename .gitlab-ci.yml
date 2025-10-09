@@ -2,7 +2,7 @@
 
 .runners:
   tags:
-    - majs-macbook-runner
+    - macosx-xcode
   before_script:
     - xcodebuild -version
     - xcodebuild -showsdks
