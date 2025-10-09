@@ -29,7 +29,7 @@ build-debug:
     - .runners
   stage: debug
   script:
-    - xcodebuild build -scheme $archive_scheme -workspace ./Linphone.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug
+    - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug
   artifacts:
     paths:
       - derivedData/Logs
@@ -43,7 +43,7 @@ test-ios:
   dependencies:
     - build-debug
   script:
-    - xcodebuild test -workspace Linphone.xcworkspace -scheme Linphone -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone" -UseModernBuildSystem=YES
+    - xcodebuild test -project LinphoneApp.xcworkspace -scheme Linphone -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone" -UseModernBuildSystem=YES
 
 build-prod:
   extends:
@@ -52,7 +52,7 @@ build-prod:
   dependencies:
     - test-ios
   script:
-    - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -workspace ./Linphone.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
+    - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcworkspace -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
     paths:
