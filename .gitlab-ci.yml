@@ -1,5 +1,3 @@
-# https://docs.gitlab.com/ci/runners/hosted_runners/macos/
-
 .runners:
   tags:
     - macosx-xcode
@@ -15,9 +13,8 @@ variables:
   export_options_plist: Linphone-adhoc.plist
   HOMEBREW_NO_AUTO_UPDATE: 1
   APPLE_ID: "${VAR_APPLE_ID}"
-  APPLE_ID_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
   TEAM_ID: "${VAR_TEAM_ID}"
-  MATCH_GIT_URL: "${VAR_MATCH_GIT_URL}"
+  MATCH_GIT_URL: "https://oauth2:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
   MATCH_PASSWORD: "${VAR_MATCH_PASSWORD}"
 
 stages:
@@ -43,6 +40,7 @@ build-prod:
     - .runners
   stage: prod
   script:
+    - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-adhoc.plist
     - fastlane match appstore --readonly
     - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
