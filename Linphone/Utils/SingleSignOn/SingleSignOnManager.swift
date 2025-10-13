@@ -28,7 +28,7 @@ class SingleSignOnManager {
 	private let TAG = "[SSO]"
 	private let clientId = "frequencyconnect"
 	private let userDefaultSSOKey = "sso-authstate"
-	let ssoRedirectUri = URL(string: "org.linphone:/openidcallback")!
+	let ssoRedirectUri = URL(string: "com.percipia:/openidcallback")!
 	private var singleSignOnUrl = ""
 	private var username: String = ""
 	private var authState: AuthState?

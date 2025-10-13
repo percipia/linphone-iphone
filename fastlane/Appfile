@@ -1,3 +1,3 @@
-app_identifier("org.linphone.linphone") # TODO: replace
+app_identifier("com.percipia.connect")
 apple_id(ENV["APPLE_ID"])
 team_id(ENV["TEAM_ID"])
