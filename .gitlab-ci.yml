@@ -16,7 +16,7 @@ variables:
   LANG: "en_US.UTF-8"
   APPLE_ID: "${VAR_APPLE_ID}"
   TEAM_ID: "${VAR_TEAM_ID}"
-  MATCH_GIT_URL: "https://oauth2:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
+  MATCH_GIT_URL: "https://gitlab-ci-token:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
   MATCH_PASSWORD: "${VAR_MATCH_PASSWORD}"
 
 stages:
