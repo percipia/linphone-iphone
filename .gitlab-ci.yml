@@ -12,6 +12,8 @@ variables:
   export_path: Linphone-appstore-ipa
   export_options_plist: Linphone-appstore.plist
   HOMEBREW_NO_AUTO_UPDATE: 1
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
   APPLE_ID: "${VAR_APPLE_ID}"
   TEAM_ID: "${VAR_TEAM_ID}"
   MATCH_GIT_URL: "https://oauth2:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
