@@ -9,8 +9,8 @@
 variables:
   archive_scheme: Linphone
   archive_path: Linphone.xcarchive
-  export_path: Linphone-adhoc-ipa
-  export_options_plist: Linphone-adhoc.plist
+  export_path: Linphone-appstore-ipa
+  export_options_plist: Linphone-appstore.plist
   HOMEBREW_NO_AUTO_UPDATE: 1
   APPLE_ID: "${VAR_APPLE_ID}"
   TEAM_ID: "${VAR_TEAM_ID}"
