@@ -1,11 +1,14 @@
-default_platform(:ios)
-
 platform :ios do
   desc "Match development certificates"
   lane :match_development do
     match(
       type: "development",
-      readonly: true
+      readonly: true,
+      app_identifier: [
+        "com.percipia.connect",
+        "com.percipia.connect.msgNotificationService",
+        "com.percipia.connect.linphoneExtension"
+      ]
     )
   end
 
@@ -13,7 +16,12 @@ platform :ios do
   lane :match_appstore do
     match(
       type: "appstore",
-      readonly: true
+      readonly: true,
+      app_identifier: [
+        "com.percipia.connect",
+        "com.percipia.connect.msgNotificationService",
+        "com.percipia.connect.linphoneExtension"
+      ]
     )
   end
 end
