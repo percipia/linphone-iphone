@@ -15,6 +15,7 @@ variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
   APPLE_ID: "${VAR_APPLE_ID}"
+  APPLE_ID_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
   TEAM_ID: "${VAR_TEAM_ID}"
   MATCH_GIT_URL: "https://gitlab-ci-token:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
   MATCH_PASSWORD: "${VAR_MATCH_PASSWORD}"
@@ -29,7 +30,7 @@ build-debug:
   stage: debug
   script:
     - fastlane ios match_development
-    - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
+    - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose -username $APPLE_ID -password $APPLE_ID_PASSWORD DEVELOPMENT_TEAM=$TEAM_ID
   artifacts:
     paths:
       - derivedData/Logs
@@ -43,7 +44,7 @@ build-prod:
   script:
     - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
     - fastlane ios match_appstore
-    - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
+    - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose -username $APPLE_ID -password $APPLE_ID_PASSWORD DEVELOPMENT_TEAM=$TEAM_ID
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
     paths:
