@@ -33,9 +33,7 @@ platform :ios do
       scheme: "Linphone",
       configuration: "Debug",
       export_method: "development",
-      team_id: ENV["TEAM_ID"],
-      username: ENV["APPLE_ID"],
-      password: ENV["APPLE_ID_PASSWORD"],
+      export_team_id: ENV["TEAM_ID"],
       output_directory: "./build",
       output_name: "FrequencyConnect-Debug.ipa"
     )
@@ -49,9 +47,7 @@ platform :ios do
       scheme: "Linphone",
       configuration: "Release",
       export_method: "app-store",
-      team_id: ENV["TEAM_ID"],
-      username: ENV["APPLE_ID"],
-      password: ENV["APPLE_ID_PASSWORD"],
+      export_team_id: ENV["TEAM_ID"],
       output_directory: "./build",
       output_name: "FrequencyConnect-Production.ipa"
     )
