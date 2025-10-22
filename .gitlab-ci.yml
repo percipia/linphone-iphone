@@ -4,9 +4,7 @@
   before_script:
     - xcodebuild -version
     - xcodebuild -showsdks
-    - bundle -v || gem install bundler
-    - bundle config set path vendor/bundle
-    - bundle install --jobs 4 --retry 3
+    - gem install fastlane
 
 variables:
   archive_scheme: Linphone
@@ -25,26 +23,18 @@ stages:
   - debug
   - prod
 
-cache:
-  key:
-    files:
-      - Gemfile.lock
-  paths:
-    - vendor/bundle
-
 build-debug:
   extends:
     - .runners
   stage: debug
   script:
-    - bundle exec fastlane match_development
+    - fastlane match_development
     - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
   artifacts:
     paths:
       - derivedData/Logs
     when: always
     expire_in: 1 day
-  when: manual
 
 build-prod:
   extends:
@@ -52,7 +42,7 @@ build-prod:
   stage: prod
   script:
     - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
-    - bundle exec fastlane match_appstore
+    - fastlane match_appstore
     - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
