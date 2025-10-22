@@ -34,6 +34,7 @@ platform :ios do
       configuration: "Debug",
       export_method: "development",
       export_team_id: ENV["TEAM_ID"],
+      xcargs: "-allowProvisioningUpdates",
       output_directory: "./build",
       output_name: "FrequencyConnect-Debug.ipa"
     )
@@ -48,6 +49,7 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       export_team_id: ENV["TEAM_ID"],
+      xcargs: "-allowProvisioningUpdates",
       output_directory: "./build",
       output_name: "FrequencyConnect-Production.ipa"
     )
