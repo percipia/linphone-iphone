@@ -24,4 +24,36 @@ platform :ios do
       ]
     )
   end
+
+  desc "Build debug app"
+  lane :build_debug do
+    match_development
+    
+    build_app(
+      scheme: "Linphone",
+      configuration: "Debug",
+      export_method: "development",
+      team_id: ENV["TEAM_ID"],
+      username: ENV["APPLE_ID"],
+      password: ENV["APPLE_ID_PASSWORD"],
+      output_directory: "./build",
+      output_name: "FrequencyConnect-Debug.ipa"
+    )
+  end
+
+  desc "Build production app"
+  lane :build_prod do
+    match_appstore
+    
+    build_app(
+      scheme: "Linphone",
+      configuration: "Release",
+      export_method: "app-store",
+      team_id: ENV["TEAM_ID"],
+      username: ENV["APPLE_ID"],
+      password: ENV["APPLE_ID_PASSWORD"],
+      output_directory: "./build",
+      output_name: "FrequencyConnect-Production.ipa"
+    )
+  end
 end
