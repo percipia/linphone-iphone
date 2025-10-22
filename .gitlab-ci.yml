@@ -28,7 +28,7 @@ build-debug:
     - .runners
   stage: debug
   script:
-    - fastlane match_development
+    - fastlane ios match_development
     - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
   artifacts:
     paths:
@@ -42,7 +42,7 @@ build-prod:
   stage: prod
   script:
     - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
-    - fastlane match_appstore
+    - fastlane ios match_appstore
     - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
     - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
