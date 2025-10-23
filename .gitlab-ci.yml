@@ -7,15 +7,15 @@
     - gem install fastlane
 
 variables:
-  #archive_scheme: Linphone
-  #archive_path: Linphone.xcarchive
-  #export_path: Linphone-appstore-ipa
-  #export_options_plist: Linphone-appstore.plist
+  # archive_scheme: Linphone
+  # archive_path: Linphone.xcarchive
+  # export_path: Linphone-appstore-ipa
+  # export_options_plist: Linphone-appstore.plist
   HOMEBREW_NO_AUTO_UPDATE: 1
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
-  #APPLE_ID: "${VAR_APPLE_ID}"
-  #APPLE_ID_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
+  # APPLE_ID: "${VAR_APPLE_ID}"
+  # APPLE_ID_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
   TEAM_ID: "${VAR_TEAM_ID}"
   FASTLANE_USER: "${VAR_APPLE_ID}"
   FASTLANE_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
@@ -32,7 +32,7 @@ build-debug:
   stage: debug
   script:
     - fastlane ios build_debug
-#    - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
+    # - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
   artifacts:
     paths:
       - build/
@@ -44,10 +44,10 @@ build-prod:
     - .runners
   stage: prod
   script:
-    - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
+    # - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
     - fastlane ios build_prod
-#    - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
-#    - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
+    # - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
+    # - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
     paths:
       - build/

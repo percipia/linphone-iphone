@@ -34,9 +34,16 @@ platform :ios do
       configuration: "Debug",
       export_method: "development",
       export_team_id: ENV["TEAM_ID"],
-      xcargs: "-allowProvisioningUpdates",
+      # xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
       output_directory: "./build",
-      output_name: "FrequencyConnect-Debug.ipa"
+      output_name: "FrequencyConnect-Debug.ipa",
+      export_options: {
+        provisioningProfiles: {
+          "com.percipia.connect" => "match Development com.percipia.connect",
+          "com.percipia.connect.msgNotificationService" => "match Development com.percipia.connect.msgNotificationService",
+          "com.percipia.connect.linphoneExtension" => "match Development com.percipia.connect.linphoneExtension"
+        }
+      }
     )
   end
 
@@ -49,9 +56,16 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       export_team_id: ENV["TEAM_ID"],
-      xcargs: "-allowProvisioningUpdates",
+      # xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
       output_directory: "./build",
-      output_name: "FrequencyConnect-Production.ipa"
+      output_name: "FrequencyConnect-Production.ipa",
+      export_options: {
+        provisioningProfiles: {
+          "com.percipia.connect" => "match AppStore com.percipia.connect",
+          "com.percipia.connect.msgNotificationService" => "match AppStore com.percipia.connect.msgNotificationService",
+          "com.percipia.connect.linphoneExtension" => "match AppStore com.percipia.connect.linphoneExtension"
+        }
+      }
     )
   end
 end
