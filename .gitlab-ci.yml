@@ -38,6 +38,7 @@ build-debug:
       - build/
     when: always
     expire_in: 1 day
+  when: manual
 
 build-prod:
   extends:
@@ -55,3 +56,6 @@ build-prod:
     expire_in: never
   only:
     - tags
+
+# Error:
+# [16:56:10]: ▸ ❌  /Users/mkravos/builds/7JzsNScw/0/frequency-connect/ios-app/LinphoneApp.xcodeproj: error: "LinphoneApp" requires a provisioning profile with the App Groups and Push Notifications features. Select a provisioning profile in the Signing & Capabilities editor. (in target 'LinphoneApp' from project 'LinphoneApp')
