@@ -29,12 +29,28 @@ platform :ios do
   lane :build_debug do
     match_development
     
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect_development_profile-path"],
+      target_filter: "LinphoneApp"
+    )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.msgNotificationService_development_profile-path"],
+      target_filter: "msgNotificationService"
+    )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.linphoneExtension_development_profile-path"],
+      target_filter: "linphoneExtension"
+    )
+    
     build_app(
       scheme: "Linphone",
       configuration: "Debug",
       export_method: "development",
       export_team_id: ENV["TEAM_ID"],
-      # xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} CODE_SIGN_STYLE=Manual",
       output_directory: "./build",
       output_name: "FrequencyConnect-Debug.ipa",
       export_options: {
@@ -51,12 +67,28 @@ platform :ios do
   lane :build_prod do
     match_appstore
     
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect_appstore_profile-path"],
+      target_filter: "LinphoneApp"
+    )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.msgNotificationService_appstore_profile-path"],
+      target_filter: "msgNotificationService"
+    )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.linphoneExtension_appstore_profile-path"],
+      target_filter: "linphoneExtension"
+    )
+    
     build_app(
       scheme: "Linphone",
       configuration: "Release",
       export_method: "app-store",
       export_team_id: ENV["TEAM_ID"],
-      # xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} CODE_SIGN_STYLE=Manual",
       output_directory: "./build",
       output_name: "FrequencyConnect-Production.ipa",
       export_options: {

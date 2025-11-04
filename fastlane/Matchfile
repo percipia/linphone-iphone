@@ -1,4 +1,3 @@
 storage_mode("git")
 git_url(ENV["MATCH_GIT_URL"])
-username(ENV["FASTLANE_USER"])
 team_id(ENV["TEAM_ID"])

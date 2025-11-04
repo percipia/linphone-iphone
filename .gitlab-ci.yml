@@ -5,20 +5,21 @@
     - xcodebuild -version
     - xcodebuild -showsdks
     - gem install fastlane
+    - |
+      if [ -n "$VAR_APPLE_API_KEY" ]; then
+        mkdir -p ~/.appstoreconnect
+        echo "$VAR_APPLE_API_KEY" | base64 -d > ~/.appstoreconnect/AuthKey.p8
+        chmod 600 ~/.appstoreconnect/AuthKey.p8
+        export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
+      fi
 
 variables:
-  # archive_scheme: Linphone
-  # archive_path: Linphone.xcarchive
-  # export_path: Linphone-appstore-ipa
-  # export_options_plist: Linphone-appstore.plist
   HOMEBREW_NO_AUTO_UPDATE: 1
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
-  # APPLE_ID: "${VAR_APPLE_ID}"
-  # APPLE_ID_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
   TEAM_ID: "${VAR_TEAM_ID}"
-  FASTLANE_USER: "${VAR_APPLE_ID}"
-  FASTLANE_PASSWORD: "${VAR_APPLE_ID_PASSWORD}"
+  APPLE_API_KEY_ID: "${VAR_APPLE_API_KEY_ID}"
+  APPLE_API_ISSUER_ID: "${VAR_APPLE_API_KEY_ISSUER_ID}"
   MATCH_GIT_URL: "https://gitlab-ci-token:${CI_JOB_TOKEN}@${VAR_MATCH_GIT_URL}"
   MATCH_PASSWORD: "${VAR_MATCH_PASSWORD}"
 
@@ -31,8 +32,11 @@ build-debug:
     - .runners
   stage: debug
   script:
+    - |
+      if [ -f "$HOME/.appstoreconnect/AuthKey.p8" ] && [ -z "$APPLE_API_KEY_PATH" ]; then
+        export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
+      fi
     - fastlane ios build_debug
-    # - xcodebuild build -scheme $archive_scheme -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -configuration Debug -verbose DEVELOPMENT_TEAM=$TEAM_ID
   artifacts:
     paths:
       - build/
@@ -45,10 +49,11 @@ build-prod:
     - .runners
   stage: prod
   script:
-    # - sed -i '' "s/Z2V957B3D6/${TEAM_ID}/g" ./Linphone-appstore.plist
+    - |
+      if [ -f "$HOME/.appstoreconnect/AuthKey.p8" ] && [ -z "$APPLE_API_KEY_PATH" ]; then
+        export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
+      fi
     - fastlane ios build_prod
-    # - xcodebuild archive -scheme $archive_scheme -archivePath ./$archive_path -configuration Release -project ./LinphoneApp.xcodeproj -allowProvisioningUpdates -UseModernBuildSystem=YES -destination 'generic/platform=iOS' -verbose DEVELOPMENT_TEAM=$TEAM_ID
-    # - xcodebuild -exportArchive -archivePath ./$archive_path -exportPath ./$export_path -exportOptionsPlist ./$export_options_plist -UseModernBuildSystem=YES -destination 'generic/platform=iOS'
   artifacts:
     paths:
       - build/
@@ -56,6 +61,3 @@ build-prod:
     expire_in: never
   only:
     - tags
-
-# Error:
-# [16:56:10]: ▸ ❌  /Users/mkravos/builds/7JzsNScw/0/frequency-connect/ios-app/LinphoneApp.xcodeproj: error: "LinphoneApp" requires a provisioning profile with the App Groups and Push Notifications features. Select a provisioning profile in the Signing & Capabilities editor. (in target 'LinphoneApp' from project 'LinphoneApp')
