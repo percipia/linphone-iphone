@@ -44,6 +44,7 @@ class SharedMainViewModel: ObservableObject {
     
     @Published var unreadMessages: Int = 0
     @Published var missedCallsCount: Int = 0
+	@Published var cardDavFriendsListsCount: Int = 0
 	
 	@Published var disableChatFeature: Bool = false
 	@Published var disableMeetingFeature: Bool = false
@@ -88,6 +89,8 @@ class SharedMainViewModel: ObservableObject {
         updateUnreadMessagesCount()
 		updateDisableChatFeature()
 		updateDisableMeetingFeature()
+		
+		getCardDavFriendsListsCount()
 	}
 	
 	func changeGeneralTerms() {
@@ -224,5 +227,28 @@ class SharedMainViewModel: ObservableObject {
 				self.disableMeetingFeature = disableMeetingFeatureTmp
 			}
 		}
+	}
+	
+	func getCardDavFriendsListsCount() {
+		CoreContext.shared.doOnCoreQueue { core in
+			var list: [String] = []
+			
+			core.friendsLists.forEach({ friendList in
+				if friendList.type == .CardDAV {
+					let label = friendList.displayName ?? friendList.uri ?? ""
+					if !label.isEmpty {
+						list.append(label)
+					}
+				}
+			})
+
+			DispatchQueue.main.async {
+				self.updateCardDavFriendsListsCount(cardDavFriendsListsCount: list.count)
+			}
+		}
+	}
+	
+	func updateCardDavFriendsListsCount(cardDavFriendsListsCount: Int) {
+		self.cardDavFriendsListsCount = cardDavFriendsListsCount
 	}
 }

@@ -32,6 +32,8 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 	@Published var phoneNumbersWithLabel: [(label: String, phoneNumber: String)] = []
 	
 	var nativeUri: String = ""
+	var editable: Bool = true
+	var isReadOnly: Bool = false
 	var withPresence: Bool?
 	
 	@Published var starred: Bool = false
@@ -70,12 +72,20 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 				}
 			}
 			let nativeUriTmp = friend?.nativeUri ?? ""
+			let editableTmp = friend?.friendList?.type == .CardDAV || nativeUriTmp.isEmpty
+			let isReadOnlyTmp = (friend?.isReadOnly == true) || (friend?.inList() == false)
 			let withPresenceTmp = withPresence
 			let starredTmp = friend?.starred ?? false
 			let vcardTmp = friend?.vcard ?? nil
 			let organizationTmp = friend?.organization ?? ""
 			let jobTitleTmp = friend?.jobTitle ?? ""
-			let photoTmp = friend?.photo ?? ""
+			var photoTmp = friend?.photo ?? ""
+			
+			if friend?.friendList?.type == .CardDAV && friend?.photo?.isEmpty == false {
+				let fileName = "file:/" + name + ".png"
+				photoTmp = fileName.replacingOccurrences(of: " ", with: "")
+			}
+			
 			var lastPresenceInfoTmp = ""
 			var presenceStatusTmp: ConsolidatedPresence = .Offline
 			
@@ -108,6 +118,8 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 				self.addresses = addressesTmp
 				self.phoneNumbersWithLabel = phoneNumbersWithLabelTmp
 				self.nativeUri = nativeUriTmp
+				self.editable = editableTmp
+				self.isReadOnly = isReadOnlyTmp
 				self.withPresence = withPresenceTmp
 				self.starred = starredTmp
 				self.vcard = vcardTmp
