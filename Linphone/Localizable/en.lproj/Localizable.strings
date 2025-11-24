@@ -47,6 +47,8 @@
 "account_settings_im_encryption_mandatory_title" = "IM encryption mandatory";
 "account_settings_lime_server_url_title" = "E2E encryption keys server URL";
 "account_settings_mwi_uri_title" = "MWI server URI (Message Waiting Indicator)";
+"account_settings_apply_international_prefix_title" = "Format phone numbers using international prefix";
+"account_settings_replace_plus_by_00_title" = "Replace + by 00 when formatting phone numbers";
 "account_settings_nat_policy_title" = "NAT policy settings";
 "account_settings_outbound_proxy_title" = "Outbound proxy";
 "account_settings_push_notification_not_available_title" = "Push notifications aren't available!";
@@ -188,6 +190,7 @@
 "contacts_list_favourites_title" = "Favourites";
 "contacts_list_filter_popup_see_all" = "See all";
 "contacts_list_filter_popup_see_linphone_only" = "See %@ contacts";
+"contacts_list_filter_popup_see_sip_only" = "See SIP contacts";
 "conversation_action_call" = "Call";
 "conversation_action_configure_ephemeral_messages" = "Configure ephemeral messages";
 "conversation_action_delete" = "Delete conversation";

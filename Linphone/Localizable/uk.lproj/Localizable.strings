@@ -514,3 +514,4 @@
 "website_privacy_policy_url" = "https://percipia.com/privacy";
 "website_terms_and_conditions_url" = "https://percipia.com/privacy";
 "website_translate_weblate_url" = "https://weblate.linphone.org/";
+"authentication_id" = "Ідентифікатор автентифікації (якщо відрізняється)";
