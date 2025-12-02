@@ -161,7 +161,6 @@ class CoreContext: ObservableObject {
 			Log.info("Git Info — App: \(appGitTag + "-" + appGitVersion) [\(appGitBranch)] | SDK: \(sdkGitVersion) [\(sdkGitBranch)]")
 			
 			let userAgent = "FrequencyConnectiOS/\(appGitTag) (\(UIDevice.current.localizedModel.replacingOccurrences(of: "'", with: ""))) LinphoneSDK"
-
 			self.mCore.setUserAgent(name: userAgent, version: self.coreVersion)
 			
 			self.mCore.videoCaptureEnabled = true
