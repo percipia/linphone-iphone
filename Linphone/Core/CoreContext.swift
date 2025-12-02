@@ -148,11 +148,22 @@ class CoreContext: ObservableObject {
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
 			
-			let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String
-			let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+			let appGitVersion = APP_GIT_COMMIT
+			let appGitBranch = APP_GIT_BRANCH
+			let appGitTag = APP_GIT_TAG
+			let sdkGitVersion = linphonesw.sdkVersion
+			var sdkGitBranch = linphonesw.sdkBranch
 			
-			let userAgent = "FrequencyConnectiOS/\(version ?? "6.0.0") (\(UIDevice.current.localizedModel.replacingOccurrences(of: "'", with: ""))) LinphoneSDK"
+			if sdkGitBranch.hasPrefix("remotes/origin/") {
+				sdkGitBranch = String(sdkGitBranch.dropFirst("remotes/origin/".count))
+			}
+			
+			Log.info("Git Info — App: \(appGitTag + "-" + appGitVersion) [\(appGitBranch)] | SDK: \(sdkGitVersion) [\(sdkGitBranch)]")
+			
+			let userAgent = "FrequencyConnectiOS/\(appGitTag) (\(UIDevice.current.localizedModel.replacingOccurrences(of: "'", with: ""))) LinphoneSDK"
+
 			self.mCore.setUserAgent(name: userAgent, version: self.coreVersion)
+			
 			self.mCore.videoCaptureEnabled = true
 			self.mCore.videoDisplayEnabled = true
 			self.mCore.videoPreviewEnabled = false
@@ -198,6 +209,26 @@ class CoreContext: ObservableObject {
 			
 			for acc in self.mCore.accountList {
 				self.forceRemotePushToMatchVoipPushSettings(account: acc)
+			}
+			
+			let container = FileUtil.sharedContainerUrl()
+			let recordingsDir = container.appendingPathComponent("Library/Recordings")
+
+			let fm = FileManager.default
+			
+			if !fm.fileExists(atPath: recordingsDir.path) {
+				do {
+					try fm.createDirectory(
+						at: recordingsDir,
+						withIntermediateDirectories: true,
+						attributes: nil
+					)
+					print("Recordings directory created.")
+				} catch {
+					print("Error creating directory: \(error)")
+				}
+			} else {
+				print("Recordings directory already exists.")
 			}
 			
 			self.mCoreDelegate = CoreDelegateStub(onGlobalStateChanged: { (core: Core, state: GlobalState, _: String) in

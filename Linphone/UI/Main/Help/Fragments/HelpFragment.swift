@@ -25,10 +25,6 @@ struct HelpFragment: View {
 	
 	@Binding var isShowHelpFragment: Bool
 	
-	@State var advancedSettingsIsOpen: Bool = false
-	
-	@FocusState var isVoicemailUriFocused: Bool
-	
 	var showAssistant: Bool {
 		(CoreContext.shared.coreIsStarted && CoreContext.shared.accounts.isEmpty)
 		|| SharedMainViewModel.shared.displayProfileMode
@@ -181,7 +177,7 @@ struct HelpFragment: View {
 											.frame(maxWidth: .infinity, alignment: .leading)
 											.multilineTextAlignment(.leading)
 										
-										Text(helpViewModel.version)
+										Text(helpViewModel.appVersion)
 											.default_text_style(styleSize: 14)
 											.frame(maxWidth: .infinity, alignment: .leading)
 											.multilineTextAlignment(.leading)
@@ -306,17 +302,17 @@ struct HelpFragment: View {
 						isShowPopup: $helpViewModel.checkUpdateAvailable,
 						title: Text("help_dialog_update_available_title"),
 						content: Text(String(format: String(localized: "help_dialog_update_available_message"), helpViewModel.versionAvailable)),
-						titleFirstButton: Text("dialog_cancel"),
-						actionFirstButton: {
-							helpViewModel.checkUpdateAvailable = false
-						},
+						titleFirstButton: nil,
+						actionFirstButton: {},
 						titleSecondButton: Text("dialog_install"),
 						actionSecondButton: {
 							helpViewModel.checkUpdateAvailable = false
 							if let url = URL(string: helpViewModel.urlVersionAvailable) {
 								UIApplication.shared.open(url)
 							}
-						}
+						},
+						titleThirdButton: Text("dialog_cancel"),
+						actionThirdButton: { helpViewModel.checkUpdateAvailable = false }
 					)
 					.background(.black.opacity(0.65))
 					.zIndex(3)
