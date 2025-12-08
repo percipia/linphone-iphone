@@ -1,7 +1,3 @@
 app_identifier("com.percipia.connect")
 
-api_key_path(ENV["APPLE_API_KEY_PATH"])
-api_key_id(ENV["APPLE_API_KEY_ID"])
-api_key_issuer_id(ENV["APPLE_API_ISSUER_ID"])
-
 team_id(ENV["TEAM_ID"])

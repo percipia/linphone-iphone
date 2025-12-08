@@ -105,6 +105,12 @@ platform :ios do
 
   desc "Upload to TestFlight"
   lane :upload_testflight do
+    app_store_connect_api_key(
+      key_id: ENV["APPLE_API_KEY_ID"],
+      issuer_id: ENV["APPLE_API_ISSUER_ID"],
+      key_filepath: ENV["APPLE_API_KEY_PATH"]
+    )
+    
     upload_to_testflight(
       ipa: "./build/FrequencyConnect-Production.ipa",
       skip_waiting_for_build_processing: false,
