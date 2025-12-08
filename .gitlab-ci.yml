@@ -26,16 +26,13 @@ variables:
 stages:
   - debug
   - prod
+  - upload
 
 build-debug:
   extends:
     - .runners
   stage: debug
   script:
-    - |
-      if [ -f "$HOME/.appstoreconnect/AuthKey.p8" ] && [ -z "$APPLE_API_KEY_PATH" ]; then
-        export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
-      fi
     - fastlane ios build_debug
   artifacts:
     paths:
@@ -49,10 +46,6 @@ build-prod:
     - .runners
   stage: prod
   script:
-    - |
-      if [ -f "$HOME/.appstoreconnect/AuthKey.p8" ] && [ -z "$APPLE_API_KEY_PATH" ]; then
-        export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
-      fi
     - fastlane ios build_prod
   artifacts:
     paths:
@@ -61,3 +54,15 @@ build-prod:
     expire_in: never
   only:
     - tags
+
+upload-testflight:
+  extends:
+    - .runners
+  stage: upload
+  script:
+    - fastlane ios upload_testflight
+  dependencies:
+    - build-prod
+  only:
+    - tags
+  when: manual

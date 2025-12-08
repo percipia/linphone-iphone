@@ -102,4 +102,14 @@ platform :ios do
       }
     )
   end
+
+  desc "Upload to TestFlight"
+  lane :upload_testflight do
+    upload_to_testflight(
+      ipa: "./build/FrequencyConnect-Production.ipa",
+      skip_waiting_for_build_processing: false,
+      skip_submission: true,
+      distribute_external: false
+    )
+  end
 end
