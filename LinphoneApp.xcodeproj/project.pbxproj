@@ -346,6 +346,15 @@
 		D737AEF02DA01203005C1280 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable/fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D738ACED2E857BEF0039F7D1 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		D73DD7CF2EE184A500654313 /* RecordingsListBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsListBottomSheet.swift; sourceTree = "<group>"; };
+		D73DD7EC2EE6DAE100654313 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = Localizable/eu.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7EE2EE6DBA900654313 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = Localizable/ca.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7F02EE6DC4000654313 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = Localizable/fi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7F22EE6DCC600654313 /* mk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mk; path = Localizable/mk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7F42EE6DD2A00654313 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = Localizable/pt.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7F62EE6DD5600654313 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Localizable/es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7F82EE6DDE200654313 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = Localizable/nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7FA2EE6DF0500654313 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = Localizable/hu.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D73DD7FC2EE6DF4F00654313 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "Localizable/pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D7458F2F2E0BDCF4000C957A /* linphoneExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = linphoneExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D748BF2B2ACD82D2004844EB /* ThirdPartySipAccountLoginFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdPartySipAccountLoginFragment.swift; sourceTree = "<group>"; };
 		D74C9CFE2ACAEC5E0021626A /* PopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
@@ -1189,13 +1198,22 @@
 				ru,
 				"zh-Hans",
 				sk,
+				eu,
+				ca,
+				fi,
+				mk,
+				pt,
+				es,
+				nl,
+				hu,
+				"pt-BR",
 			);
 			mainGroup = D719ABAA2ABC67BF00B41C10;
 			packageReferences = (
 				D7D5AD7B2DD34E4D00016721 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				D7D5AD7C2DD34E7C00016721 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				D7DF8BE42E2104D0003A3BC7 /* XCRemoteSwiftPackageReference "Elegant-Emoji-Picker" */,
-				D7D1F5482EDDD8D30034EEB0 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */,
+				D73DD7FF2EE6FF6A00654313 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */,
 			);
 			productRefGroup = D719ABB42ABC67BF00B41C10 /* Products */;
 			projectDirPath = "";
@@ -1283,7 +1301,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#!/bin/bash\n\nbranch=$(git rev-parse --abbrev-ref HEAD)\ncommit=$(git rev-parse --short HEAD)\ntag=$(git describe --tags --abbrev=0 2>/dev/null || echo \"no-tag\")\n\ncat <<EOF > \"$SRCROOT/Linphone/GeneratedGit.swift\"\nimport Foundation\n\npublic let APP_GIT_BRANCH = \"$branch\"\npublic let APP_GIT_COMMIT = \"$commit\"\npublic let APP_GIT_TAG = \"$tag\"\nEOF\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#!/bin/bash\n\nbranch=$(git symbolic-ref --short HEAD 2>/dev/null || echo \"detached\")\ncommit=$(git rev-parse --short HEAD)\ntag=$(git describe --tags --exact-match 2>/dev/null || git describe --tags --abbrev=0 2>/dev/null || echo \"no-tag\")\n\ncat <<EOF > \"$SRCROOT/Linphone/GeneratedGit.swift\"\nimport Foundation\n\npublic enum AppGitInfo {\n    public static let branch = \"$branch\"\n    public static let commit = \"$commit\"\n    public static let tag = \"$tag\"\n}\nEOF\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1506,6 +1524,15 @@
 				D7F372C32E65C51B0008B863 /* ru */,
 				D7F372C42E65C51E0008B863 /* zh-Hans */,
 				D71C266F2E819A0D001A7F92 /* sk */,
+				D73DD7EC2EE6DAE100654313 /* eu */,
+				D73DD7EE2EE6DBA900654313 /* ca */,
+				D73DD7F02EE6DC4000654313 /* fi */,
+				D73DD7F22EE6DCC600654313 /* mk */,
+				D73DD7F42EE6DD2A00654313 /* pt */,
+				D73DD7F62EE6DD5600654313 /* es */,
+				D73DD7F82EE6DDE200654313 /* nl */,
+				D73DD7FA2EE6DF0500654313 /* hu */,
+				D73DD7FC2EE6DF4F00654313 /* pt-BR */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1982,7 +2009,7 @@
 				kind = branch;
 			};
 		};
-		D7D1F5482EDDD8D30034EEB0 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */ = {
+		D73DD7FF2EE6FF6A00654313 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://gitlab.linphone.org/BC/public/linphone-sdk-swift-ios.git";
 			requirement = {

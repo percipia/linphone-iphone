@@ -28,6 +28,8 @@ struct RecordingsListFragment: View {
 	@Binding var isShowRecordingsListFragment: Bool
 	
 	@State var showingSheet: Bool = false
+    @State private var showShareSheet: Bool = false
+    @State private var showPicker: Bool = false
 	
 	var body: some View {
 		NavigationView {
@@ -35,18 +37,30 @@ struct RecordingsListFragment: View {
 				if #available(iOS 16.4, *), idiom != .pad {
 					innerView()
 						.sheet(isPresented: $showingSheet) {
-							RecordingsListBottomSheet(showingSheet: $showingSheet)
+                            RecordingsListBottomSheet(showingSheet: $showingSheet, showShareSheet: $showShareSheet, showPicker: $showPicker)
 								.environmentObject(recordingsListViewModel)
 								.presentationDetents([.fraction(0.4)])
 						}
 				} else {
 					innerView()
 						.halfSheet(showSheet: $showingSheet) {
-							RecordingsListBottomSheet(showingSheet: $showingSheet)
+                            RecordingsListBottomSheet(showingSheet: $showingSheet, showShareSheet: $showShareSheet, showPicker: $showPicker)
 								.environmentObject(recordingsListViewModel)
 						} onDismiss: {}
 				}
 			}
+            .sheet(isPresented: $showShareSheet) {
+                if let selectedRecording = recordingsListViewModel.selectedRecording, let url = URL(string: "file://" + selectedRecording.filePath) {
+                    ShareAnySheet(items: [url])
+                        .edgesIgnoringSafeArea(.bottom)
+                }
+            }
+            .sheet(isPresented: $showPicker) {
+                if let selectedRecording = recordingsListViewModel.selectedRecording, let url = URL(string: "file://" + selectedRecording.filePath) {
+                    DocumentSaver(fileURL: url)
+                        .edgesIgnoringSafeArea(.bottom)
+                }
+            }
 			.navigationTitle("")
 			.navigationBarHidden(true)
 		}

@@ -31,6 +31,8 @@ struct RecordingsListBottomSheet: View {
 	@EnvironmentObject var recordingsListViewModel: RecordingsListViewModel
 	
 	@Binding var showingSheet: Bool
+    @Binding var showShareSheet: Bool
+    @Binding var showPicker: Bool
 	
 	var body: some View {
 		VStack(alignment: .leading) {
@@ -56,7 +58,7 @@ struct RecordingsListBottomSheet: View {
 			
 			if let selectedRecording = recordingsListViewModel.selectedRecording {
 				Button {
-					//selectedRecording.shareRecording()
+                    showShareSheet = true
 					
 					if #available(iOS 16.0, *) {
 						if idiom != .pad {
@@ -92,7 +94,7 @@ struct RecordingsListBottomSheet: View {
 				.frame(maxWidth: .infinity)
 				
 				Button {
-					//selectedRecording.downloadRecording()
+                    showPicker = true
 					
 					if #available(iOS 16.0, *) {
 						if idiom != .pad {
@@ -128,7 +130,8 @@ struct RecordingsListBottomSheet: View {
 				.frame(maxWidth: .infinity)
 				
 				Button {
-					//selectedRecording.deleteRecording()
+                    recordingsListViewModel.recordings.removeAll { $0.filePath == selectedRecording.filePath }
+					selectedRecording.delete()
 					
 					if #available(iOS 16.0, *) {
 						if idiom != .pad {
