@@ -17,6 +17,7 @@ Certificates are stored in a private Git repository. The repository URL is confi
 - `match_appstore` - Downloads App Store certificates and provisioning profiles (readonly)
 - `build_debug` - Builds debug version of the app
 - `build_prod` - Builds production version of the app
+- `upload_testflight` - Uploads the binary created by *build_prod* to Apple TestFlight for testing and release
 
 ## Generating New Provisioning Profiles
 
