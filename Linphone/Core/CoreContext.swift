@@ -248,11 +248,6 @@ class CoreContext: ObservableObject {
 						}
 					}
 					
-					// TODO: Temporary workaround until SDK fixs
-					if CorePreferences.defaultDomain == "" {
-						CorePreferences.defaultDomain = core.defaultAccount?.params?.domain ?? ""
-					}
-					
 					self.actionsToPerformOnCoreQueueWhenCoreIsStarted.forEach {	$0(core) }
 					self.actionsToPerformOnCoreQueueWhenCoreIsStarted.removeAll()
 					
@@ -335,6 +330,7 @@ class CoreContext: ObservableObject {
 			}, onConfiguringStatus: { (_: Core, status: ConfiguringState, message: String) in
 				Log.info("New configuration state is \(status) = \(message)\n")
 				let themeMainColor = CorePreferences.themeMainColor
+				SharedMainViewModel.shared.updateConfigChanges()
 				DispatchQueue.main.async {
 					if status == ConfiguringState.Successful {
 						var accountModels: [AccountModel] = []
@@ -436,6 +432,31 @@ class CoreContext: ObservableObject {
 				}
 				DispatchQueue.main.async {
 					self.accounts = accountModels
+				}
+			}, onMessageWaitingIndicationChanged: { (core: Core, event: Event, mwi: MessageWaitingIndication) in
+                if (mwi.hasMessageWaiting()) {
+                    let summaries = mwi.summaries
+                    Log.info(
+                        "[CoreContext][onMessageWaitingIndicationChanged] MWI NOTIFY received, messages are waiting (\(summaries.count) summaries)"
+                    )
+                    
+                    if let defaultAccount = core.defaultAccount?.params?.identityAddress, let mwiAccount = mwi.accountAddress, defaultAccount.weakEqual(address2: mwiAccount){
+                        if !summaries.isEmpty {
+                            let summary = summaries.first
+                            DispatchQueue.main.async {
+                                withAnimation {
+                                    SharedMainViewModel.shared.waitingMessageCount = Int(summary?.nbNew ?? 0)
+                                }
+                            }
+                        }
+                    }
+				} else {
+					Log.info("[CoreContext][onMessageWaitingIndicationChanged] MWI NOTIFY received, no message is waiting")
+					DispatchQueue.main.async {
+						withAnimation {
+							SharedMainViewModel.shared.waitingMessageCount = 0
+						}
+					}
 				}
 			})
 			

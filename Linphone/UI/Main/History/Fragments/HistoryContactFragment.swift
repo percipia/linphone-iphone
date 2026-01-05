@@ -70,7 +70,10 @@ struct HistoryContactFragment: View {
 					Spacer()
 					
 					Menu {
-						if !historyModel.isConf {
+						let disableAddContact = CorePreferences.disableAddContact
+						let isFriend = historyModel.isFriend == true
+						
+						if !historyModel.isConf && (!disableAddContact || (disableAddContact && isFriend)) {
 							Button {
 								isMenuOpen = false
 								
@@ -280,29 +283,31 @@ struct HistoryContactFragment: View {
                                             }
                                         })
                                     }
-                                    
-									Spacer()
 									
-									Button(action: {
-										telecomManager.doCallOrJoinConf(address: historyModel.addressLinphone, isVideo: true)
-									}, label: {
-										VStack {
-											HStack(alignment: .center) {
-												Image("video-camera")
-													.renderingMode(.template)
-													.resizable()
-													.foregroundStyle(Color.grayMain2c600)
-													.frame(width: 25, height: 25)
+									if !SharedMainViewModel.shared.disableVideoCall {
+										Spacer()
+										
+										Button(action: {
+											telecomManager.doCallOrJoinConf(address: historyModel.addressLinphone, isVideo: true)
+										}, label: {
+											VStack {
+												HStack(alignment: .center) {
+													Image("video-camera")
+														.renderingMode(.template)
+														.resizable()
+														.foregroundStyle(Color.grayMain2c600)
+														.frame(width: 25, height: 25)
+												}
+												.padding(16)
+												.background(Color.grayMain2c200)
+												.cornerRadius(40)
+												
+												Text("contact_video_call_action")
+													.default_text_style(styleSize: 14)
+													.frame(minWidth: 80)
 											}
-											.padding(16)
-											.background(Color.grayMain2c200)
-											.cornerRadius(40)
-											
-											Text("contact_video_call_action")
-												.default_text_style(styleSize: 14)
-												.frame(minWidth: 80)
-										}
-									})
+										})
+									}
 								} else {
 									Button(action: {
 										withAnimation {

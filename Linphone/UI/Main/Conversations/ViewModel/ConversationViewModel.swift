@@ -366,6 +366,12 @@ class ConversationViewModel: ObservableObject {
 			
 			self.coreContext.doOnCoreQueue { _ in
 				let chatMessageDelegate = ChatMessageDelegateStub(onMsgStateChanged: { (message: ChatMessage, msgState: ChatMessage.State) in
+					if msgState == .Queued || msgState == .PendingDelivery {
+						if let eventLog = message.eventLog {
+							self.getNewMessages(eventLogs: [eventLog])
+						}
+						return
+					}
 					var statusTmp: Message.Status?
 					switch message.state {
 					case .InProgress:
@@ -470,12 +476,12 @@ class ConversationViewModel: ObservableObject {
 					if !self.conversationMessagesSection.isEmpty,
 					   !self.conversationMessagesSection[0].rows.isEmpty {
 						let indexMessageEventLogId = self.conversationMessagesSection[0].rows.firstIndex(where: {$0.eventModel.eventLogId.isEmpty && $0.eventModel.eventLog.chatMessage != nil ? $0.eventModel.eventLog.chatMessage!.messageId == message.messageId : false})
-						let indexMessage = self.conversationMessagesSection[0].rows.firstIndex(where: {$0.eventModel.eventLogId == message.messageId})
 						
 						DispatchQueue.main.async {
 							if let indexMessageEventLogId = indexMessageEventLogId, !self.conversationMessagesSection.isEmpty, !self.conversationMessagesSection[0].rows.isEmpty, self.conversationMessagesSection[0].rows.count > indexMessageEventLogId {
 								self.conversationMessagesSection[0].rows[indexMessageEventLogId].eventModel.eventLogId = message.messageId
 							}
+							let indexMessage = self.conversationMessagesSection[0].rows.firstIndex(where: {$0.eventModel.eventLogId == message.messageId})
 							if let indexMessage = indexMessage, !self.conversationMessagesSection.isEmpty, !self.conversationMessagesSection[0].rows.isEmpty, self.conversationMessagesSection[0].rows.count > indexMessage {
 								self.conversationMessagesSection[0].rows[indexMessage].message.status = statusTmp ?? .error
 							}
@@ -536,6 +542,8 @@ class ConversationViewModel: ObservableObject {
 						}
 					}
 				})
+				
+				self.chatMessageDelegateHolders.removeAll()
 				
 				self.chatMessageDelegateHolders.append(ChatMessageDelegateHolder(message: message, delegate: chatMessageDelegate))
 			}
@@ -2181,9 +2189,12 @@ class ConversationViewModel: ObservableObject {
 						}
 					}
 					
-					if message != nil && !message!.contents.isEmpty {
+					if let message = message , !message.contents.isEmpty {
 						Log.info("[ConversationViewModel] Sending message")
-						message!.send()
+						
+						self.addChatMessageDelegate(message: message)
+						message.send()
+						
 						self.sharedMainViewModel.displayedConversation!.chatRoom.stopComposing()
 					}
 					
@@ -2516,7 +2527,7 @@ class ConversationViewModel: ObservableObject {
 						dispatchGroup.enter()
 						ContactAvatarModel.getAvatarModelFromAddress(address: chatMessageReaction.fromAddress!) { avatarResult in
 							if let account = core.defaultAccount,
-							   let contactAddress = account.contactAddress,
+							   let contactAddress = account.params?.identityAddress,
 							   contactAddress.asStringUriOnly().contains(avatarResult.address) {
 								
 								let innerSheetCat = InnerSheetCategory(

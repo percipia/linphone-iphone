@@ -36,9 +36,9 @@ final class MagicSearchSingleton: ObservableObject {
 	
 	private var limitSearchToLinphoneAccounts = true
 	
-	@Published var allContact = false
-	let allContactKey = "all_contact"
+	@Published var allContact = true
 	
+	var linphoneDomain = true
 	var domainDefaultAccount = ""
 	
 	var searchDelegate: MagicSearchDelegate?
@@ -56,15 +56,11 @@ final class MagicSearchSingleton: ObservableObject {
 	}
 	
 	private init() {
-		let preferences = UserDefaults.standard
-		if preferences.object(forKey: allContactKey) == nil {
-			preferences.set(allContact, forKey: allContactKey)
-		} else {
-			allContact = preferences.bool(forKey: allContactKey)
-		}
+		allContact = CorePreferences.contactsFilter == ""
 		
 		coreContext.doOnCoreQueue { core in
-			self.domainDefaultAccount = (core.defaultAccount?.params?.domain?.contains("sip.linphone.org") == true) ? (core.defaultAccount?.params?.domain ?? "") : "*"
+			self.linphoneDomain = CorePreferences.defaultDomain == core.defaultAccount?.params?.domain
+			self.domainDefaultAccount = CorePreferences.contactsFilter
 			
 			self.magicSearch = try? core.createMagicSearch()
 			
@@ -101,7 +97,7 @@ final class MagicSearchSingleton: ObservableObject {
 					($0.address?.asStringUriOnly() ?? "") < ($1.address?.asStringUriOnly() ?? "")
 				})
 				
-				if let defaultAccount = core.defaultAccount, let contactAddress = defaultAccount.contactAddress {
+				if let defaultAccount = core.defaultAccount, let contactAddress = defaultAccount.params?.identityAddress {
 					lastSearchSuggestions.removeAll {
 						$0.address?.weakEqual(address2: contactAddress) ?? false
 					}
@@ -161,10 +157,9 @@ final class MagicSearchSingleton: ObservableObject {
 	}
 	
 	func changeAllContact(allContactBool: Bool) {
-		let preferences = UserDefaults.standard
-		
 		allContact = allContactBool
-		preferences.set(allContact, forKey: allContactKey)
+		domainDefaultAccount = allContactBool ? "" : (linphoneDomain ? CorePreferences.defaultDomain : "*")
+		CorePreferences.contactsFilter = domainDefaultAccount
 	}
     
     func updateContacts(

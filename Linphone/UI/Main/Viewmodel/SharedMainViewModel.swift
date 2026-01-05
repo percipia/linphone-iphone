@@ -39,6 +39,7 @@ class SharedMainViewModel: ObservableObject {
 	@Published var dialPlansShortLabelList: [String] = []
 	
 	@Published var fileUrlsToShare: [String] = []
+	@Published var waitingMessageCount: Int = 0
 	
 	@Published var operationInProgress = false
     
@@ -46,6 +47,7 @@ class SharedMainViewModel: ObservableObject {
     @Published var missedCallsCount: Int = 0
 	@Published var cardDavFriendsListsCount: Int = 0
 	
+	@Published var disableVideoCall: Bool = false
 	@Published var disableChatFeature: Bool = false
 	@Published var disableMeetingFeature: Bool = false
 	
@@ -86,8 +88,9 @@ class SharedMainViewModel: ObservableObject {
 		}
         
         updateMissedCallsCount()
-        updateUnreadMessagesCount()
+		updateDisableVideoCall()
 		updateDisableChatFeature()
+        updateUnreadMessagesCount()
 		updateDisableMeetingFeature()
 		
 		getCardDavFriendsListsCount()
@@ -209,6 +212,16 @@ class SharedMainViewModel: ObservableObject {
         }
     }
 	
+	func updateDisableVideoCall() {
+		CoreContext.shared.doOnCoreQueue { core in
+			let disableVideoCallFeatureTmp = !core.videoEnabled
+			
+			DispatchQueue.main.async {
+				self.disableVideoCall = disableVideoCallFeatureTmp
+			}
+		}
+	}
+	
 	func updateDisableChatFeature() {
 		CoreContext.shared.doOnCoreQueue { core in
 			let disableChatFeatureTmp = CorePreferences.disableChatFeature
@@ -227,6 +240,12 @@ class SharedMainViewModel: ObservableObject {
 				self.disableMeetingFeature = disableMeetingFeatureTmp
 			}
 		}
+	}
+	
+	func updateConfigChanges() {
+		updateDisableVideoCall()
+		updateDisableChatFeature()
+		updateDisableMeetingFeature()
 	}
 	
 	func getCardDavFriendsListsCount() {

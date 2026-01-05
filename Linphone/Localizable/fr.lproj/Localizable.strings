@@ -419,6 +419,8 @@
 "message_meeting_invitation_updated_notification" = "Réunion mise à jour";
 "message_reaction_click_to_remove_label" = "Cliquez pour supprimer";
 "message_reactions_info_all_title" = "Réactions";
+"mwi_messages_are_waiting_single" = "1 message vocal en attente";
+"mwi_messages_are_waiting_multiple" = "%@ messages vocaux en attente";
 "network_not_reachable" = "Vous n’êtes pas connecté à internet";
 "network_reachable_again" = "Vous êtes à nouveau connecté à internet";
 "new_conversation_create_group" = "Créer une conversation de groupe";
@@ -532,6 +534,8 @@
 "uri_handler_config_success_toast" = "Configuration appliquée avec succè";
 "username" = "Nom d’utilisateur";
 "username_error" = "Erreur dans le nom d'utilisateur";
+"Voicemail" = "Messagerie vocale";
+"New message" = "Nouveau message";
 "web_platform_forgotten_password_url" = "https://percipia.com/contactus";
 "web_platform_register_email_url" = "https://percipia.com/contactus";
 "website_contact_url" = "https://percipia.com/contactus";

@@ -33,8 +33,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Finalet/Elegant-Emoji-Picker",
       "state" : {
-        "branch" : "main",
-        "revision" : "31605313f26a5997495aba6906b1c5bf8bf7b124"
+        "revision" : "598ff0a72198375d7317b61982fa8648d0ba3a44"
       }
     },
     {
@@ -124,7 +123,7 @@
       "location" : "https://gitlab.linphone.org/BC/public/linphone-sdk-swift-ios.git",
       "state" : {
         "branch" : "alpha",
-        "revision" : "0dc2d9ef5b2e1e1868e3e6143a89a7ba9d983ea6"
+        "revision" : "9e5a562e218530b2a38b858b5183446ceb1d6e35"
       }
     },
     {
