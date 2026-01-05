@@ -25,12 +25,12 @@ To generate new provisioning profiles, use the following commands on your local 
 
 ### App Store Profiles
 ```bash
-fastlane match appstore --app_identifier com.percipia.connect,com.percipia.connect.linphoneExtension,com.percipia.connect.msgNotificationService --force
+fastlane match appstore --app_identifier com.percipia.connect,com.percipia.connect.linphoneExtension,com.percipia.connect.msgNotificationService,com.percipia.connect.intentsExtension --force
 ```
 
 ### Development Profiles
 ```bash
-fastlane match development --app_identifier com.percipia.connect,com.percipia.connect.linphoneExtension,com.percipia.connect.msgNotificationService --force
+fastlane match development --app_identifier com.percipia.connect,com.percipia.connect.linphoneExtension,com.percipia.connect.msgNotificationService,com.percipia.connect.intentsExtension --force
 ```
 
 The `--force` flag will revoke existing profiles and create new ones.

@@ -9,7 +9,8 @@ platform :ios do
       app_identifier: [
         "com.percipia.connect",
         "com.percipia.connect.msgNotificationService",
-        "com.percipia.connect.linphoneExtension"
+        "com.percipia.connect.linphoneExtension",
+        "com.percipia.connect.intentsExtension"
       ]
     )
   end
@@ -22,7 +23,8 @@ platform :ios do
       app_identifier: [
         "com.percipia.connect",
         "com.percipia.connect.msgNotificationService",
-        "com.percipia.connect.linphoneExtension"
+        "com.percipia.connect.linphoneExtension",
+        "com.percipia.connect.intentsExtension"
       ]
     )
   end
@@ -46,6 +48,11 @@ platform :ios do
       profile: ENV["sigh_com.percipia.connect.linphoneExtension_development_profile-path"],
       target_filter: "linphoneExtension"
     )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.intentsExtension_development_profile-path"],
+      target_filter: "intentsExtension"
+    )
     
     build_app(
       scheme: "Linphone",
@@ -59,7 +66,8 @@ platform :ios do
         provisioningProfiles: {
           "com.percipia.connect" => "match Development com.percipia.connect",
           "com.percipia.connect.msgNotificationService" => "match Development com.percipia.connect.msgNotificationService",
-          "com.percipia.connect.linphoneExtension" => "match Development com.percipia.connect.linphoneExtension"
+          "com.percipia.connect.linphoneExtension" => "match Development com.percipia.connect.linphoneExtension",
+          "com.percipia.connect.intentsExtension" => "match Development com.percipia.connect.intentsExtension",
         }
       }
     )
@@ -84,6 +92,11 @@ platform :ios do
       profile: ENV["sigh_com.percipia.connect.linphoneExtension_appstore_profile-path"],
       target_filter: "linphoneExtension"
     )
+    update_project_provisioning(
+      xcodeproj: "LinphoneApp.xcodeproj",
+      profile: ENV["sigh_com.percipia.connect.intentsExtension_appstore_profile-path"],
+      target_filter: "intentsExtension"
+    )
     
     build_app(
       scheme: "Linphone",
@@ -97,7 +110,8 @@ platform :ios do
         provisioningProfiles: {
           "com.percipia.connect" => "match AppStore com.percipia.connect",
           "com.percipia.connect.msgNotificationService" => "match AppStore com.percipia.connect.msgNotificationService",
-          "com.percipia.connect.linphoneExtension" => "match AppStore com.percipia.connect.linphoneExtension"
+          "com.percipia.connect.linphoneExtension" => "match AppStore com.percipia.connect.linphoneExtension",
+          "com.percipia.connect.intentsExtension" => "match AppStore com.percipia.connect.intentsExtension"
         }
       }
     )
