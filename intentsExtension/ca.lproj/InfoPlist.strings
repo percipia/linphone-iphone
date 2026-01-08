@@ -1,0 +1,2 @@
+/* Siri Intent Example Phrases */
+"INStartCallIntent" = "Truca a ${contact} amb ${application}";

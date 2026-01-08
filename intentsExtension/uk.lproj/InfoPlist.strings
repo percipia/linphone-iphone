@@ -1,0 +1,2 @@
+/* Siri Intent Example Phrases */
+"INStartCallIntent" = "Зателефонувати ${contact} через ${application}";
