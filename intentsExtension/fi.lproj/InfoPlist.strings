@@ -1,2 +1,0 @@
-/* Siri Intent Example Phrases */
-"INStartCallIntent" = "Soita ${contact} käyttäen ${application}";

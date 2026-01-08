@@ -1,2 +1,0 @@
-/* Siri Intent Example Phrases */
-"INStartCallIntent" = "Позвонить ${contact} через ${application}";

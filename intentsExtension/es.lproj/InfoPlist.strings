@@ -1,2 +1,0 @@
-/* Siri Intent Example Phrases */
-"INStartCallIntent" = "Llamar a ${contact} usando ${application}";

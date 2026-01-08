@@ -1,2 +1,0 @@
-/* Siri Intent Example Phrases */
-"INStartCallIntent" = "Hívd ${contact} kapcsolatot ${application} segítségével";
