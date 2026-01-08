@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Truca a Joan amb ${ApplicationName}</string>
-				<string>Fes una trucada a Maria amb ${ApplicationName}</string>
-				<string>Inicia una videotrucada amb Miquel a ${ApplicationName}</string>
+				<string>Truca a Joan amb Frequency Connect</string>
+				<string>Fes una trucada a Maria amb Frequency Connect</string>
+				<string>Inicia una videotrucada amb Miquel a Frequency Connect</string>
 			</array>
 		</dict>
 	</array>

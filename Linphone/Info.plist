@@ -144,5 +144,28 @@
 	</array>
 	<key>UILaunchScreen</key>
 	<false/>
+	<key>INAlternativeAppNames</key>
+	<array>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Frequency Connect</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Connect</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Frequency Softphone</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Frequency</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Percipia</string>
+		</dict>
+	</array>
 </dict>
 </plist>

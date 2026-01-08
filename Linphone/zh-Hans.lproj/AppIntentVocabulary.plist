@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>使用${ApplicationName}呼叫张三</string>
-				<string>用${ApplicationName}给李四打电话</string>
-				<string>在${ApplicationName}上与王五开始视频通话</string>
+				<string>使用Frequency Connect呼叫张三</string>
+				<string>用Frequency Connect给李四打电话</string>
+				<string>在Frequency Connect上与王五开始视频通话</string>
 			</array>
 		</dict>
 	</array>

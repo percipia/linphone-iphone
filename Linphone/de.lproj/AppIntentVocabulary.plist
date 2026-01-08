@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Rufe Johann mit ${ApplicationName} an</string>
-				<string>Tätige einen Anruf an Maria mit ${ApplicationName}</string>
-				<string>Starte einen Videoanruf mit Michael auf ${ApplicationName}</string>
+				<string>Rufe Johann mit Frequency Connect an</string>
+				<string>Tätige einen Anruf an Maria mit Frequency Connect</string>
+				<string>Starte einen Videoanruf mit Michael auf Frequency Connect</string>
 			</array>
 		</dict>
 	</array>

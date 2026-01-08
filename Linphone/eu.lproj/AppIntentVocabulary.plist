@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Deitu Joni ${ApplicationName} erabiliz</string>
-				<string>Egin dei bat Mariari ${ApplicationName} erabilita</string>
-				<string>Hasi bideo-dei bat Mikelekin ${ApplicationName} aplikazioan</string>
+				<string>Deitu Joni Frequency Connect erabiliz</string>
+				<string>Egin dei bat Mariari Frequency Connect erabilita</string>
+				<string>Hasi bideo-dei bat Mikelekin Frequency Connect aplikazioan</string>
 			</array>
 		</dict>
 	</array>

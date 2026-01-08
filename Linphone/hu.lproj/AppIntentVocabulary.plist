@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Hívd Jánost ${ApplicationName} segítségével</string>
-				<string>Telefonálj Máriának a ${ApplicationName} alkalmazással</string>
-				<string>Kezdj videohívást Mihállyal a ${ApplicationName} alkalmazásban</string>
+				<string>Hívd Jánost Frequency Connect segítségével</string>
+				<string>Telefonálj Máriának a Frequency Connect alkalmazással</string>
+				<string>Kezdj videohívást Mihállyal a Frequency Connect alkalmazásban</string>
 			</array>
 		</dict>
 	</array>

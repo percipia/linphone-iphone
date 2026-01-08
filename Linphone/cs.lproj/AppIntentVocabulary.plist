@@ -9,9 +9,9 @@
 			<string>INStartCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Zavolat Jana pomocí ${ApplicationName}</string>
-				<string>Provést hovor na Marii přes ${ApplicationName}</string>
-				<string>Zahájit videohovor s Michalem na ${ApplicationName}</string>
+				<string>Zavolat Jana pomocí Frequency Connect</string>
+				<string>Provést hovor na Marii přes Frequency Connect</string>
+				<string>Zahájit videohovor s Michalem na Frequency Connect</string>
 			</array>
 		</dict>
 	</array>
