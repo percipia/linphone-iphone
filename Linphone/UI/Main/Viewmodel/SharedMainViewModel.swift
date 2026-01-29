@@ -24,6 +24,14 @@ class SharedMainViewModel: ObservableObject {
 	
 	static let shared = SharedMainViewModel()
 	
+	static let appGroupName: String = {
+		Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_NAME") as? String
+		?? {
+			fatalError("APP_GROUP_NAME not defined in Info.plist")
+		}()
+	}()
+	
+	@Published var welcomeViewDisplayed = false
 	@Published var generalTermsAccepted = false
 	@Published var displayProfileMode = false
 	@Published var defaultAvatar: URL?
@@ -224,7 +232,7 @@ class SharedMainViewModel: ObservableObject {
 	
 	func updateDisableChatFeature() {
 		CoreContext.shared.doOnCoreQueue { core in
-			let disableChatFeatureTmp = CorePreferences.disableChatFeature
+			let disableChatFeatureTmp = AppServices.corePreferences.disableChatFeature
 			
 			DispatchQueue.main.async {
 				self.disableChatFeature = disableChatFeatureTmp
@@ -234,7 +242,7 @@ class SharedMainViewModel: ObservableObject {
 	
 	func updateDisableMeetingFeature() {
 		CoreContext.shared.doOnCoreQueue { core in
-			let disableMeetingFeatureTmp = CorePreferences.disableMeetings ||
+			let disableMeetingFeatureTmp = AppServices.corePreferences.disableMeetings ||
 			!LinphoneUtils.isRemoteConferencingAvailable(core: core)
 			DispatchQueue.main.async {
 				self.disableMeetingFeature = disableMeetingFeatureTmp

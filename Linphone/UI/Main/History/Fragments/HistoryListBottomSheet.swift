@@ -59,7 +59,7 @@ struct HistoryListBottomSheet: View {
 			
 			Spacer()
 			
-			let disableAddContact = CorePreferences.disableAddContact
+			let disableAddContact = AppServices.corePreferences.disableAddContact
 			let isFriend = historyListViewModel.selectedCall?.isFriend == true
 
 			if !disableAddContact || (disableAddContact && isFriend) {
@@ -152,8 +152,7 @@ struct HistoryListBottomSheet: View {
 					dismiss()
 				}
 				
-				ToastViewModel.shared.toastMessage = "Success_address_copied_into_clipboard"
-				ToastViewModel.shared.displayToast.toggle()
+				ToastViewModel.shared.show("Success_address_copied_into_clipboard")
 				
 			} label: {
 				HStack {

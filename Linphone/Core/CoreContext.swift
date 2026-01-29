@@ -108,12 +108,11 @@ class CoreContext: ObservableObject {
 				DispatchQueue.main.async {
 					if isConnected {
 						Log.info("Network is now satisfied")
-						ToastViewModel.shared.toastMessage = "Success_toast_network_connected"
+						ToastViewModel.shared.show("Success_toast_network_connected")
 					} else {
 						Log.error("Network is now \(path.status)")
-						ToastViewModel.shared.toastMessage = "Unavailable_network"
+						ToastViewModel.shared.show("Unavailable_network")
 					}
-					ToastViewModel.shared.displayToast = true
 				}
 				self.networkStatusIsConnected = isConnected
 			}
@@ -123,11 +122,11 @@ class CoreContext: ObservableObject {
 		
 		coreQueue.async {
 			LoggingService.Instance.logLevel = LogLevel.Debug
-			Factory.Instance.logCollectionPath = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupName as NSString).utf8String))
+			Factory.Instance.logCollectionPath = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (SharedMainViewModel.appGroupName as NSString).utf8String))
 			Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
 			
 			Log.info("Checking if linphonerc file exists already. If not, creating one as a copy of linphonerc-default")
-			if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Config.appGroupName)?
+			if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
 				.appendingPathComponent("Library/Preferences/linphone") {
 				let rcFileUrl = rcDir.appendingPathComponent("linphonerc")
 				if !FileManager.default.fileExists(atPath: rcFileUrl.path) {
@@ -145,7 +144,7 @@ class CoreContext: ObservableObject {
 				}
 			}
 			
-			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: Config.get(), systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: Config.appGroupName, mainCore: true)
+			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
 			
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
@@ -317,19 +316,16 @@ class CoreContext: ObservableObject {
 				Log.info("[CoreContext] Transferred call \(transferred.remoteAddress!.asStringUriOnly()) state changed \(callState)")
 				DispatchQueue.main.async {
 					if callState == Call.State.Connected {
-						ToastViewModel.shared.toastMessage = "Success_toast_call_transfer_successful"
-						ToastViewModel.shared.displayToast = true
+						ToastViewModel.shared.show("Success_toast_call_transfer_successful")
 					} else if callState == Call.State.OutgoingProgress {
-						ToastViewModel.shared.toastMessage = "Success_toast_call_transfer_in_progress"
-						ToastViewModel.shared.displayToast = true
+						ToastViewModel.shared.show("Success_toast_call_transfer_in_progress")
 					} else if callState == Call.State.End || callState == Call.State.Error {
-						ToastViewModel.shared.toastMessage = "Failed_toast_call_transfer_failed"
-						ToastViewModel.shared.displayToast = true
+						ToastViewModel.shared.show("Failed_toast_call_transfer_failed")
 					}
 				}
 			}, onConfiguringStatus: { (_: Core, status: ConfiguringState, message: String) in
 				Log.info("New configuration state is \(status) = \(message)\n")
-				let themeMainColor = CorePreferences.themeMainColor
+				let themeMainColor = AppServices.corePreferences.themeMainColor
 				SharedMainViewModel.shared.updateConfigChanges()
 				DispatchQueue.main.async {
 					if status == ConfiguringState.Successful {
@@ -346,8 +342,7 @@ class CoreContext: ObservableObject {
 				if info.starts(with: "https") {
 					DispatchQueue.main.async {
 						UIPasteboard.general.setValue(info, forPasteboardType: UTType.plainText.identifier)
-						ToastViewModel.shared.toastMessage = "Success_send_logs"
-						ToastViewModel.shared.displayToast = true
+						ToastViewModel.shared.show("Success_send_logs")
 					}
 				}
 			}, onAccountRegistrationStateChanged: { (core: Core, account: Account, state: RegistrationState, message: String) in
@@ -397,8 +392,7 @@ class CoreContext: ObservableObject {
 						self.loggedIn = false
 						if self.networkStatusIsConnected {
 							// If network is disconnected, a toast message with key "Unavailable_network" should already be displayed
-							ToastViewModel.shared.toastMessage = "Registration_failed"
-							ToastViewModel.shared.displayToast = true
+							ToastViewModel.shared.show("Registration_failed")
 						}
 						
 					}
@@ -530,7 +524,7 @@ class CoreContext: ObservableObject {
 	}
 	
 	func copyDatabaseFileToDocumentsDirectory() {
-		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Config.appGroupName)?
+		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
 			.appendingPathComponent("Library/Application Support/linphone") {
 			let rcFileUrl = rcDir.appendingPathComponent("linphone.db")
 			let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
@@ -546,6 +540,19 @@ class CoreContext: ObservableObject {
 			}
 		}
 	}
+}
+
+enum AppServices {
+	static let config = Config.newForSharedCore(
+		appGroupId: Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_NAME") as? String
+		?? {
+			fatalError("APP_GROUP_NAME not defined in Info.plist")
+		}(),
+		configFilename: "linphonerc",
+		factoryConfigFilename: FileUtil.bundleFilePath("linphonerc-factory")
+	)!
+	
+	static let corePreferences = CorePreferences(config: config)
 }
 
 // swiftlint:enable line_length

@@ -85,7 +85,7 @@ class CardDavViewModel: ObservableObject {
 			}
 			
 			let isReadOnlyTmp = friendList.isReadOnly
-			let friendListInWhichStoreNewlyCreatedFriendsTmp = CorePreferences.friendListInWhichStoreNewlyCreatedFriends
+			let friendListInWhichStoreNewlyCreatedFriendsTmp = AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends
 			let uriTmp = friendList.uri ?? ""
 			DispatchQueue.main.async {
 				self.isEdit = true
@@ -104,9 +104,9 @@ class CardDavViewModel: ObservableObject {
 		self.coreContext.doOnCoreQueue { core in
 			if self.isEdit, let friendList = self.friendList {
 				let name = friendList.displayName
-				if name == CorePreferences.friendListInWhichStoreNewlyCreatedFriends {
+				if name == AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends {
 					Log.info("\(CardDavViewModel.TAG) Deleting friend list configured to be used to store newly created friends, updating default friend list back to \(self.linphoneAddressBookFriendList)")
-					CorePreferences.friendListInWhichStoreNewlyCreatedFriends = self.linphoneAddressBookFriendList
+					AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends = self.linphoneAddressBookFriendList
 				}
 				
 				if let tempRemoteFriendList = core.getFriendListByName(name: self.tempRemoteAddressBookFriendList) {
@@ -128,8 +128,7 @@ class CardDavViewModel: ObservableObject {
 					NotificationCenter.default.post(name: NSNotification.Name("ContactLoaded"), object: nil)
 					self.cardDavServerOperationSuccessful = true
 					
-					ToastViewModel.shared.toastMessage = "Success_settings_contacts_carddav_deleted_toast"
-					ToastViewModel.shared.displayToast = true
+					ToastViewModel.shared.show("Success_settings_contacts_carddav_deleted_toast")
 				}
 			}
 		}
@@ -202,9 +201,9 @@ class CardDavViewModel: ObservableObject {
 				Log.info("\(CardDavViewModel.TAG) CardDAV friend list \(name) created with server URL \(server), synchronizing it")
 			}
 			
-			if !self.storeNewContactsInIt && CorePreferences.friendListInWhichStoreNewlyCreatedFriends == name {
+			if !self.storeNewContactsInIt && AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends == name {
 				Log.info("\(CardDavViewModel.TAG) No longer using friend list \(name) as default friend list, switching back to \(self.linphoneAddressBookFriendList)")
-				CorePreferences.friendListInWhichStoreNewlyCreatedFriends = self.linphoneAddressBookFriendList
+				AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends = self.linphoneAddressBookFriendList
 			}
 			
 			if let friendList = self.friendList {
@@ -227,19 +226,18 @@ class CardDavViewModel: ObservableObject {
 						DispatchQueue.main.async {
 							self.cardDavServerOperationInProgress = false
 							
-							ToastViewModel.shared.toastMessage = "Success_settings_contacts_carddav_sync_successful_toast"
-							ToastViewModel.shared.displayToast = true
+							ToastViewModel.shared.show("Success_settings_contacts_carddav_sync_successful_toast")
 						}
 						
 						let name = self.displayName
 						if self.storeNewContactsInIt {
-							let previous = CorePreferences.friendListInWhichStoreNewlyCreatedFriends
+							let previous = AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends
 							if friendList.isReadOnly {
 								Log.warn("\(CardDavViewModel.TAG) User asked to add newly created contacts in this friend list but it is read only, keep currently default friend list \(previous)")
 								self.storeNewContactsInIt = false
 							} else {
 								Log.info("\(CardDavViewModel.TAG) Updating default friend list to store newly created contacts from \(previous) to \(name)")
-								CorePreferences.friendListInWhichStoreNewlyCreatedFriends = name
+								AppServices.corePreferences.friendListInWhichStoreNewlyCreatedFriends = name
 							}
 							
 							DispatchQueue.main.async {
@@ -256,8 +254,7 @@ class CardDavViewModel: ObservableObject {
 						DispatchQueue.main.async {
 							self.cardDavServerOperationInProgress = false
 							
-							ToastViewModel.shared.toastMessage = "settings_contacts_carddav_sync_error_toast"
-							ToastViewModel.shared.displayToast = true
+							ToastViewModel.shared.show("settings_contacts_carddav_sync_error_toast")
 						}
 						if !self.isEdit {
 							Log.error("\(CardDavViewModel.TAG) Synchronization failed, removing Friend list from Core")

@@ -526,7 +526,7 @@ struct CallView: View {
 						.padding(.top)
 						.default_text_style_white(styleSize: 22)
 					
-					if !CorePreferences.hideSipAddresses {
+					if !AppServices.corePreferences.hideSipAddresses {
 						Text(callViewModel.remoteAddressCleanedString)
 							.default_text_style_white_300(styleSize: 16)
 					}
@@ -672,8 +672,7 @@ struct CallView: View {
 						)
 						
 						DispatchQueue.main.async {
-							ToastViewModel.shared.toastMessage = "Success_address_copied_into_clipboard"
-							ToastViewModel.shared.displayToast = true
+							ToastViewModel.shared.show("Success_address_copied_into_clipboard")
 						}
 					}, label: {
 						HStack {
@@ -2282,7 +2281,7 @@ struct CallView: View {
                 .frame(height: geo.size.height * 0.15)
                 
                 HStack(spacing: 0) {
-					if !CorePreferences.disableChatFeature && callViewModel.chatEnabled {
+					if !AppServices.corePreferences.disableChatFeature && callViewModel.chatEnabled {
                         VStack {
                             Button {
                                 callViewModel.createConversation()
@@ -2442,7 +2441,7 @@ struct CallView: View {
                     .frame(width: geo.size.width * 0.24, height: geo.size.width * 0.24)
                     .hidden()
                     
-					if CorePreferences.disableChatFeature || !callViewModel.chatEnabled {
+					if AppServices.corePreferences.disableChatFeature || !callViewModel.chatEnabled {
                         VStack {
                             Button {
                             } label: {
@@ -2708,7 +2707,7 @@ struct CallView: View {
                         .frame(width: geo.size.width * 0.125, height: geo.size.width * 0.125)
                     }
                     
-                    if !CorePreferences.disableChatFeature && callViewModel.chatEnabled {
+                    if !AppServices.corePreferences.disableChatFeature && callViewModel.chatEnabled {
                         VStack {
                             Button {
                                 callViewModel.createConversation()

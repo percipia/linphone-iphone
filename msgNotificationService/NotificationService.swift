@@ -27,11 +27,18 @@ import Firebase
 
 var LINPHONE_DUMMY_SUBJECT = "dummy subject"
 
+let appGroupName: String = {
+	Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_NAME") as? String
+	?? {
+		fatalError("APP_GROUP_NAME not defined in Info.plist")
+	}()
+}()
+
 extension String {
 	func getDisplayNameFromSipAddress(lc: Core) -> String? {
 		Log.info("looking for display name for \(self)")
 		
-		let defaults = UserDefaults.init(suiteName: Config.appGroupName)
+		let defaults = UserDefaults.init(suiteName: appGroupName)
 		let addressBook = defaults?.dictionary(forKey: "addressBook")
 		
 		if addressBook == nil {
@@ -87,12 +94,12 @@ class NotificationService: UNNotificationServiceExtension {
 		bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 		
 		LoggingService.Instance.logLevel = LogLevel.Debug
-		Factory.Instance.logCollectionPath = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupName as NSString).utf8String))
+		Factory.Instance.logCollectionPath = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (appGroupName as NSString).utf8String))
 		Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
 		
 		Log.info("[msgNotificationService] start msgNotificationService extension")
 		/*
-		if (VFSUtil.vfsEnabled(groupName: Config.appGroupName) && !VFSUtil.activateVFS()) {
+		if (VFSUtil.vfsEnabled(groupName: AppServices.config.appGroupName) && !VFSUtil.activateVFS()) {
 			VFSUtil.log("[VFS] Error unable to activate.", .error)
 		}
 		*/
@@ -117,7 +124,7 @@ class NotificationService: UNNotificationServiceExtension {
 			}
 				
 				/*
-				let defaults = UserDefaults.init(suiteName: Config.appGroupName)
+				let defaults = UserDefaults.init(suiteName: AppServices.config.appGroupName)
 				if let chatroomsPushStatus = defaults?.dictionary(forKey: "chatroomsPushStatus") {
 					let aps = bestAttemptContent.userInfo["aps"] as? NSDictionary
 					let alert = aps?["alert"] as? NSDictionary
@@ -303,8 +310,11 @@ class NotificationService: UNNotificationServiceExtension {
 	
 	func createCore() {
 		Log.info("[msgNotificationService] create core")
+		
+		let factoryPath = FileUtil.bundleFilePath("linphonerc-factory")!
+		let config = Config.newForSharedCore(appGroupId: appGroupName, configFilename: "linphonerc", factoryConfigFilename: factoryPath)!
 
-		lc = try? Factory.Instance.createSharedCoreWithConfig(config: Config.get(), systemContext: nil, appGroupId: Config.appGroupName, mainCore: false)
+		lc = try? Factory.Instance.createSharedCoreWithConfig(config: config, systemContext: nil, appGroupId: appGroupName, mainCore: false)
 	}
 	
 	func stopCore() {

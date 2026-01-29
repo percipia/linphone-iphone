@@ -25,33 +25,39 @@ struct ToastView: View {
 	
 	var body: some View {
 		VStack {
-			if toastViewModel.displayToast {
+			if let toast = toastViewModel.toast {
 				HStack {
-					if toastViewModel.toastMessage.contains("toast_call_transfer") {
+					if toast.message.contains("Failed_search") {
+						Image("magnifying-glass")
+							.resizable()
+							.renderingMode(.template)
+							.frame(width: 25, height: 25, alignment: .leading)
+							.foregroundStyle(Color.redDanger500)
+					} else if toast.message.contains("toast_call_transfer") {
 						Image("phone-transfer")
 							.resizable()
 							.renderingMode(.template)
 							.frame(width: 25, height: 25, alignment: .leading)
-							.foregroundStyle(toastViewModel.toastMessage.contains("Success") ? Color.greenSuccess500 : Color.redDanger500)
-					} else if toastViewModel.toastMessage.contains("is recording") {
+							.foregroundStyle(toast.message.contains("Success") ? Color.greenSuccess500 : Color.redDanger500)
+					} else if toast.message.contains("is recording") {
 						Image("record-fill")
 							.resizable()
 							.renderingMode(.template)
 							.frame(width: 25, height: 25, alignment: .leading)
 							.foregroundStyle(Color.redDanger500)
-					} else if toastViewModel.toastMessage.contains("Info_") {
+					} else if toast.message.contains("Info_") {
 						Image("trusted")
 							.resizable()
 							.frame(width: 25, height: 25, alignment: .leading)
 					} else {
-						Image(toastViewModel.toastMessage.contains("Success") ? "check" : "warning-circle")
+						Image(toast.message.contains("Success") ? "check" : "warning-circle")
 							.resizable()
 							.renderingMode(.template)
 							.frame(width: 25, height: 25, alignment: .leading)
-							.foregroundStyle(toastViewModel.toastMessage.contains("Success") ? Color.greenSuccess500 : Color.redDanger500)
+							.foregroundStyle(toast.message.contains("Success") ? Color.greenSuccess500 : Color.redDanger500)
 					}
 					
-					switch toastViewModel.toastMessage {
+					switch toast.message {
 					case "Success_qr_code_validated":
 						Text("qr_code_validated")
 							.multilineTextAlignment(.center)
@@ -116,7 +122,7 @@ struct ToastView: View {
 							.padding(8)
 						
 					case let str where str.contains("is recording"):
-						Text(toastViewModel.toastMessage)
+						Text(toast.message)
 							.multilineTextAlignment(.center)
 							.foregroundStyle(Color.redDanger500)
 							.default_text_style(styleSize: 15)
@@ -249,7 +255,7 @@ struct ToastView: View {
 							.padding(8)
 						
 					case let str where str.contains("Error: "):
-						Text(toastViewModel.toastMessage)
+						Text(toast.message)
 							.multilineTextAlignment(.center)
 							.foregroundStyle(Color.redDanger500)
 							.default_text_style(styleSize: 15)
@@ -316,6 +322,20 @@ struct ToastView: View {
 							.default_text_style(styleSize: 15)
 							.padding(8)
 						
+					case "Failed_search_no_match_found":
+						Text("conversation_search_no_match_found")
+							.multilineTextAlignment(.center)
+							.foregroundStyle(Color.redDanger500)
+							.default_text_style(styleSize: 15)
+							.padding(8)
+						
+					case "Failed_search_results_limit_reached":
+						Text("conversation_search_results_limit_reached_label")
+							.multilineTextAlignment(.center)
+							.foregroundStyle(Color.redDanger500)
+							.default_text_style(styleSize: 15)
+							.padding(8)
+						
 					case "Success_settings_contacts_carddav_sync_successful_toast":
 						Text("settings_contacts_carddav_sync_successful_toast")
 							.multilineTextAlignment(.center)
@@ -351,25 +371,14 @@ struct ToastView: View {
 				.overlay(
 					RoundedRectangle(cornerRadius: 50)
 						.inset(by: 0.5)
-						.stroke(toastViewModel.toastMessage.contains("Success") 
-								? Color.greenSuccess500 : (toastViewModel.toastMessage.contains("Info_")
+						.stroke(toast.message.contains("Success") 
+								? Color.greenSuccess500 : (toast.message.contains("Info_")
 														   ? Color.blueInfo500 : Color.redDanger500), lineWidth: 1)
 				)
 				.onTapGesture {
-					if !toastViewModel.toastMessage.contains("is recording") {
+					if !toast.message.contains("is recording") {
 						withAnimation {
-							toastViewModel.toastMessage = ""
-							toastViewModel.displayToast = false
-						}
-					}
-				}
-				.onAppear {
-					if !toastViewModel.toastMessage.contains("is recording") {
-						DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-							withAnimation {
-								toastViewModel.toastMessage = ""
-								toastViewModel.displayToast = false
-							}
+							toastViewModel.hide()
 						}
 					}
 				}

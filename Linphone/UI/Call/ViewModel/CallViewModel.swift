@@ -976,8 +976,7 @@ class CallViewModel: ObservableObject {
 						self.isNotEncrypted = false
 						
 						if isDeviceTrusted && withToast {
-							ToastViewModel.shared.toastMessage = "Info_call_securised"
-							ToastViewModel.shared.displayToast = true
+							ToastViewModel.shared.show("Info_call_securised")
 						}
 					}
 					
@@ -1060,8 +1059,9 @@ class CallViewModel: ObservableObject {
 						try callToTransferTo!.transferToAnother(dest: self.currentCall!)
 						Log.info("[CallViewModel] Attended transfer is successful")
 					} catch _ {
-						ToastViewModel.shared.toastMessage = "Failed_toast_call_transfer_failed"
-						ToastViewModel.shared.displayToast = true
+						DispatchQueue.main.async {
+							ToastViewModel.shared.show("Failed_toast_call_transfer_failed")
+						}
 						
 						Log.error("[CallViewModel] Failed to make attended transfer!")
 					}
@@ -1080,9 +1080,9 @@ class CallViewModel: ObservableObject {
 				try self.currentCall!.transferTo(referTo: toAddress)
 				Log.info("[CallViewModel] Blind call transfer is successful")
 			} catch _ {
-				ToastViewModel.shared.toastMessage = "Failed_toast_call_transfer_failed"
-				ToastViewModel.shared.displayToast = true
-				
+				DispatchQueue.main.async {
+					ToastViewModel.shared.show("Failed_toast_call_transfer_failed")
+				}
 				Log.error("[CallViewModel] Failed to make blind call transfer!")
 			}
 		}
@@ -1277,8 +1277,7 @@ class CallViewModel: ObservableObject {
 					)
 					DispatchQueue.main.async {
 						self.operationInProgress = false
-						ToastViewModel.shared.toastMessage = "Failed_to_create_conversation_error"
-						ToastViewModel.shared.displayToast = true
+						ToastViewModel.shared.show("Failed_to_create_conversation_error")
 					}
 				}
 			}
@@ -1300,7 +1299,7 @@ class CallViewModel: ObservableObject {
 				if let chatParams = params.chatParams {
 					chatParams.ephemeralLifetime = 0 // Make sure ephemeral is disabled by default
 					
-					let sameDomain = remoteAddress?.domain == CorePreferences.defaultDomain && remoteAddress?.domain == account.params?.domain
+					let sameDomain = remoteAddress?.domain == AppServices.corePreferences.defaultDomain && remoteAddress?.domain == account.params?.domain
 					if account.params != nil && (account.params!.instantMessagingEncryptionMandatory && sameDomain) {
 						Log.info(
 							"\(CallViewModel.TAG) Account is in secure mode & domain matches, requesting E2E encryption"
@@ -1368,8 +1367,7 @@ class CallViewModel: ObservableObject {
 				self.chatRoomDelegate = nil
 				DispatchQueue.main.async {
 					self.operationInProgress = false
-					ToastViewModel.shared.toastMessage = "Failed_to_create_conversation_error"
-					ToastViewModel.shared.displayToast = true
+					ToastViewModel.shared.show("Failed_to_create_conversation_error")
 				}
 			}
 		}, onConferenceJoined: { (chatRoom: ChatRoom, _: EventLog) in
@@ -1403,8 +1401,7 @@ class CallViewModel: ObservableObject {
 				self.chatRoomDelegate = nil
 				DispatchQueue.main.async {
 					self.operationInProgress = false
-					ToastViewModel.shared.toastMessage = "Failed_to_create_conversation_error"
-					ToastViewModel.shared.displayToast = true
+					ToastViewModel.shared.show("Failed_to_create_conversation_error")
 				}
 			}
 		})
