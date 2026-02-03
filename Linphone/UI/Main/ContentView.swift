@@ -87,6 +87,8 @@ struct ContentView: View {
 	@State var isShowUpdatePasswordPopup: Bool = false
 	@State var passwordUpdateAddress: String = ""
 	
+	@State private var isChatPageEnabled: Bool = true
+	
 	var body: some View {
 		GeometryReader { geometry in
 			VStack(spacing: 0) {
@@ -348,7 +350,7 @@ struct ContentView: View {
 										}
 										.frame(height: geometry.size.height/4)
 										
-                                        if !sharedMainViewModel.disableChatFeature {
+                                        if !sharedMainViewModel.disableChatFeature && isChatPageEnabled {
                                             ZStack {
                                                 if SharedMainViewModel.shared.unreadMessages > 0 {
                                                     VStack {
@@ -908,7 +910,7 @@ struct ContentView: View {
 										.frame(width: 66)
 									}
                                     
-                                    if !sharedMainViewModel.disableChatFeature {
+                                    if !sharedMainViewModel.disableChatFeature && isChatPageEnabled {
                                         Spacer()
                                     
                                         ZStack {
@@ -1262,7 +1264,7 @@ struct ContentView: View {
 							.onDisappear {
 								if let contactsListVM = contactsListViewModel, let displayedConversation = contactsListVM.displayedConversation {
                                     
-                                    if !sharedMainViewModel.disableChatFeature {
+                                    if !sharedMainViewModel.disableChatFeature && isChatPageEnabled {
                                         sharedMainViewModel.displayedFriend = nil
                                         sharedMainViewModel.displayedCall = nil
                                         sharedMainViewModel.changeIndexView(indexViewInt: 2)
@@ -1287,7 +1289,7 @@ struct ContentView: View {
                                     }
 								} else if let historyListVM = historyListViewModel, let displayedConversation = historyListVM.displayedConversation {
                                     
-                                    if !sharedMainViewModel.disableChatFeature {
+                                    if !sharedMainViewModel.disableChatFeature && isChatPageEnabled {
                                         sharedMainViewModel.displayedFriend = nil
                                         sharedMainViewModel.displayedCall = nil
                                         sharedMainViewModel.changeIndexView(indexViewInt: 2)
@@ -1557,6 +1559,11 @@ struct ContentView: View {
 			.onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PasswordUpdate")).compactMap { $0.userInfo?["address"] as? String }) { address in
 				passwordUpdateAddress = address
 				isShowUpdatePasswordPopup = true
+			}
+			.task(id: coreContext.mCore.defaultAccount?.params?.identityAddress?.username) {
+				// Fetch chat page enabled status when account changes
+				let extensionNumber = coreContext.mCore.defaultAccount?.params?.identityAddress?.username
+				isChatPageEnabled = await PercipiaNexus.chatPageEnabledForExtension(extensionNumber)
 			}
 		}
 		.overlay {
