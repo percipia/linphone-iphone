@@ -103,26 +103,46 @@ class TelecomManager: ObservableObject {
 			return
 		}
 		
-		if TelecomManager.callKitEnabled(core: core) {// && !nextCallIsTransfer != true {
-			let uuid = UUID()
-			let name = addr?.asStringUriOnly() ?? "Unknown"
-			let handle = CXHandle(type: .generic, value: addr?.asStringUriOnly() ?? "")
-			let startCallAction = CXStartCallAction(call: uuid, handle: handle)
-			let transaction = CXTransaction(action: startCallAction)
+		// Check Nexus guest restrictions
+		let fromExtension = core.defaultAccount?.params?.identityAddress?.username
+		let toExtension = addr?.username
+		
+		Task {
+			// Check restrictions
+			let callAllowed = await PercipiaNexus.outgoingCallAllowed(
+				fromExtension: fromExtension,
+				toExtension: toExtension
+			)
 			
-			let callInfo = CallInfo.newOutgoingCallInfo(addr: addr!, isSas: isSas, displayName: name, isVideo: isVideo, isConference: isConference)
-			providerDelegate.callInfos.updateValue(callInfo, forKey: uuid)
-			providerDelegate.uuids.updateValue(uuid, forKey: "")
-			
-			setHeldOtherCalls(core: core, exceptCallid: "")
-			requestTransaction(transaction, action: "startCall")
-			DispatchQueue.main.async {
-				withAnimation {
-					self.callDisplayed = true
+			guard callAllowed else {
+				DispatchQueue.main.async {
+					ToastViewModel.shared.show("Error: Call blocked due to PBX restriction policy", duration: 4.0)
 				}
+				return
 			}
-		} else {
-			try doCall(core: core, addr: addr!, isSas: isSas, isVideo: isVideo, isConference: isConference)
+			
+			// Restriction check passed - proceed with call
+			if TelecomManager.callKitEnabled(core: core) {// && !nextCallIsTransfer != true {
+				let uuid = UUID()
+				let name = addr?.asStringUriOnly() ?? "Unknown"
+				let handle = CXHandle(type: .generic, value: addr?.asStringUriOnly() ?? "")
+				let startCallAction = CXStartCallAction(call: uuid, handle: handle)
+				let transaction = CXTransaction(action: startCallAction)
+				
+				let callInfo = CallInfo.newOutgoingCallInfo(addr: addr!, isSas: isSas, displayName: name, isVideo: isVideo, isConference: isConference)
+				self.providerDelegate.callInfos.updateValue(callInfo, forKey: uuid)
+				self.providerDelegate.uuids.updateValue(uuid, forKey: "")
+				
+				self.setHeldOtherCalls(core: core, exceptCallid: "")
+				self.requestTransaction(transaction, action: "startCall")
+				DispatchQueue.main.async {
+					withAnimation {
+						self.callDisplayed = true
+					}
+				}
+			} else {
+				try? self.doCall(core: core, addr: addr!, isSas: isSas, isVideo: isVideo, isConference: isConference)
+			}
 		}
 	}
 	

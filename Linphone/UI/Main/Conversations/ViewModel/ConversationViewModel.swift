@@ -2116,8 +2116,30 @@ class ConversationViewModel: ObservableObject {
 	}
 	
 	func sendMessage(messageText: String, audioRecorder: AudioRecorder? = nil) {
-		if self.sharedMainViewModel.displayedConversation != nil {
-			coreContext.doOnCoreQueue { _ in
+		guard let displayedConversation = self.sharedMainViewModel.displayedConversation else { return }
+		
+		// Check Nexus guest restrictions
+		let fromExtension = CoreContext.shared.mCore.defaultAccount?.params?.identityAddress?.username
+		let toExtension = displayedConversation.chatRoom.participants.first?.address?.username
+		let isGroupChat = displayedConversation.chatRoom.participants.count > 1
+		
+		Task {
+			// Check restrictions
+			let chatAllowed = await PercipiaNexus.outgoingChatAllowed(
+				fromExtension: fromExtension,
+				toExtension: toExtension,
+				isGroupChat: isGroupChat
+			)
+			
+			guard chatAllowed else {
+				DispatchQueue.main.async {
+					ToastViewModel.shared.show("Error: Message blocked due to PBX restriction policy", duration: 4.0)
+				}
+				return
+			}
+			
+			// Restriction check passed - proceed with message creation and sending
+			self.coreContext.doOnCoreQueue { _ in
 				do {
 					var message: ChatMessage?
 					if self.messageToReply != nil {
