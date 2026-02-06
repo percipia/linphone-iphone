@@ -325,7 +325,6 @@ class CoreContext: ObservableObject {
 				}
 			}, onConfiguringStatus: { (_: Core, status: ConfiguringState, message: String) in
 				Log.info("New configuration state is \(status) = \(message)\n")
-				let themeMainColor = AppServices.corePreferences.themeMainColor
 				SharedMainViewModel.shared.updateConfigChanges()
 				DispatchQueue.main.async {
 					if status == ConfiguringState.Successful {
@@ -334,7 +333,7 @@ class CoreContext: ObservableObject {
 							accountModels.append(AccountModel(account: account, core: self.mCore))
 						}
 						self.accounts = accountModels
-						ThemeManager.shared.applyTheme(named: themeMainColor)
+						ThemeManager.shared.applyTheme(named: "percipia")
 						self.reloadID = UUID()
 					}
 				}
