@@ -27,7 +27,7 @@ final class PercipiaNexus {
     private static let PORT = "8443"
     
     // WARNING: Only enable for lab testing with self-signed certificates, do not use in prod
-    private static let SKIP_SSL_VERIFICATION = true
+    private static let SKIP_SSL_VERIFICATION = false
     
     private static let client: URLSession = {
         let config = URLSessionConfiguration.default
