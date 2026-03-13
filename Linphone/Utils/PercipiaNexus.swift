@@ -31,8 +31,8 @@ final class PercipiaNexus {
     
     private static let client: URLSession = {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 60
+        config.timeoutIntervalForRequest = 3
+        config.timeoutIntervalForResource = 3
         
         if SKIP_SSL_VERIFICATION {
             Log.warn("\(TAG) SSL certificate verification is DISABLED - only use for testing!")
