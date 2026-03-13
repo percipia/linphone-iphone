@@ -2123,32 +2123,10 @@ class ConversationViewModel: ObservableObject {
 			}
 		}
 	}
-	
+
 	func sendMessage(messageText: String, audioRecorder: AudioRecorder? = nil) {
-		guard let displayedConversation = self.sharedMainViewModel.displayedConversation else { return }
-		
-		// Check Nexus guest restrictions
-		let fromExtension = CoreContext.shared.mCore.defaultAccount?.params?.identityAddress?.username
-		let toExtension = displayedConversation.chatRoom.participants.first?.address?.username
-		let isGroupChat = displayedConversation.chatRoom.participants.count > 1
-		
-		Task {
-			// Check restrictions
-			let chatAllowed = await PercipiaNexus.outgoingChatAllowed(
-				fromExtension: fromExtension,
-				toExtension: toExtension,
-				isGroupChat: isGroupChat
-			)
-			
-			guard chatAllowed else {
-				DispatchQueue.main.async {
-					ToastViewModel.shared.show("Error: Message blocked due to PBX restriction policy", duration: 4.0)
-				}
-				return
-			}
-			
-			// Restriction check passed - proceed with message creation and sending
-			self.coreContext.doOnCoreQueue { _ in
+		if self.sharedMainViewModel.displayedConversation != nil {
+			coreContext.doOnCoreQueue { _ in
 				do {
 					var message: ChatMessage?
 					if self.messageToReply != nil {
@@ -2276,6 +2254,161 @@ class ConversationViewModel: ObservableObject {
 			}
 		}
 	}
+
+	// Includes Nexus PBX guest restrictions check before sending the message. If the check fails, the message will not be sent and an error toast will be displayed.	
+	//   Currently commented out pending business decision. TODO: Re-evaluate the need for this check and whether it should be re-enabled.
+	// func sendMessage(messageText: String, audioRecorder: AudioRecorder? = nil) {
+	// 	guard let displayedConversation = self.sharedMainViewModel.displayedConversation else { return }
+		
+	// 	// Check Nexus guest restrictions
+	// 	let fromExtension = CoreContext.shared.mCore.defaultAccount?.params?.identityAddress?.username
+	// 	let toExtension = displayedConversation.chatRoom.participants.first?.address?.username
+	// 	let isGroupChat = displayedConversation.chatRoom.participants.count > 1
+		
+	// 	Task {
+	// 		// Check restrictions
+	// 		let chatAllowed = await PercipiaNexus.outgoingChatAllowed(
+	// 			fromExtension: fromExtension,
+	// 			toExtension: toExtension,
+	// 			isGroupChat: isGroupChat
+	// 		)
+			
+	// 		guard chatAllowed else {
+	// 			DispatchQueue.main.async {
+	// 				ToastViewModel.shared.show("Error: Message blocked due to PBX restriction policy", duration: 4.0)
+	// 			}
+	// 			return
+	// 		}
+			
+	// 		// Restriction check passed - proceed with message creation and sending
+	// 		self.coreContext.doOnCoreQueue { _ in
+	// 			do {
+	// 				var message: ChatMessage?
+	// 				if self.messageToReply != nil {
+	// 					let chatMessageToReply = self.sharedMainViewModel.displayedConversation!.chatRoom.findEventLog(messageId: self.messageToReply!.eventModel.eventLogId)?.chatMessage
+	// 					if chatMessageToReply != nil {
+	// 						message = try self.sharedMainViewModel.displayedConversation!.chatRoom.createReplyMessage(message: chatMessageToReply!)
+	// 					}
+	// 				} else if let chatMessage = self.messageToEdit?.eventModel.eventLog.chatMessage {
+	// 					message = try self.sharedMainViewModel.displayedConversation!.chatRoom.createReplacesMessage(message: chatMessage)
+	// 				} else {
+	// 					message = try self.sharedMainViewModel.displayedConversation!.chatRoom.createEmptyMessage()
+	// 				}
+					
+	// 				let toSend = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+	// 				if !toSend.isEmpty {
+	// 					if message != nil {
+	// 						message!.addUtf8TextContent(text: toSend)
+	// 					}
+	// 				}
+					
+	// 				if audioRecorder != nil {
+	// 					do {
+	// 						audioRecorder!.stopVoiceRecorder()
+	// 						let content = try audioRecorder!.linphoneAudioRecorder.createContent()
+	// 						Log.info(
+	// 							"[ConversationViewModel] Voice recording content created, file name is \(content.name ?? "") and duration is \(content.fileDuration)"
+	// 						)
+							
+	// 						if message != nil {
+	// 							message!.addContent(content: content)
+	// 						}
+	// 					}
+	// 				} else {
+	// 					self.mediasToSend.forEach { attachment in
+	// 						do {
+	// 							let content = try Factory.Instance.createContent()
+								
+	// 							switch attachment.type {
+	// 							case .image:
+	// 								content.type = "image"
+	// 							case .audio:
+	// 								content.type = "audio"
+	// 							case .video:
+	// 								content.type = "video"
+	// 							case .pdf:
+	// 								content.type = "application"
+	// 							case .text:
+	// 								content.type = "text"
+	// 							default:
+	// 								content.type = "file"
+	// 							}
+								
+	// 							// content.subtype = attachment.type == .plainText ? "plain" : FileUtils.getExtensionFromFileName(attachment.fileName)
+	// 							content.subtype = attachment.full.pathExtension
+								
+	// 							content.name = attachment.full.lastPathComponent
+								
+	// 							if message != nil {
+	// 								let tempPath = FileManager.default.temporaryDirectory.appendingPathComponent(attachment.full.lastPathComponent)
+	// 								let folderURL = FileUtil.sharedContainerUrl().appendingPathComponent("Library/Images")
+	// 								let newPath = folderURL.appendingPathComponent(attachment.full.lastPathComponent)
+
+	// 								do {
+	// 									if !FileManager.default.fileExists(atPath: folderURL.path) {
+	// 										try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+	// 									}
+										
+	// 									if FileManager.default.fileExists(atPath: newPath.path) {
+	// 										try FileManager.default.removeItem(atPath: newPath.path)
+	// 									}
+										
+	// 									try FileManager.default.moveItem(atPath: tempPath.path, toPath: newPath.path)
+										
+	// 									content.filePath = newPath.path
+	// 									message?.addFileContent(content: content)
+										
+	// 								} catch {
+	// 									Log.error(error.localizedDescription)
+	// 								}
+	// 							}
+	// 						} catch {
+	// 						}
+	// 					}
+	// 				}
+					
+	// 				if let message = message , !message.contents.isEmpty {
+	// 					Log.info("[ConversationViewModel] Sending message")
+						
+	// 					self.addChatMessageDelegate(message: message)
+	// 					message.send()
+						
+	// 					self.sharedMainViewModel.displayedConversation!.chatRoom.stopComposing()
+	// 				}
+					
+	// 				Log.info("[ConversationViewModel] Message sent, re-setting defaults")
+					
+	// 				DispatchQueue.main.async {
+	// 					self.messageToReply = nil
+	// 					self.messageToEdit = nil
+	// 					withAnimation {
+	// 						self.mediasToSend.removeAll()
+	// 					}
+	// 				}
+					
+	// 				/*
+	// 				 isReplying.postValue(false)
+	// 				 isFileAttachmentsListOpen.postValue(false)
+	// 				 isParticipantsListOpen.postValue(false)
+	// 				 isEmojiPickerOpen.postValue(false)
+					 
+	// 				 if (::voiceMessageRecorder.isInitialized) {
+	// 				 stopVoiceRecorder()
+	// 				 }
+	// 				 isVoiceRecording.postValue(false)
+					 
+	// 				 // Warning: do not delete files
+	// 				 val attachmentsList = arrayListOf<FileModel>()
+	// 				 attachments.postValue(attachmentsList)
+					 
+	// 				 chatMessageToReplyTo = null
+	// 				 */
+	// 			} catch {
+					
+	// 			}
+	// 		}
+	// 	}
+	// }
 	
 	func changeDisplayedChatRoom(conversationModel: ConversationModel) {
 		self.selectedMessage = nil

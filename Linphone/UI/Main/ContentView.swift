@@ -1560,11 +1560,12 @@ struct ContentView: View {
 				passwordUpdateAddress = address
 				isShowUpdatePasswordPopup = true
 			}
-			.task(id: coreContext.mCore.defaultAccount?.params?.identityAddress?.username) {
-				// Fetch chat page enabled status when account changes
-				let extensionNumber = coreContext.mCore.defaultAccount?.params?.identityAddress?.username
-				isChatPageEnabled = await PercipiaNexus.chatPageEnabledForExtension(extensionNumber)
-			}
+			// Currently commented out pending business decision. TODO: Re-evaluate the need for this check and whether it should be re-enabled.
+			// .task(id: coreContext.mCore.defaultAccount?.params?.identityAddress?.username) {
+			// 	// Fetch chat page enabled status when account changes
+			// 	let extensionNumber = coreContext.mCore.defaultAccount?.params?.identityAddress?.username
+			// 	isChatPageEnabled = await PercipiaNexus.chatPageEnabledForExtension(extensionNumber)
+			// }
 		}
 		.overlay {
 			if isMenuOpen {

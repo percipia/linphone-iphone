@@ -1,7 +1,7 @@
 /**
  * Utility class for integrating with the Percipia Nexus hospitality platform.
  * Handles HTTP communication with the Nexus endpoint to fetch and cache guest extension parameters,
- * including restrictions for guest-to-guest calling, guest-to-admin messaging, and conversation access.
+ * enabling/disabling PBX policy restrictions on guest-to-admin messaging, and conversation access.
  *
  * Authored by Maj Kravos <https://www.majkravos.com>
  */
@@ -51,7 +51,6 @@ final class PercipiaNexus {
     struct ConnectParams {
         let isGuest: Bool
         let isGuestToAdminMessagingEnabled: Bool
-        let isGuestToGuestCallingEnabled: Bool
     }
 
     // Struct to hold cached connect params along with timestamp
@@ -190,8 +189,7 @@ final class PercipiaNexus {
             
             return ConnectParams(
                 isGuest: json["is_guest_extension"] as? Bool ?? false,
-                isGuestToAdminMessagingEnabled: json["is_guest_to_admin_messaging_enabled"] as? Bool ?? false,
-                isGuestToGuestCallingEnabled: json["is_guest_to_guest_calling_enabled"] as? Bool ?? false
+                isGuestToAdminMessagingEnabled: json["is_guest_to_admin_messaging_enabled"] as? Bool ?? false
             )
         } catch {
             Log.error("\(TAG) Failed to fetch connect params: \(error.localizedDescription)")
@@ -273,23 +271,6 @@ final class PercipiaNexus {
             }
         } else {
             Log.warn("\(TAG) fromExtensionParams or toExtensionParams is null, allowing outgoing message by default")
-            return true
-        }
-    }
-    
-    static func outgoingCallAllowed(fromExtension: String?, toExtension: String?) async -> Bool {
-        let fromExtensionParams = await getConnectParamsForExtension(ext: fromExtension)
-        let toExtensionParams = await getConnectParamsForExtension(ext: toExtension)
-        
-        if let fromExtensionParams = fromExtensionParams, let toExtensionParams = toExtensionParams {
-            if fromExtensionParams.isGuest && toExtensionParams.isGuest && !fromExtensionParams.isGuestToGuestCallingEnabled {
-                Log.warn("\(TAG) Guest extension [\(fromExtension ?? "")] is not allowed to call extension [\(toExtension ?? "")] because guest-to-guest calling is disabled")
-                return false
-            } else {
-                return true
-            }
-        } else {
-            Log.warn("\(TAG) fromExtensionParams or toExtensionParams is null, allowing outgoing call by default")
             return true
         }
     }
