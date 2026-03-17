@@ -353,7 +353,7 @@
 "manage_account_device_remove" = "Supprimer";
 "manage_account_devices_title" = "Appareils";
 "manage_account_dialog_international_prefix_help_message" = "Choisissez votre pays pour permettre à Linphone de faire le lien avec vos contacts.";
-"manage_account_dialog_remove_account_message" = "Si vous souhaitez supprimer définitivement votre compte rendez-vous sur : your PBX web portal";
+"manage_account_dialog_remove_account_message" = "Si vous souhaitez supprimer définitivement votre compte, rendez-vous sur : votre portail web PBX";
 "manage_account_dialog_remove_account_title" = "Se déconnecter du compte ?";
 "manage_account_edit_picture" = "Modifier";
 "manage_account_international_prefix" = "Indicatif international";

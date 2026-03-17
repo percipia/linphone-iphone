@@ -66,7 +66,7 @@
 "manage_account_delete" = "Odhlásiť sa";
 "manage_account_device_last_connection" = "Posledné pripojenie:";
 "manage_account_dialog_remove_account_title" = "Odhlásiť sa z Vášho účtu?";
-"manage_account_dialog_remove_account_message" = "Pokiaľ si želáte nenávratne zmazať svoj účet, navštívte: your PBX web portal";
+"manage_account_dialog_remove_account_message" = "Pokiaľ si želáte natrvalo zmazať svoj účet, navštívte: váš webový portál PBX";
 "history_list_empty_history" = "Momentálne žiadny hovor…";
 "manage_account_title" = "Spravovať účet";
 "manage_account_status_failed_summary" = "Pripojenie účtu zlyhalo, skontrolujte nastavenia.";
