@@ -26,7 +26,7 @@ class AccountLoginViewModel: ObservableObject {
 	
 	@Published var username: String = ""
 	@Published var passwd: String = ""
-	@Published var domain: String = "pbx.percipia.net"
+	@Published var domain: String = ""
 	@Published var displayName: String = ""
 	@Published var transportType: String = "TLS"
 	@Published var authId: String = ""
@@ -55,14 +55,9 @@ class AccountLoginViewModel: ObservableObject {
 					}
 				}
 				
-				if self.domain != "pbx.percipia.net" {
-					if let assistantLinphone = Bundle.main.path(forResource: "assistant_third_party_default_values", ofType: nil) {
-						core.loadConfigFromXml(xmlUri: assistantLinphone)
-					}
-				} else {
-					if let assistantLinphone = Bundle.main.path(forResource: "assistant_linphone_default_values", ofType: nil) {
-						core.loadConfigFromXml(xmlUri: assistantLinphone)
-					}
+				// Load feature defaults (push, AVPF, CPIM, SRTP, etc.) — domain-independent
+				if let assistantLinphone = Bundle.main.path(forResource: "assistant_linphone_default_values", ofType: nil) {
+					core.loadConfigFromXml(xmlUri: assistantLinphone)
 				}
 				
 				// Get the transport protocol to use.
@@ -158,8 +153,8 @@ class AccountLoginViewModel: ObservableObject {
 				// Also set the newly added account as default
 				core.defaultAccount = account
 				
+				// Reset form fields (not domain — preserve for UI state)
 				DispatchQueue.main.async {
-					self.domain = "pbx.percipia.net"
 					self.transportType = "TLS"
 					self.authId = ""
 					self.outboundProxy = ""

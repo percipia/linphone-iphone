@@ -100,7 +100,6 @@ struct ThirdPartySipAccountLoginFragment: View {
 						.padding(.all, 10)
 						.onTapGesture {
 							withAnimation {
-								accountLoginViewModel.domain = "pbx.percipia.net"
 								accountLoginViewModel.transportType = "TLS"
 								dismiss()
 							}
@@ -180,7 +179,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.default_text_style_700(styleSize: 15)
 					.padding(.bottom, -5)
 				
-				TextField("pbx.percipia.net", text: $accountLoginViewModel.domain)
+				TextField("sip.example.com", text: $accountLoginViewModel.domain)
 					.default_text_style(styleSize: 15)
 					.disableAutocorrection(true)
 					.autocapitalization(.none)

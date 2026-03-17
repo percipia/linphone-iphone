@@ -310,7 +310,7 @@ struct HistoryContactFragment: View {
 								} else {
 									Button(action: {
 										withAnimation {
-											if historyModel.address.hasPrefix("sip:conference-focus@pbx.percipia.net") {
+											if historyModel.address.hasPrefix("sip:conference-focus@") {
 												do {
 													let meetingAddress = try Factory.Instance.createAddress(addr: historyModel.address)
 													
