@@ -239,7 +239,7 @@
 "manage_account_device_last_connection" = "Letzte Verbindung:";
 "manage_account_device_remove" = "Entfernen";
 "manage_account_devices_title" = "Geräte";
-"manage_account_dialog_remove_account_message" = "Wenn Sie Ihr Konto dauerhaft löschen möchten, gehen Sie zu: https://pbx.percipia.net";
+"manage_account_dialog_remove_account_message" = "Wenn Sie Ihr Konto dauerhaft löschen möchten, gehen Sie zu: your PBX web portal";
 "manage_account_dialog_remove_account_title" = "Von Ihrem Konto abmelden?";
 "manage_account_edit_picture" = "Bild bearbeiten";
 "manage_account_international_prefix" = "Internationale Vorwahl";
@@ -509,10 +509,8 @@
 "help_about_open_source_licenses_title" = "GNU General Public License v3.0";
 "help_about_open_source_licenses_subtitle" = "© Percipia 2010-2024";
 "authentication_id" = "Authentifizierungs ID (falls anders)";
-"[https://pbx.percipia.net](https://pbx.percipia.net)" = "[https://pbx.percipia.net](https://pbx.percipia.net)";
 "[percipia.com/contactus](https://percipia.com/contactus)" = "[percipia.com/contactus](https://percipia.com/contactus)";
 "assistant_web_platform_link" = "";
 "conversation_end_to_end_encrypted_bottom_sheet_link" = "https://linphone.org/en/features/#security";
-"pbx.percipia.net" = "pbx.percipia.net";
 "website_contact_url" = "";
 "web_platform_forgotten_password_url" = "";

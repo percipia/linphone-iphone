@@ -178,5 +178,5 @@ struct PopupUpdatePassword: View {
 }
 
 #Preview {
-	PopupUpdatePassword(isShowUpdatePasswordPopup: .constant(true), passwordUpdateAddress: .constant("example@pbx.percipia.net"))
+	PopupUpdatePassword(isShowUpdatePasswordPopup: .constant(true), passwordUpdateAddress: .constant("example@sip.example.com"))
 }

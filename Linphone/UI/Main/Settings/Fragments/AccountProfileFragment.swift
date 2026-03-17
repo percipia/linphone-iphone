@@ -629,7 +629,8 @@ struct AccountProfileFragment: View {
 					let textPart = components.dropLast().joined(separator: " ")
 					
 					let contentPopup1 = Text(textPart + " ")
-					let contentPopup2 = Text("[https://pbx.percipia.net](https://pbx.percipia.net)").underline()
+					let accountDomain = CoreContext.shared.mCore.defaultAccount?.params?.domain ?? "your PBX"
+					let contentPopup2 = Text("[https://\(accountDomain)](https://\(accountDomain))").underline()
 					
 					PopupView(
 						isShowPopup: $isShowLogoutPopup,
