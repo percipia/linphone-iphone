@@ -20,34 +20,35 @@
 import SwiftUI
 import WebKit
 import QuickLook
+import Combine
 
 // swiftlint:disable type_body_length
 // swiftlint:disable cyclomatic_complexity
 struct ChatBubbleView: View {
-	
+
 	private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
-	
+
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
-	
+
 	let eventLogMessage: EventLogMessage
-	
+
 	let geometryProxy: GeometryProxy
-	
+
 	@State private var ticker = Ticker()
 	@State private var isPressed: Bool = false
 	@State private var didLongPress = false
 	@State private var timePassed: TimeInterval?
-	
+
 	@State private var timer: Timer?
 	@State private var ephemeralLifetime: String = ""
-	
+
 	@State private var selectedAttachment: Bool = false
 	@State private var selectedAttachmentIndex: Int = 0
-	
+
 	@State private var selectedURLAttachment: URL?
-	
+
 	@State private var showShareSheet = false
-	
+
 	var body: some View {
 		HStack {
 			if eventLogMessage.eventModel.eventLogType == .ConferenceChatMessage {
@@ -73,7 +74,7 @@ struct ChatBubbleView: View {
 								}
 								.padding(.leading, 43)
 							}
-							
+
 							VStack(alignment: .leading, spacing: 0) {
 								if SharedMainViewModel.shared.displayedConversation != nil && SharedMainViewModel.shared.displayedConversation!.isGroup
 									&& !eventLogMessage.message.isOutgoing && eventLogMessage.message.isFirstMessage {
@@ -82,50 +83,50 @@ struct ChatBubbleView: View {
 										.padding(.top, 5)
 										.padding(.bottom, 2)
 								}
-								
+
 								if eventLogMessage.message.isForward {
 									HStack {
 										if eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
-										
+
 										VStack(alignment: eventLogMessage.message.isOutgoing ? .trailing : .leading, spacing: 0) {
 											HStack {
 												Image("forward")
 													.resizable()
 													.frame(width: 15, height: 15, alignment: .leading)
-												
+
 												Text("message_forwarded_label")
 													.default_text_style(styleSize: 12)
 											}
 											.padding(.bottom, 2)
 										}
-										
+
 										if !eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
 									}
 									.frame(maxWidth: .infinity)
 								}
-								
+
 								if eventLogMessage.message.replyMessage != nil {
 									HStack {
 										if eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
-										
+
 										VStack(alignment: eventLogMessage.message.isOutgoing ? .trailing : .leading, spacing: 0) {
 											HStack {
 												Image("reply")
 													.resizable()
 													.frame(width: 15, height: 15, alignment: .leading)
-												
+
 												Text(conversationViewModel.participantConversationModel.first(
 													where: {$0.address == eventLogMessage.message.replyMessage!.address})?.name ?? "")
 												.default_text_style(styleSize: 12)
 											}
 											.padding(.bottom, 2)
-											
+
 											VStack(alignment: eventLogMessage.message.isOutgoing ? .trailing : .leading) {
 												if !eventLogMessage.message.replyMessage!.text.isEmpty {
 													Text(eventLogMessage.message.replyMessage!.text)
@@ -158,7 +159,7 @@ struct ChatBubbleView: View {
 										.onTapGesture {
 											conversationViewModel.scrollToMessage(message: eventLogMessage.message)
 										}
-										
+
 										if !eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
@@ -166,19 +167,19 @@ struct ChatBubbleView: View {
 									.frame(maxWidth: .infinity)
 									.padding(.bottom, -20)
 								}
-								
+
 								ZStack {
 									HStack {
 										if eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
-										
+
 										VStack(alignment: eventLogMessage.message.isOutgoing ? .trailing : .leading) {
 											VStack(alignment: eventLogMessage.message.isOutgoing ? .trailing : .leading) {
 												if !eventLogMessage.message.attachments.isEmpty && !eventLogMessage.message.isIcalendar {
 													messageAttachments()
 												}
-												
+
 												if !eventLogMessage.message.text.isEmpty {
 													DynamicLinkText(
 														text: eventLogMessage.message.text,
@@ -193,7 +194,7 @@ struct ChatBubbleView: View {
 														.font(.system(size: 14))
 														.lineLimit(1)
 												}
-												
+
 												if eventLogMessage.message.isIcalendar && eventLogMessage.message.messageConferenceInfo != nil {
 													VStack(spacing: 0) {
 														VStack {
@@ -214,12 +215,12 @@ struct ChatBubbleView: View {
 																		.padding(.bottom, 5)
 																}
 															}
-															
+
 															HStack {
 																VStack(spacing: 0) {
 																	Text(eventLogMessage.message.messageConferenceInfo!.meetingDay)
 																		.default_text_style(styleSize: 16)
-																	
+
 																	Text(eventLogMessage.message.messageConferenceInfo!.meetingDayNumber)
 																		.foregroundStyle(.white)
 																		.default_text_style_800(styleSize: 18)
@@ -227,14 +228,14 @@ struct ChatBubbleView: View {
 																		.frame(width: 30, height: 30, alignment: .center)
 																		.background(Color.orangeMain500)
 																		.clipShape(Circle())
-																	
+
 																}
 																.padding(.all, 10)
 																.frame(width: 70, height: 70)
 																.background(.white)
 																.cornerRadius(15)
 																.shadow(color: .black.opacity(0.1), radius: 15)
-																
+
 																VStack {
 																	HStack {
 																		Image("video-conference")
@@ -242,19 +243,19 @@ struct ChatBubbleView: View {
 																			.resizable()
 																			.foregroundStyle(Color.grayMain2c600)
 																			.frame(width: 25, height: 25)
-																		
+
 																		Text(eventLogMessage.message.messageConferenceInfo!.meetingSubject)
 																			.default_text_style_800(styleSize: 15)
 																			.lineLimit(1)
 																			.frame(maxWidth: .infinity, alignment: .leading)
 																	}
 																	.frame(maxWidth: .infinity, alignment: .leading)
-																	
+
 																	Text(eventLogMessage.message.messageConferenceInfo!.meetingDate)
 																		.default_text_style_300(styleSize: 14)
 																		.lineLimit(1)
 																		.frame(maxWidth: .infinity, alignment: .leading)
-																	
+
 																	Text(eventLogMessage.message.messageConferenceInfo!.meetingTime)
 																		.default_text_style_300(styleSize: 14)
 																		.lineLimit(1)
@@ -267,18 +268,18 @@ struct ChatBubbleView: View {
 														.padding(.all, 15)
 														.frame(maxWidth: .infinity)
 														.background(Color.gray100)
-														
+
 														VStack(spacing: 2) {
 															if !eventLogMessage.message.messageConferenceInfo!.meetingDescription.isEmpty {
 																Text("meeting_schedule_description_title")
 																	.default_text_style(styleSize: 14)
 																	.frame(maxWidth: .infinity, alignment: .leading)
-																
+
 																Text(eventLogMessage.message.messageConferenceInfo!.meetingDescription)
 																	.default_text_style_300(styleSize: 14)
 																	.frame(maxWidth: .infinity, alignment: .leading)
 															}
-															
+
 															if eventLogMessage.message.messageConferenceInfo!.meetingState != .cancelled {
 																HStack {
 																	Image("users")
@@ -286,11 +287,11 @@ struct ChatBubbleView: View {
 																		.resizable()
 																		.foregroundStyle(Color.grayMain2c600)
 																		.frame(width: 20, height: 20)
-																	
+
 																	Text(eventLogMessage.message.messageConferenceInfo!.meetingParticipants)
 																		.default_text_style(styleSize: 14)
 																		.frame(maxWidth: .infinity, alignment: .leading)
-																	
+
 																	Button(action: {
 																		conversationViewModel.joinMeetingInvite(addressUri: eventLogMessage.message.messageConferenceInfo!.meetingConferenceUri)
 																	}, label: {
@@ -318,7 +319,7 @@ struct ChatBubbleView: View {
 													.background(.white)
 													.cornerRadius(10)
 												}
-												
+
 												HStack(alignment: .center) {
 													if eventLogMessage.message.isEphemeral && eventLogMessage.message.isOutgoing {
 														Text(ephemeralLifetime)
@@ -334,7 +335,7 @@ struct ChatBubbleView: View {
 																	updateEphemeralTimer()
 																}
 															}
-														
+
 														Image("clock-countdown")
 															.renderingMode(.template)
 															.resizable()
@@ -342,7 +343,7 @@ struct ChatBubbleView: View {
 															.frame(width: 15, height: 15)
 															.padding(.top, 1)
 													}
-													
+
 													if eventLogMessage.message.isEdited && eventLogMessage.message.isOutgoing {
 														Text("conversation_message_edited_label")
 														 .foregroundStyle(Color.grayMain2c500)
@@ -350,13 +351,13 @@ struct ChatBubbleView: View {
 														 .padding(.top, 1)
 														 .padding(.trailing, -4)
 													}
-													
+
 													Text(conversationViewModel.getMessageTime(startDate: eventLogMessage.message.dateReceived))
 														.foregroundStyle(Color.grayMain2c500)
 														.default_text_style_300(styleSize: 12)
 														.padding(.top, 1)
 														.padding(.trailing, -4)
-													
+
 													if (SharedMainViewModel.shared.displayedConversation != nil && SharedMainViewModel.shared.displayedConversation!.isGroup)
 														|| eventLogMessage.message.isOutgoing {
 														if eventLogMessage.message.status == .sending {
@@ -374,7 +375,7 @@ struct ChatBubbleView: View {
 																.padding(.top, 1)
 														}
 													}
-													
+
 													if eventLogMessage.message.isEdited && !eventLogMessage.message.isOutgoing {
 														Text("conversation_message_edited_label")
 														 .foregroundStyle(Color.grayMain2c500)
@@ -382,7 +383,7 @@ struct ChatBubbleView: View {
 														 .padding(.top, 1)
 														 .padding(.trailing, -4)
 													}
-													
+
 													if eventLogMessage.message.isEphemeral && !eventLogMessage.message.isOutgoing {
 														Image("clock-countdown")
 															.renderingMode(.template)
@@ -391,7 +392,7 @@ struct ChatBubbleView: View {
 															.frame(width: 15, height: 15)
 															.padding(.top, 1)
 															.padding(.trailing, -4)
-														
+
 														Text(ephemeralLifetime)
 															.foregroundStyle(Color.grayMain2c500)
 															.default_text_style_300(styleSize: 12)
@@ -424,7 +425,7 @@ struct ChatBubbleView: View {
 													(!eventLogMessage.message.isOutgoing && eventLogMessage.message.isFirstMessage ? [.topRight, .bottomRight, .bottomLeft] : [.allCorners]),
 												stroke: eventLogMessage.message.id == conversationViewModel.highlightedMessageID
 											)
-											
+
 											if !eventLogMessage.message.reactions.isEmpty {
 												HStack {
 													ForEach(0..<eventLogMessage.message.reactions.count, id: \.self) { index in
@@ -434,7 +435,7 @@ struct ChatBubbleView: View {
 																.padding(.horizontal, -2)
 														}
 													}
-													
+
 													if containsDuplicates(strings: eventLogMessage.message.reactions) {
 														Text("\(eventLogMessage.message.reactions.count)")
 															.default_text_style(styleSize: 12)
@@ -458,7 +459,7 @@ struct ChatBubbleView: View {
 												.padding(eventLogMessage.message.isOutgoing ? .trailing : .leading, 5)
 											}
 										}
-										
+
 										if !eventLogMessage.message.isOutgoing {
 											Spacer()
 										}
@@ -467,7 +468,7 @@ struct ChatBubbleView: View {
 								}
 								.frame(maxWidth: .infinity)
 							}
-							
+
 							if !eventLogMessage.message.isOutgoing {
 								Spacer()
 							}
@@ -514,7 +515,7 @@ struct ChatBubbleView: View {
 			} else if !eventLogMessage.eventModel.text.isEmpty {
 				HStack {
 					Spacer()
-					
+
 					HStack {
 						if eventLogMessage.eventModel.icon != nil {
 							eventLogMessage.eventModel.icon!
@@ -523,7 +524,7 @@ struct ChatBubbleView: View {
 								.foregroundStyle(Color.grayMain2c500)
 								.frame(width: 25, height: 25, alignment: .leading)
 						}
-						
+
 						Text(eventLogMessage.eventModel.text)
 							.foregroundStyle(Color.grayMain2c500)
 							.default_text_style(styleSize: 12)
@@ -534,7 +535,7 @@ struct ChatBubbleView: View {
 						RoundedRectangle(cornerRadius: 6)
 							.stroke(Color.grayMain2c200, lineWidth: 1)
 					)
-					
+
 					Spacer()
 				}
 				.padding(.vertical, 10)
@@ -549,16 +550,16 @@ struct ChatBubbleView: View {
 		}
 		.quickLookPreview($selectedURLAttachment, in: conversationViewModel.attachments.map { $0.full })
 	}
-	
+
 	func containsDuplicates(strings: [String]) -> Bool {
 		let uniqueStrings = Set(strings)
 		return uniqueStrings.count != strings.count
 	}
-	
+
 	@ViewBuilder
 	func messageAttachments() -> some View {
 		if eventLogMessage.message.attachments.count == 1 {
-			if eventLogMessage.message.attachments.first!.type == .image || eventLogMessage.message.attachments.first!.type == .gif 
+			if eventLogMessage.message.attachments.first!.type == .image || eventLogMessage.message.attachments.first!.type == .gif
 				|| eventLogMessage.message.attachments.first!.type == .video {
 				let result = imageDimensions(url: eventLogMessage.message.attachments.first!.thumbnail.absoluteString)
 				ZStack {
@@ -571,7 +572,7 @@ struct ChatBubbleView: View {
 						.if(result.1 < UIScreen.main.bounds.height/2) { view in
 							view.frame(maxHeight: result.1)
 						}
-						.if(result.0 >= result.1 && geometryProxy.size.width > 0 && result.0 >= geometryProxy.size.width - 110 
+						.if(result.0 >= result.1 && geometryProxy.size.width > 0 && result.0 >= geometryProxy.size.width - 110
 							&& result.1 >= UIScreen.main.bounds.height/2.5) { view in
 							view.frame(
 								maxWidth: geometryProxy.size.width - 110,
@@ -584,7 +585,7 @@ struct ChatBubbleView: View {
 								maxHeight: UIScreen.main.bounds.height/2.5
 							)
 						}
-					
+
 					if eventLogMessage.message.attachments.first!.type == .image || eventLogMessage.message.attachments.first!.type == .video {
 						if #available(iOS 16.0, *) {
 							CachedAsyncImage(
@@ -617,7 +618,7 @@ struct ChatBubbleView: View {
 										selectedURLAttachment = eventLogMessage.message.attachments.first!.full
 									}
 								})
-							
+
 							.overlay(
 								Group {
 									if eventLogMessage.message.attachments.first!.type == .video {
@@ -706,7 +707,7 @@ struct ChatBubbleView: View {
 							}
 						}
 					}
-					
+
 					VStack {
 						Text(eventLogMessage.message.attachments.first!.name)
 							.foregroundStyle(Color.grayMain2c700)
@@ -714,7 +715,7 @@ struct ChatBubbleView: View {
 							.truncationMode(.middle)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.lineLimit(1)
-						
+
 						if eventLogMessage.message.attachments.first!.size > 0 {
 							Text(eventLogMessage.message.attachments.first!.size.formatBytes())
 							 .default_text_style_300(styleSize: 14)
@@ -748,7 +749,7 @@ struct ChatBubbleView: View {
 		} else if eventLogMessage.message.attachments.count > 1 {
 			let sizeCard = ((geometryProxy.size.width - 150)/2)-2
 			let columns = [GridItem(.adaptive(minimum: sizeCard), spacing: 1)]
-			
+
 			VStack {
 				LazyVGrid(columns: columns) {
 					ForEach(eventLogMessage.message.attachments.filter({ $0.type == .image || $0.type == .gif
@@ -757,7 +758,7 @@ struct ChatBubbleView: View {
 								Rectangle()
 									.fill(Color(.white))
 									.frame(width: sizeCard, height: sizeCard)
-								
+
 								if #available(iOS 16.0, *) {
 									CachedAsyncImage(
 										url: attachment.thumbnail,
@@ -767,7 +768,7 @@ struct ChatBubbleView: View {
 												selectedURLAttachment = attachment.full
 											}
 										})
-									
+
 									.overlay(
 										Group {
 											if attachment.type == .video {
@@ -789,7 +790,7 @@ struct ChatBubbleView: View {
 												selectedURLAttachment = attachment.full
 											}
 										})
-									
+
 									.overlay(
 										Group {
 											if attachment.type == .video {
@@ -809,7 +810,7 @@ struct ChatBubbleView: View {
 							.contentShape(Rectangle())
 						}
 				}
-				
+
 				ForEach(eventLogMessage.message.attachments.filter({ $0.type != .image && $0.type != .gif
 					&& $0.type != .video }), id: \.id) { attachment in
 					HStack {
@@ -845,7 +846,7 @@ struct ChatBubbleView: View {
 								}
 							}
 						}
-						
+
 						VStack {
 							Text(attachment.name)
 								.foregroundStyle(Color.grayMain2c700)
@@ -853,7 +854,7 @@ struct ChatBubbleView: View {
 								.truncationMode(.middle)
 								.frame(maxWidth: .infinity, alignment: .leading)
 								.lineLimit(1)
-							
+
 							if attachment.size > 0 {
 								Text(attachment.size.formatBytes())
 								 .default_text_style_300(styleSize: 14)
@@ -885,10 +886,10 @@ struct ChatBubbleView: View {
 					}
 				}
 			}
-			.frame(width: geometryProxy.size.width - 150)
+			.frame(width: max(0, geometryProxy.size.width - 150))
 		}
 	}
-	
+
 	func imageDimensions(url: String) -> (CGFloat, CGFloat) {
 		if let imageSource = CGImageSourceCreateWithURL(URL(string: url)! as CFURL, nil) {
 			if let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as Dictionary? {
@@ -900,7 +901,7 @@ struct ChatBubbleView: View {
 		}
 		return (100, 100)
 	}
-	
+
 	func getImageOfType(type: AttachmentType) -> String {
 		if type == .audio {
 			return "file-audio"
@@ -914,7 +915,7 @@ struct ChatBubbleView: View {
 			return "file"
 		}
 	}
-	
+
 	private func updateEphemeralTimer() {
 		if eventLogMessage.message.isEphemeral {
 			if eventLogMessage.message.ephemeralExpireTime == 0 {
@@ -923,7 +924,7 @@ struct ChatBubbleView: View {
 			} else {
 				let remaining = eventLogMessage.message.ephemeralExpireTime - Int(Date().timeIntervalSince1970)
 				self.ephemeralLifetime = remaining.convertDurationToString()
-				
+
 				if timer == nil {
 					timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
 						let updatedRemaining = eventLogMessage.message.ephemeralExpireTime - Int(Date().timeIntervalSince1970)
@@ -938,7 +939,7 @@ struct ChatBubbleView: View {
 			}
 		}
 	}
-	
+
 	private func getFileSize(atPath path: String) -> Int? {
 		do {
 			let attributes = try FileManager.default.attributesOfItem(atPath: path)
@@ -957,7 +958,7 @@ struct DynamicLinkText: View {
 	let isMessageId: Bool
 	let searchText: String
 	let participantConversationModel: [ContactAvatarModel]
-	
+
 	var body: some View {
 		Text(makeAttributedString(from: text))
 			.fixedSize(horizontal: false, vertical: true)
@@ -965,13 +966,13 @@ struct DynamicLinkText: View {
 			.lineLimit(nil)
 			.default_text_style(styleSize: 14)
 	}
-	
+
 	// MARK: - Builder
-	
+
 	private func makeAttributedString(from text: String) -> AttributedString {
 		var result = AttributedString()
 		var currentWord = ""
-		
+
 		for char in text {
 			if char == " " || char == "\n" {
 				appendWord(currentWord, to: &result)
@@ -981,19 +982,19 @@ struct DynamicLinkText: View {
 				currentWord.append(char)
 			}
 		}
-		
+
 		appendWord(currentWord, to: &result)
-		
+
 		highlightSearch(in: &result, originalText: text)
-		
+
 		return result
 	}
-	
+
 	// MARK: - Word handling
-	
+
 	private func appendWord(_ word: String, to result: inout AttributedString) {
 		guard !word.isEmpty else { return }
-		
+
 		// URL
 		if
 			let encoded = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
@@ -1007,7 +1008,7 @@ struct DynamicLinkText: View {
 			result.append(link)
 			return
 		}
-		
+
 		// Mention
 		if isMention(word),
 		   let participant = participantConversationModel.first(
@@ -1022,50 +1023,50 @@ struct DynamicLinkText: View {
 			result.append(mention)
 			return
 		}
-		
+
 		// Text
 		var normal = AttributedString(word)
 		normal.foregroundColor = Color.grayMain2c700
 		result.append(normal)
 	}
-	
+
 	// MARK: - Highlight global
-	
+
 	private func highlightSearch(
 		in attributed: inout AttributedString,
 		originalText: String
 	) {
 		guard !searchText.isEmpty && isMessageId else { return }
-		
+
 		let base = originalText.folding(
 			options: [.caseInsensitive, .diacriticInsensitive],
 			locale: .current
 		)
-		
+
 		let search = searchText.folding(
 			options: [.caseInsensitive, .diacriticInsensitive],
 			locale: .current
 		)
-		
+
 		var searchRange = base.startIndex..<base.endIndex
-		
+
 		while let found = base.range(of: search, range: searchRange) {
 			guard
 				let start = AttributedString.Index(found.lowerBound, within: attributed),
 				let end = AttributedString.Index(found.upperBound, within: attributed)
 			else { break }
-			
+
 			attributed[start..<end].font = .system(size: 14, weight: .bold)
-			
+
 			searchRange = found.upperBound..<base.endIndex
 		}
 	}
-	
+
 	// MARK: - Mention validation
-	
+
 	private func isMention(_ word: String) -> Bool {
 		guard word.first == "@", word.count > 1 else { return false }
-		
+
 		let username = word.dropFirst()
 		return username.allSatisfy {
 			$0.isLetter || $0.isNumber || $0 == "." || $0 == "_"
@@ -1076,7 +1077,7 @@ struct DynamicLinkText: View {
 enum URLType {
 	case name(String) // local file name of gif
 	case url(URL) // remote url
-	
+
 	var url: URL? {
 		switch self {
 		case .name(let name):
@@ -1092,7 +1093,7 @@ struct GifImageView: UIViewRepresentable {
 	init(_ name: URL) {
 		self.name = name
 	}
-	
+
 	func makeUIView(context: Context) -> WKWebView {
 		let webview = WKWebView()
 		let url = name
@@ -1104,7 +1105,7 @@ struct GifImageView: UIViewRepresentable {
 		}
 		return webview
 	}
-	
+
 	func updateUIView(_ uiView: WKWebView, context: Context) {
 		uiView.reload()
 	}
@@ -1140,7 +1141,7 @@ class Ticker: ObservableObject {
 struct RoundedCorner: Shape {
 	var radius: CGFloat = .infinity
 	var corners: UIRectCorner = .allCorners
-	
+
 	func path(in rect: CGRect) -> Path {
 		let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
 		return Path(path.cgPath)
@@ -1159,16 +1160,18 @@ extension View {
 
 struct CustomSlider: View {
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
-	
+
 	let eventLogMessage: EventLogMessage
-	
+
+	@State private var timer: Timer?
 	@State private var value: Double = 0.0
 	@State private var isPlaying: Bool = false
-	@State private var timer: Timer?
-	
+	@State private var cancellable: AnyCancellable?
+
 	var minTrackColor: Color = .white.opacity(0.5)
-	var maxTrackGradient: Gradient = Gradient(colors: [Color.orangeMain500, Color.orangeMain500])
-	
+	var maxTrackGradient: Gradient = Gradient(colors: [Color.orangeMain500.opacity(0.5), Color.orangeMain500])
+
+
 	var body: some View {
 		GeometryReader { geometry in
 			let radius = geometry.size.height * 0.5
@@ -1185,7 +1188,7 @@ struct CustomSlider: View {
 						.frame(width: self.value * geometry.size.width / 100, height: geometry.size.height)
 						.animation(self.value > 0 ? .linear(duration: 0.1) : nil, value: self.value)
 				}
-				
+
 				HStack {
 					Button(
 						action: {
@@ -1208,9 +1211,9 @@ struct CustomSlider: View {
 					.padding(8)
 					.background(.white)
 					.clipShape(RoundedRectangle(cornerRadius: 25))
-					
+
 					Spacer()
-					
+
 					HStack {
 						Text((eventLogMessage.message.attachments.first!.duration/1000).convertDurationToString())
 							.default_text_style(styleSize: 16)
@@ -1223,12 +1226,31 @@ struct CustomSlider: View {
 				.padding(.horizontal, 10)
 			}
 			.clipShape(RoundedRectangle(cornerRadius: radius))
+			.onAppear {
+				if eventLogMessage.message.attachments.first?.type == .voiceRecording {
+					cancellable =
+					NotificationCenter.default
+						.publisher(for: NSNotification.Name("VoiceRecording"))
+						.compactMap { $0.userInfo?["messageId"] as? String }
+						.sink { messageId in
+							if messageId == eventLogMessage.message.id {
+								conversationViewModel.startVoiceRecordPlayer(
+									voiceRecordPath: eventLogMessage.message.attachments.first!.full
+								)
+								playProgress()
+							}
+						}
+				}
+			}
 			.onDisappear {
+				cancellable?.cancel()
+				cancellable = nil
+
 				resetProgress()
 			}
 		}
 	}
-	
+
 	private func playProgress() {
 		isPlaying = true
 		self.value = conversationViewModel.getPositionVoiceRecordPlayer(voiceRecordPath: eventLogMessage.message.attachments.first!.full)
@@ -1247,17 +1269,33 @@ struct CustomSlider: View {
 					}
 				}
 			} else {
-				resetProgress()
+				self.resetProgress()
+
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+					let rows = conversationViewModel.conversationMessagesSection[0].rows
+
+					if let index = rows.firstIndex(where: { $0.eventModel.eventLogId == eventLogMessage.message.id }),
+					   rows.indices.contains(index - 1) {
+						let nextRow = rows[index - 1]
+						if nextRow.message.attachments.first?.type == .voiceRecording {
+							NotificationCenter.default.post(
+								name: NSNotification.Name("VoiceRecording"),
+								object: nil,
+								userInfo: ["messageId": nextRow.message.id]
+							)
+						}
+					}
+				}
 			}
 		}
 	}
-	
+
 	// Pause the progress
 	private func pauseProgress() {
 		isPlaying = false
 		stopProgress()
 	}
-	
+
 	// Reset the progress
 	private func resetProgress() {
 		conversationViewModel.stopVoiceRecordPlayer()
@@ -1265,7 +1303,7 @@ struct CustomSlider: View {
 		value = 0.0
 		isPlaying = false
 	}
-	
+
 	// Stop the progress and invalidate the timer
 	private func stopProgress() {
 		timer?.invalidate()

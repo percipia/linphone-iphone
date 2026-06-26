@@ -20,7 +20,7 @@
 import Foundation
 import linphonesw
 
-class CorePreferences {
+class CorePreferences: ObservableObject {
 	
 	private let config: Config
 	
@@ -150,6 +150,15 @@ class CorePreferences {
 		}
 	}
 	
+	var hideContactEdition: Bool {
+		get {
+			config.getBool(section: "ui", key: "hide_contact_edition", defaultValue: false)
+		}
+		set {
+			config.setBool(section: "ui", key: "hide_contact_edition", value: newValue)
+		}
+	}
+
 	var disableAddContact: Bool {
 		get {
 			config.getBool(section: "ui", key: "disable_add_contact", defaultValue: false)
@@ -276,6 +285,15 @@ class CorePreferences {
 		}
 	}
 	
+	var onlyAllowEarpieceDuringCall: Bool {
+		get {
+			config.getBool(section: "ui", key: "only_allow_earpiece_during_call", defaultValue: false)
+		}
+		set {
+			config.setBool(section: "ui", key: "only_allow_earpiece_during_call", value: newValue)
+		}
+	}
+
 	var printLogsInLogcat: Bool {
 		get {
 			config.getBool(section: "app", key: "debug", defaultValue: true)
@@ -321,6 +339,24 @@ class CorePreferences {
 		}
 	}
 	
+	var showChatMessageContentInNotification: Bool {
+		get {
+			config.getBool(section: "ui", key: "display_notification_content", defaultValue: true)
+		}
+		set {
+			config.setBool(section: "ui", key: "display_notification_content", value: newValue)
+		}
+	}
+	
+	var showDeveloperSettings: Bool {
+		get {
+			config.getBool(section: "ui", key: "show_developer_settings", defaultValue: false)
+		}
+		set {
+			config.setBool(section: "ui", key: "show_developer_settings", value: newValue)
+		}
+	}
+	
 	var showDialogWhenCallingDeviceUuidDirectly: Bool {
 		get {
 			config.getBool(section: "app", key: "show_confirmation_dialog_zrtp_trust_call", defaultValue: true)
@@ -336,6 +372,27 @@ class CorePreferences {
 		}
 		set {
 			config.setBool(section: "ui", key: "show_favorites_contacts", value: newValue)
+		}
+	}
+	
+	var showPastMeetings: Bool {
+		get {
+			config.getBool(section: "ui", key: "show_past_meetings", defaultValue: true)
+		}
+		set {
+			DispatchQueue.main.async {
+				self.objectWillChange.send()
+			}
+			config.setBool(section: "ui", key: "show_past_meetings", value: newValue)
+		}
+	}
+	
+	var singleSignOnClientId: String {
+		get {
+			config.getString(section: "app", key: "oidc_client_id", defaultString: "linphone")
+		}
+		set {
+			config.setString(section: "app", key: "oidc_client_id", value: newValue)
 		}
 	}
 	

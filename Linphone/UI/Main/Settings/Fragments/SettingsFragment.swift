@@ -132,7 +132,7 @@ struct SettingsFragment: View {
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-1)
 								.transition(.move(edge: .top))
 							}
@@ -167,10 +167,10 @@ struct SettingsFragment: View {
 										Toggle("settings_calls_adaptive_rate_control_title", isOn: $settingsViewModel.adaptiveRateControl)
 											.default_text_style_700(styleSize: 15)
 										
+										/*
 										Toggle("settings_calls_enable_video_title", isOn: $settingsViewModel.enableVideo)
 											.default_text_style_700(styleSize: 15)
 										
-										/*
 										Toggle("settings_calls_vibrate_while_ringing_title", isOn: $isOn)
 											.default_text_style_700(styleSize: 15)
 										*/
@@ -195,15 +195,36 @@ struct SettingsFragment: View {
 											}
 										}
 										*/
+										
+										NavigationLink(destination: {
+											SettingsAdvancedCallFragment(settingsViewModel: settingsViewModel)
+										}, label: {
+											HStack(alignment: .center) {
+												Text("settings_advanced_calls")
+													.default_text_style_700(styleSize: 15)
+													.frame(maxWidth: .infinity, alignment: .leading)
+												
+												Spacer()
+												
+												Image("caret-right")
+													.renderingMode(.template)
+													.resizable()
+													.foregroundStyle(Color.grayMain2c600)
+													.frame(width: 25, height: 25, alignment: .leading)
+											}
+											.frame(maxWidth: .infinity)
+											
+										})
 									}
 									.padding(.vertical, 30)
 									.padding(.horizontal, 20)
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-2)
 								.transition(.move(edge: .top))
+								.background(Color.gray100)
 							}
 							
 							HStack(alignment: .center) {
@@ -234,15 +255,19 @@ struct SettingsFragment: View {
 									VStack(spacing: 30) {
 										Toggle("settings_conversations_auto_download_title", isOn: $settingsViewModel.autoDownload)
 											.default_text_style_700(styleSize: 15)
+										
+										Toggle("settings_conversations_hide_message_content_in_notif_title", isOn: $settingsViewModel.hideNotificationContent)
+											.default_text_style_700(styleSize: 15)
 									}
 									.padding(.vertical, 30)
 									.padding(.horizontal, 20)
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-3)
 								.transition(.move(edge: .top))
+								.background(Color.gray100)
 							}
 							
 							HStack(alignment: .center) {
@@ -370,9 +395,10 @@ struct SettingsFragment: View {
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-4)
 								.transition(.move(edge: .top))
+								.background(Color.gray100)
 							}
 							
 							HStack(alignment: .center) {
@@ -401,6 +427,9 @@ struct SettingsFragment: View {
 							if meetingsIsOpen {
 								VStack(spacing: 0) {
 									VStack(spacing: 30) {
+										Toggle("settings_meetings_show_past_meetings_title", isOn: $settingsViewModel.showPastMeetings)
+											.default_text_style_700(styleSize: 15)
+										
 										VStack(alignment: .leading) {
 											Text("settings_meetings_default_layout_title")
 												.default_text_style_700(styleSize: 15)
@@ -435,9 +464,10 @@ struct SettingsFragment: View {
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-5)
 								.transition(.move(edge: .top))
+								.background(Color.gray100)
 							}
 							
 							HStack(alignment: .center) {
@@ -477,9 +507,10 @@ struct SettingsFragment: View {
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+								.padding(.horizontal, 20)
 								.zIndex(-6)
 								.transition(.move(edge: .top))
+								.background(Color.gray100)
 							}
 							
 							/*
@@ -522,11 +553,13 @@ struct SettingsFragment: View {
 								}
 								.background(.white)
 								.cornerRadius(15)
-								.padding(.horizontal)
+							 	.padding(.horizontal, 20)
 								.zIndex(-7)
 								.transition(.move(edge: .top))
+							 	.background(Color.gray100)
 							}
 							*/
+							
 							NavigationLink(destination: {
 								SettingsAdvancedFragment(settingsViewModel: settingsViewModel)
 							}, label: {
@@ -550,7 +583,35 @@ struct SettingsFragment: View {
 							.padding(.vertical, 10)
 							.padding(.horizontal, 20)
 							.background(Color.gray100)
+							
+							if AppServices.corePreferences.showDeveloperSettings {
+								NavigationLink(destination: {
+									SettingsDeveloperFragment(settingsViewModel: settingsViewModel)
+								}, label: {
+									HStack(alignment: .center) {
+										Text("settings_developer_title")
+											.default_text_style_800(styleSize: 18)
+											.frame(maxWidth: .infinity, alignment: .leading)
+										
+										Spacer()
+										
+										Image("caret-right")
+											.renderingMode(.template)
+											.resizable()
+											.foregroundStyle(Color.grayMain2c600)
+											.frame(width: 25, height: 25, alignment: .leading)
+											.padding(.all, 10)
+									}
+									.frame(maxWidth: .infinity)
+									
+								})
+								.padding(.vertical, 10)
+								.padding(.horizontal, 20)
+								.background(Color.gray100)
+							}
 						}
+						.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
+						.frame(maxWidth: .infinity)
 					}
 					.background(Color.gray100)
 				}

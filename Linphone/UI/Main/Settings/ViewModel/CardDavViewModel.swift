@@ -31,19 +31,24 @@ class CardDavViewModel: ObservableObject {
 	let tempRemoteAddressBookFriendList = "TempRemoteDirectoryContacts address-book"
 	
 	@Published var isEdit: Bool = false
-	@Published var displayName: String = "CardDav Test"
-	@Published var serverUrl: String = "https://dav.berfini.me/dav.php/addressbooks/BC/default/"
-	@Published var username: String = "BC"
-	@Published var password: String = "cotcot"
-	@Published var realm: String = "BaikalDAV"
+	@Published var displayName: String = ""
+	@Published var serverUrl: String = ""
+	@Published var username: String = ""
+	@Published var password: String = ""
+	@Published var realm: String = ""
 	@Published var storeNewContactsInIt: Bool = false
 	@Published var isReadOnly: Bool = false
 	
 	var isFormComplete: Bool {
-		!displayName.isEmpty &&
-		!serverUrl.isEmpty &&
-		!username.isEmpty &&
-		!realm.isEmpty
+		if !isEdit {
+			!displayName.isEmpty &&
+			!serverUrl.isEmpty &&
+			!username.isEmpty &&
+			!realm.isEmpty
+		} else {
+			!displayName.isEmpty &&
+			!serverUrl.isEmpty
+		}
 	}
 	
 	@Published var cardDavServerOperationInProgress = false
@@ -147,7 +152,7 @@ class CardDavViewModel: ObservableObject {
 		
 		self.coreContext.doOnCoreQueue { core in
 			// TODO: add dialog to ask user before removing existing friend list & auth info ?
-			if !self.isEdit == false {
+			if !self.isEdit {
 				let foundFriendList = core.getFriendListByName(name: name)
 				if let foundFriendList = foundFriendList {
 					Log.warn("\(CardDavViewModel.TAG) Friend list \(name) already exists, removing it first")
@@ -177,6 +182,15 @@ class CardDavViewModel: ObservableObject {
 			
 			if self.isEdit && self.friendList != nil {
 				Log.info("\(CardDavViewModel.TAG) Changes were made to CardDAV friend list \(name), synchronizing it")
+				self.addFriendListDelegate(friendList: self.friendList!)
+				if let friendList = self.friendList {
+					friendList.displayName = name
+					friendList.uri = if (server.hasPrefix("http://") || server.hasPrefix("https://")) {
+						server
+					} else {
+						"https://$server"
+					}
+				}
 			} else {
 				self.friendList = try? core.createFriendList()
 				

@@ -2,6 +2,6 @@ import Foundation
 
 public enum AppGitInfo {
     public static let branch = "percipia"
-    public static let commit = "159877b10"
-    public static let tag = "2.2.2"
+    public static let commit = "13aae596"
+    public static let tag = "no-tag"
 }

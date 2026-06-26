@@ -30,7 +30,7 @@ class ConversationModel: ObservableObject, Identifiable {
 	var chatRoom: ChatRoom
 	var lastMessage: ChatMessage?
 	
-	let isDisabledBecauseNotSecured: Bool = false
+	var isDisabledBecauseNotSecured: Bool = false
 	
 	static let TAG = "[Conversation Model]"
 	
@@ -45,6 +45,7 @@ class ConversationModel: ObservableObject, Identifiable {
 	@Published var lastUpdateTime: time_t
 	@Published var isMuted: Bool
 	@Published var isEphemeral: Bool
+	@Published var isEndToEndEncryptionAvailable: Bool
 	@Published var encryptionEnabled: Bool
 	@Published var lastMessagePrefixText: String
 	@Published var lastMessageText: String
@@ -68,8 +69,19 @@ class ConversationModel: ObservableObject, Identifiable {
 		self.remoteSipUri = chatRoom.peerAddress?.asStringUriOnly() ?? ""
 		
 		self.isGroup = !chatRoom.hasCapability(mask: ChatRoom.Capabilities.OneToOne.rawValue) && chatRoom.hasCapability(mask: ChatRoom.Capabilities.Conference.rawValue)
+		
+		if (!chatRoom.hasCapability(mask: ChatRoom.Capabilities.Encrypted.rawValue)) {
+			if let localAddress = chatRoom.localAddress , LinphoneUtils.getAccountForAddress(address: localAddress)?.params?.instantMessagingEncryptionMandatory == true {
+				Log.warn("\(ConversationModel.TAG) Conversation with subject \(chatRoom.subjectUtf8 ?? "No subject") is considered as read-only because it isn't encrypted and default account is in secure mode")
+				self.isDisabledBecauseNotSecured = true
+			} else {
+				self.isDisabledBecauseNotSecured = false
+			}
+		} else {
+			self.isDisabledBecauseNotSecured = false
+		}
 
-		self.isReadOnly = chatRoom.isReadOnly
+		self.isReadOnly = chatRoom.isReadOnly || self.isDisabledBecauseNotSecured
 		
 		let chatRoomParticipants = chatRoom.participants
 		let addressFriend = (chatRoomParticipants.first != nil && chatRoomParticipants.first!.address != nil)
@@ -137,6 +149,8 @@ class ConversationModel: ObservableObject, Identifiable {
 
 		self.isEphemeral = chatRoom.ephemeralEnabled
 		
+		self.isEndToEndEncryptionAvailable = true
+		
 		self.encryptionEnabled = chatRoom.currentParams != nil && chatRoom.currentParams!.encryptionEnabled
 		
 		self.lastMessage = nil
@@ -154,6 +168,15 @@ class ConversationModel: ObservableObject, Identifiable {
 		self.lastMessageInItalic = false
 
 		self.unreadMessagesCount = chatRoom.unreadMessagesCount
+		
+		
+		coreContext.doOnCoreQueue { core in
+			let isEndToEndEncryptionAvailableTmp = LinphoneUtils.isEndToEndEncryptedChatAvailable(core: core)
+			
+			DispatchQueue.main.async {
+				self.isEndToEndEncryptionAvailable = isEndToEndEncryptionAvailableTmp
+			}
+		}
 		
 		getContentTextMessage(chatRoom: chatRoom)
 	}
@@ -403,8 +426,43 @@ class ConversationModel: ObservableObject, Identifiable {
 	
 	func deleteChatRoom() {
 		CoreContext.shared.doOnCoreQueue { core in
+			Log.info("\(ConversationModel.TAG) Deleting conversation \(LinphoneUtils.getConversationId(chatRoom: self.chatRoom))")
 			core.deleteChatRoom(chatRoom: self.chatRoom)
-	   }
+			
+			DispatchQueue.main.async {
+				ToastViewModel.shared.show("Success_chatroom_deleted")
+			}
+		}
+	}
+
+	func deleteHistory() {
+		CoreContext.shared.doOnCoreQueue { _ in
+			Log.info("\(ConversationModel.TAG) Deleting history for conversation \(LinphoneUtils.getConversationId(chatRoom: self.chatRoom))")
+			self.chatRoom.deleteHistory()
+			
+			DispatchQueue.main.async {
+				self.lastMessage = nil
+				self.lastMessagePrefixText = ""
+				self.lastMessageText = ""
+				self.lastMessageIcon = ""
+				self.lastMessageIsOutgoing = false
+				self.lastMessageState = 0
+				self.lastMessageInItalic = false
+				ToastViewModel.shared.show("Success_remove_conversation_history")
+			}
+		}
+	}
+
+	func leaveChatRoom() {
+		CoreContext.shared.doOnCoreQueue { _ in
+			Log.info("\(ConversationModel.TAG) Leaving conversation \(LinphoneUtils.getConversationId(chatRoom: self.chatRoom))")
+			self.chatRoom.leave()
+			
+			DispatchQueue.main.async {
+				self.isReadOnly = true
+				ToastViewModel.shared.show("Success_left_chatroom")
+			}
+		}
 	}
 }
 // swiftlint:enable line_length

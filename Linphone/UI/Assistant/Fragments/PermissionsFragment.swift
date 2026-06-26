@@ -20,11 +20,11 @@
 import SwiftUI
 
 struct PermissionsFragment: View {
-	
+
 	var permissionManager = PermissionManager.shared
-	
+
 	@Environment(\.dismiss) var dismiss
-	
+
 	var body: some View {
 		GeometryReader { geometry in
 			if #available(iOS 16.4, *) {
@@ -43,7 +43,7 @@ struct PermissionsFragment: View {
 		.edgesIgnoringSafeArea(.bottom)
 		.edgesIgnoringSafeArea(.horizontal)
 	}
-	
+
 	func innerScrollView(geometry: GeometryProxy) -> some View {
 		VStack {
 			ZStack {
@@ -61,20 +61,20 @@ struct PermissionsFragment: View {
 						}
 					Spacer()
 				}
-				
+
 				Text("assistant_permissions_title")
 					.default_text_style_800(styleSize: 20)
 			}
 			.frame(width: geometry.size.width)
 			.padding(.top, 10)
 			.padding(.bottom, 20)
-			
+
 			Text(String(format: String(localized: "assistant_permissions_subtitle"), Bundle.main.displayName))
 				.default_text_style(styleSize: 15)
 				.multilineTextAlignment(.center)
-			
+
 			Spacer()
-			
+
 			VStack(alignment: .leading) {
 				HStack {
 					HStack(alignment: .center) {
@@ -87,13 +87,13 @@ struct PermissionsFragment: View {
 					.padding(16)
 					.background(Color.grayMain2c200)
 					.cornerRadius(40)
-					
+
 					Text("assistant_permissions_post_notifications_title")
 						.default_text_style(styleSize: 15)
 						.padding(.leading, 10)
 				}
 				.padding(.bottom)
-				
+
 				HStack {
 					HStack(alignment: .center) {
 						Image("address-book")
@@ -110,7 +110,7 @@ struct PermissionsFragment: View {
 						.padding(.leading, 10)
 				}
 				.padding(.bottom)
-				
+
 				HStack {
 					HStack(alignment: .center) {
 						Image("microphone")
@@ -122,13 +122,13 @@ struct PermissionsFragment: View {
 					.padding(16)
 					.background(Color.grayMain2c200)
 					.cornerRadius(40)
-					
+
 					Text("assistant_permissions_record_audio_title")
 						.default_text_style(styleSize: 15)
 						.padding(.leading, 10)
 				}
 				.padding(.bottom)
-				
+
 				HStack {
 					HStack(alignment: .center) {
 						Image("video-camera")
@@ -140,7 +140,7 @@ struct PermissionsFragment: View {
 					.padding(16)
 					.background(Color.grayMain2c200)
 					.cornerRadius(40)
-					
+
 					Text("assistant_permissions_access_camera_title")
 						.default_text_style(styleSize: 15)
 						.padding(.leading, 10)
@@ -150,9 +150,9 @@ struct PermissionsFragment: View {
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 			.frame(maxHeight: .infinity)
 			.padding(.horizontal, 20)
-			
+
 			Spacer()
-			
+
 			Button {
 				permissionManager.getPermissions()
 			} label: {

@@ -32,44 +32,98 @@ import Firebase
 #endif
 
 class CoreContext: ObservableObject {
-    
+
     static let shared = CoreContext()
-    
+
 	var pipViewModel = PIPViewModel()
-	
+
 	var coreVersion: String = Core.getVersion
 	@Published var loggedIn: Bool = false
 	@Published var loggingInProgress: Bool = false
 	@Published var coreHasStartedOnce: Bool = false
 	@Published var coreIsStarted: Bool = false
+	@Published var codeScannerIsOpen: Bool = false
 	@Published var accounts: [AccountModel] = []
 	@Published var shortcuts: [ShortcutModel] = []
 	var mCore: Core!
-	
+
 	var bearerAuthInfoPendingPasswordUpdate: AuthInfo?
 	var imdnToEverybodyThreshold: Bool = true
-	
+
 	let monitor = NWPathMonitor()
 	var networkStatusIsConnected: Bool = true // updated on core queue
-	
+
 	private var mCoreDelegate: CoreDelegate!
 	private var actionsToPerformOnCoreQueueWhenCoreIsStarted: [((Core) -> Void)] = []
 	private var callStateCallBacks: [((Call.State) -> Void)] = []
 	private var configuringStateCallBacks: [((ConfiguringState) -> Void)] = []
-	
+
 	var digestAuthInfoPendingPasswordUpdate: AuthInfo?
-	
+
 	@Published var reloadID = UUID()
-	
+
 	private init() {
 		do {
 			try initialiseCore()
 		} catch {
-			
+
+		}
+		observeMDMNotifications()
+	}
+
+	// MARK: - MDM notifications
+
+	private func observeMDMNotifications() {
+		NotificationCenter.default.addObserver(self, selector: #selector(onMDMConfigurationApplied(_:)), name: MDMManager.configurationAppliedNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(onMDMConfigurationRemoved), name: MDMManager.configurationRemovedNotification, object: nil)
+	}
+
+	@objc private func onMDMConfigurationApplied(_ notification: Notification) {
+		Log.info("[CoreContext] MDM configuration applied, refreshing configuration")
+		CoreContext.shared.doOnCoreQueue { core in
+			self.handleConfigurationChanged(status: .Successful)
 		}
 	}
-	
-	func doOnCoreQueue(synchronous: Bool = false, lambda: @escaping (Core) -> Void) {
+
+	@objc private func onMDMConfigurationRemoved() {
+		doOnCoreQueue { core in
+			Log.info("[CoreContext] MDM configuration removed, re-initializing app to default state")
+			var startCore = false
+			if core.globalState == .On {
+				core.stop()
+				startCore = true
+			}
+			AppServices.resetConfig()
+			self.mCore.config?.reload()
+			if startCore {
+				try?core.start()
+			}
+			self.handleConfigurationChanged(status: .Successful)
+		}
+	}
+
+	/// Shared handler for configuration changes (both from core provisioning and MDM).
+	private func handleConfigurationChanged(status: ConfiguringState) {
+		let themeMainColor = AppServices.corePreferences.themeMainColor
+		SharedMainViewModel.shared.updateConfigChanges()
+		if status == .Successful {
+			var accountModels: [AccountModel] = []
+			for account in self.mCore.accountList {
+				accountModels.append(AccountModel(account: account, core: self.mCore))
+			}
+			DispatchQueue.main.async {
+					self.accounts = accountModels
+					if accountModels.isEmpty {
+						self.loggingInProgress = false
+						self.loggedIn = false
+					}
+					ThemeManager.shared.applyTheme(named: themeMainColor)
+					self.reloadID = UUID()
+			}
+		}
+	}
+
+	func doOnCoreQueueCoreStarted(synchronous: Bool = false, lambda: @escaping (Core) -> Void) {
 		let isOnQueue = DispatchQueue.getSpecific(key: coreQueueKey) != nil
 
 		let execute = {
@@ -90,13 +144,13 @@ class CoreContext: ObservableObject {
 			coreQueue.async(execute: execute)
 		}
 	}
-	
+
 	private let coreQueueKey: DispatchSpecificKey<Void> = {
 		let key = DispatchSpecificKey<Void>()
 		coreQueue.setSpecific(key: key, value: ())
 		return key
 	}()
-	
+
 	func initialiseCore() throws {
 		Log.info("Initialising core")
 #if USE_CRASHLYTICS
@@ -116,70 +170,49 @@ class CoreContext: ObservableObject {
 				}
 				self.networkStatusIsConnected = isConnected
 			}
-			
+
 		}
 		monitor.start(queue: coreQueue)
-		
+
 		coreQueue.async {
 			LoggingService.Instance.logLevel = LogLevel.Debug
 			Factory.Instance.logCollectionPath = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (SharedMainViewModel.appGroupName as NSString).utf8String))
 			Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
-			
-			Log.info("Checking if linphonerc file exists already. If not, creating one as a copy of linphonerc-default")
-			if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
-				.appendingPathComponent("Library/Preferences/linphone") {
-				let rcFileUrl = rcDir.appendingPathComponent("linphonerc")
-				if !FileManager.default.fileExists(atPath: rcFileUrl.path) {
-					do {
-						try FileManager.default.createDirectory(at: rcDir, withIntermediateDirectories: true)
-						if let pathToDefaultConfig = Bundle.main.path(forResource: "linphonerc-default", ofType: nil) {
-							try FileManager.default.copyItem(at: URL(fileURLWithPath: pathToDefaultConfig), to: rcFileUrl)
-							Log.info("Successfully copied linphonerc-default configuration")
-						}
-					} catch let error {
-						Log.error("Failed to copy default linphonerc file: \(error.localizedDescription)")
-					}
-				} else {
-					Log.info("Found existing linphonerc file, skip copying of linphonerc-default configuration")
-				}
-			}
-			
+
+			MDMManager.shared.loadXMLConfigFromMdm(config: AppServices.config)
+
 			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
-			
+
+			MDMManager.shared.applyMdmConfigToCore(core: self.mCore)
+			self.startObservingMDMConfigurationUpdates()
+
+
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
-			
+
 			let appGitVersion = AppGitInfo.commit
 			let appGitBranch = AppGitInfo.branch
 			let appGitTag = AppGitInfo.tag
-			let sdkGitVersion = linphonesw.sdkVersion
-			var sdkGitBranch = linphonesw.sdkBranch
-			
+			let sdkGitVersion = linphonesw.LinphoneSdkInfos.version
+			var sdkGitBranch = linphonesw.LinphoneSdkInfos.branch
+
 			if sdkGitBranch.hasPrefix("remotes/origin/") {
 				sdkGitBranch = String(sdkGitBranch.dropFirst("remotes/origin/".count))
 			}
-			
+
 			Log.info("Git Info — App: \(appGitTag + "-" + appGitVersion) [\(appGitBranch)] | SDK: \(sdkGitVersion) [\(sdkGitBranch)]")
-			
+
 			let userAgent = "FrequencyConnectiOS/\(appGitTag) (\(UIDevice.current.localizedModel.replacingOccurrences(of: "'", with: ""))) LinphoneSDK"
 			self.mCore.setUserAgent(name: userAgent, version: self.coreVersion)
-			
+
 			self.mCore.videoPreviewEnabled = false
 			self.mCore.fecEnabled = true
-			
-			// Migration
-			/*
-			self.mCore.config!.setBool(section: "sip", key: "auto_answer_replacing_calls", value: false)
-			self.mCore.config!.setBool(section: "sip", key: "deliver_imdn", value: false)
-			self.mCore.config!.setString(section: "misc", key: "log_collection_upload_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
-			self.mCore.config!.setString(section: "misc", key: "file_transfer_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
-			self.mCore.config!.setString(section: "misc", key: "version_check_url_root", value: "https://download.linphone.org/releases")
-			
-			self.mCore.imdnToEverybodyThreshold = 1
-			self.imdnToEverybodyThreshold = self.mCore.imdnToEverybodyThreshold == 1
+
+			let filesDirectoriesURL = FileUtil.sharedContainerUrl().appendingPathComponent("Library/Images")
+			self.mCore.chatMessageFilesDirectories = [filesDirectoriesURL.path]
+
 			//self.copyDatabaseFileToDocumentsDirectory()
-			*/
-			
+
 			let shortcutsCount = self.mCore.config!.getInt(section: "ui", key: "shortcut_count", defaultValue: 0)
 			if shortcutsCount > 0 {
 				var shortcuts: [ShortcutModel] = []
@@ -190,7 +223,7 @@ class CoreContext: ObservableObject {
 					let name = self.mCore.config!.getString(section: shortcutSection, key: "name", defaultString: "")
 					let iconLink = self.mCore.config!.getString(section: shortcutSection, key: "icon", defaultString: "")
 					let iconLinkUrl =  URL(string: iconLink)
-					
+
 					if linkUrl == nil {
 						Log.error("Could not add shortcut #\(i) pointing to \(name) because the link URL '\(link)' is invalid")
 						continue
@@ -201,21 +234,37 @@ class CoreContext: ObservableObject {
 					}
 					shortcuts.append(ShortcutModel(linkUrl: linkUrl!, name: name, iconLinkUrl: iconLinkUrl!))
 				}
-				
+
 				DispatchQueue.main.async {
 					self.shortcuts = shortcuts
 				}
 			}
-			
+
 			for acc in self.mCore.accountList {
 				self.forceRemotePushToMatchVoipPushSettings(account: acc)
 			}
-			
+
+			let fm = FileManager.default
+
+			let folderURL = FileUtil.sharedContainerUrl().appendingPathComponent("Library/Images")
+			if !fm.fileExists(atPath: folderURL.path) {
+				do {
+					try fm.createDirectory(
+						at: folderURL,
+						withIntermediateDirectories: true,
+						attributes: nil
+					)
+					print("Images directory created.")
+				} catch {
+					print("Error creating directory: \(error)")
+				}
+			} else {
+				print("Images directory already exists.")
+			}
+
 			let container = FileUtil.sharedContainerUrl()
 			let recordingsDir = container.appendingPathComponent("Library/Recordings")
 
-			let fm = FileManager.default
-			
 			if !fm.fileExists(atPath: recordingsDir.path) {
 				do {
 					try fm.createDirectory(
@@ -230,7 +279,7 @@ class CoreContext: ObservableObject {
 			} else {
 				print("Recordings directory already exists.")
 			}
-			
+
 			self.mCoreDelegate = CoreDelegateStub(onGlobalStateChanged: { (core: Core, state: GlobalState, _: String) in
 				if state == GlobalState.On {
 #if DEBUG
@@ -241,21 +290,24 @@ class CoreContext: ObservableObject {
 					for account in core.accountList {
 						if account.params?.pushNotificationConfig?.provider != ("apns" + pushEnvironment) {
 							let newParams = account.params?.clone()
-							
+
 							Log.info("Account \(String(describing: newParams?.identityAddress?.asStringUriOnly())) - updating apple push provider from \(String(describing: newParams?.pushNotificationConfig?.provider)) to apns\(pushEnvironment)")
 							newParams?.pushNotificationConfig?.provider = "apns" + pushEnvironment
-							
+
 							account.params = newParams
 						}
 					}
-					
+
 					self.actionsToPerformOnCoreQueueWhenCoreIsStarted.forEach {	$0(core) }
 					self.actionsToPerformOnCoreQueueWhenCoreIsStarted.removeAll()
-					
+
 					var accountModels: [AccountModel] = []
 					for account in self.mCore.accountList {
 						accountModels.append(AccountModel(account: account, core: self.mCore))
 					}
+
+					self.runMigration()
+
 					DispatchQueue.main.async {
 						self.coreHasStartedOnce = true
 						self.coreIsStarted = true
@@ -266,10 +318,10 @@ class CoreContext: ObservableObject {
 						self.coreIsStarted = state == GlobalState.On
 					}
 				}
-				
+
 			}, onCallStateChanged: { (core: Core, call: Call, cstate: Call.State, message: String) in
 				TelecomManager.shared.onCallStateChanged(core: core, call: call, state: cstate, message: message)
-				
+
 				if core.calls.isEmpty {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
 						if UIApplication.shared.applicationState == .background {
@@ -279,6 +331,11 @@ class CoreContext: ObservableObject {
 					}
 				}
 			}, onAuthenticationRequested: { (core: Core, authInfo: AuthInfo, method: AuthMethod) in
+                guard self.networkStatusIsConnected else {
+                    Log.warn("[CoreContext] Authentication requested while device is offline, ignoring")
+                    return
+                }
+
 				if method == .Bearer {
 					if let server = authInfo.authorizationServer, !server.isEmpty {
 						Log.info("Authentication requested method is Bearer, starting Single Sign On activity with server URL \(server) and username \(authInfo.username ?? "")")
@@ -286,13 +343,13 @@ class CoreContext: ObservableObject {
 						SingleSignOnManager.shared.setUp(ssoUrl: server, user: authInfo.username ?? "")
 					}
 				}
-				
+
 				if method == .HttpDigest {
 					guard let username = authInfo.username, let domain = authInfo.domain, let realm = authInfo.realm else {
 						Log.error("Authentication requested but either username [\(String(describing: authInfo.username))], domain [\(String(describing: authInfo.domain))] or server [\(String(describing: authInfo.authorizationServer))] is nil or empty!")
 						return
 					}
-					
+
 					guard let accountFound = core.accountList.first(where: {
 						$0.params?.identityAddress?.username == authInfo.username &&
 						$0.params?.identityAddress?.domain == authInfo.domain
@@ -303,7 +360,7 @@ class CoreContext: ObservableObject {
 
 					let identity = "\(authInfo.username ?? "username")@\(authInfo.domain ?? "domain")"
 					Log.info("[CoreContext] Authentication requested method is HttpDigest, showing dialog asking user for password for identity [\(identity)]")
-					
+
 					DispatchQueue.main.async {
 						NotificationCenter.default.post(
 							name: NSNotification.Name("PasswordUpdate"),
@@ -311,7 +368,7 @@ class CoreContext: ObservableObject {
 							userInfo: ["address": "sip:" + identity]
 						)
 					}
-					
+
 					self.digestAuthInfoPendingPasswordUpdate = authInfo
 				}
 			}, onTransferStateChanged: { (_: Core, transferred: Call, callState: Call.State) in
@@ -327,18 +384,7 @@ class CoreContext: ObservableObject {
 				}
 			}, onConfiguringStatus: { (_: Core, status: ConfiguringState, message: String) in
 				Log.info("New configuration state is \(status) = \(message)\n")
-				SharedMainViewModel.shared.updateConfigChanges()
-				DispatchQueue.main.async {
-					if status == ConfiguringState.Successful {
-						var accountModels: [AccountModel] = []
-						for account in self.mCore.accountList {
-							accountModels.append(AccountModel(account: account, core: self.mCore))
-						}
-						self.accounts = accountModels
-						ThemeManager.shared.applyTheme(named: "percipia")
-						self.reloadID = UUID()
-					}
-				}
+				self.handleConfigurationChanged(status: status)
 			}, onLogCollectionUploadStateChanged: { (_: Core, _: Core.LogCollectionUploadState, info: String) in
 				if info.starts(with: "https") {
 					DispatchQueue.main.async {
@@ -351,21 +397,21 @@ class CoreContext: ObservableObject {
 				// Otherwise, we will be Failed.
 				Log.info("New registration state is \(state) for user id " +
 						 "\( String(describing: account.params?.identityAddress?.asString())) = \(message)\n")
-				
+
 				switch state {
 				case .Ok:
 					DispatchQueue.main.async {
 						NotificationCenter.default.post(name: NSNotification.Name("CoreStarted"), object: nil)
 					}
 					ContactsManager.shared.fetchContacts()
-					
+
 					if let defaultAccountParams = self.mCore.defaultAccount?.params, defaultAccountParams.publishEnabled == false {
 						let params = defaultAccountParams
 						let clonedParams = params.clone()
 						clonedParams?.publishEnabled = true
 						self.mCore.defaultAccount?.params = clonedParams
 					}
-					
+
 					if self.mCore.consolidatedPresence !=  ConsolidatedPresence.Online {
 						self.updatePresence(core: self.mCore, presence: ConsolidatedPresence.Online)
 					}
@@ -376,9 +422,9 @@ class CoreContext: ObservableObject {
 				default:
 					break
 				}
-				
+
 				TelecomManager.shared.onAccountRegistrationStateChanged(core: core, account: account, state: state, message: message)
-				
+
 				DispatchQueue.main.async {
 					if state == .Ok {
 						self.loggingInProgress = false
@@ -395,7 +441,7 @@ class CoreContext: ObservableObject {
 							// If network is disconnected, a toast message with key "Unavailable_network" should already be displayed
 							ToastViewModel.shared.show("Registration_failed")
 						}
-						
+
 					}
 				}
 			}, onDefaultAccountChanged: { (_: Core, account: Account?) in
@@ -405,15 +451,15 @@ class CoreContext: ObservableObject {
 						for accountModel in self.accounts {
 							accountModel.isDefaultAccount = accountModel.account == account
 						}
-						
+
 						NotificationCenter.default.post(name: NSNotification.Name("DefaultAccountChanged"), object: nil)
 					}
-					
+
 					ContactsManager.shared.fetchContacts()
 				}
 			}, onAccountAdded: { (_: Core, acc: Account) in
 				self.forceRemotePushToMatchVoipPushSettings(account: acc)
-				
+
 				var accountModels: [AccountModel] = []
 				for account in self.mCore.accountList {
 					accountModels.append(AccountModel(account: account, core: self.mCore))
@@ -435,7 +481,7 @@ class CoreContext: ObservableObject {
                     Log.info(
                         "[CoreContext][onMessageWaitingIndicationChanged] MWI NOTIFY received, messages are waiting (\(summaries.count) summaries)"
                     )
-                    
+
                     if let defaultAccount = core.defaultAccount?.params?.identityAddress, let mwiAccount = mwi.accountAddress, defaultAccount.weakEqual(address2: mwiAccount){
                         if !summaries.isEmpty {
                             let summary = summaries.first
@@ -455,25 +501,25 @@ class CoreContext: ObservableObject {
 					}
 				}
 			})
-			
+
 			self.mCore.addDelegate(delegate: self.mCoreDelegate)
-			
+
 			self.mCore.autoIterateEnabled = true
-			
+
 			try? self.mCore.start()
 		}
 	}
-	
+
 	func updatePresence(core: Core, presence: ConsolidatedPresence) {
 		if core.config!.getBool(section: "app", key: "publish_presence", defaultValue: true) {
 			core.consolidatedPresence = presence
 		}
 	}
-	
+
 	func onEnterForeground() {
 		coreQueue.async {
 			Log.info("[onEnterForegroundOrBackground] Entering foreground")
-			
+
 			try? self.mCore.start()
 		}
 	}
@@ -481,10 +527,10 @@ class CoreContext: ObservableObject {
 	func onEnterBackground() {
 		coreQueue.async {
 			Log.info("[onEnterForegroundOrBackground] Entering background, un-PUBLISHING presence info")
-			
+
 			self.updatePresence(core: self.mCore, presence: .Offline)
 			self.mCore.iterate()
-			
+
 			if self.mCore.currentCall == nil && self.mCore.globalState == .On {
 				Log.info("[onEnterForegroundOrBackground] Stopping core because no active calls")
 				self.mCore.stop()
@@ -493,28 +539,28 @@ class CoreContext: ObservableObject {
 			}
 		}
 	}
-	
+
 	func crashForCrashlytics() {
 		fatalError("Crashing app to test crashlytics")
 	}
-	
-	func performActionOnCoreQueueWhenCoreIsStarted(action: @escaping (_ core: Core) -> Void ) {
+
+	func doOnCoreQueue(synchronous: Bool = false, action: @escaping (_ core: Core) -> Void ) {
 		if coreIsStarted {
-			doOnCoreQueue { core in
+			doOnCoreQueueCoreStarted(synchronous: synchronous) { core in
 				action(core)
 			}
 		} else {
 			actionsToPerformOnCoreQueueWhenCoreIsStarted.append(action)
 		}
 	}
-	
+
 	func addCoreDelegateStub(delegate: CoreDelegateStub) {
 		mCore.addDelegate(delegate: delegate)
 	}
 	func removeCoreDelegateStub(delegate: CoreDelegateStub) {
 		mCore.removeDelegate(delegate: delegate)
 	}
-	
+
 	func forceRemotePushToMatchVoipPushSettings(account: Account) {
 		if let params = account.params, params.pushNotificationAllowed && !params.remotePushNotificationAllowed {
 			Log.warn("account \(account.displayName()): VOIP and REMOTE push setting mismatch, force \(params.pushNotificationAllowed ? "enabling" : "disabling") of REMOTE Push")
@@ -523,7 +569,7 @@ class CoreContext: ObservableObject {
 			account.params = newParams
 		}
 	}
-	
+
 	func copyDatabaseFileToDocumentsDirectory() {
 		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
 			.appendingPathComponent("Library/Application Support/linphone") {
@@ -541,19 +587,144 @@ class CoreContext: ObservableObject {
 			}
 		}
 	}
+
+	func startObservingMDMConfigurationUpdates() {
+		NotificationCenter.default.addObserver(
+			self,
+			selector: #selector(mdmConfigDidChange),
+			name: UserDefaults.didChangeNotification,
+			object: nil
+		)
+	}
+
+	@objc private func mdmConfigDidChange() {
+		guard MDMManager.shared.managedConfigChangedSinceLastCheck() else { return }
+		CoreContext.shared.doOnCoreQueue { core in
+			MDMManager.shared.applyMdmConfigToCore(core: core)
+		}
+	}
+
+	func migrateIfNeeded(from old: String, to new: String, block: () -> Void) {
+		let last = UserDefaults.standard.string(forKey: "lastMigrationVersion") ?? "0"
+
+		if last.compare(new, options: .numeric) == .orderedAscending {
+			block()
+			UserDefaults.standard.set(new, forKey: "lastMigrationVersion")
+		}
+	}
+
+	func runMigration() {
+		// Migration
+		let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
+		let lastMigration = UserDefaults.standard.string(forKey: "lastMigrationVersion") ?? "0"
+
+		if lastMigration.compare("6.2.0", options: .numeric) == .orderedAscending &&
+			currentVersion.compare("6.2.0", options: .numeric) != .orderedAscending {
+
+			self.runMigration620()
+
+			UserDefaults.standard.set("6.2.0", forKey: "lastMigrationVersion")
+		}
+	}
+
+	func runMigration600() {
+		self.mCore.config!.setBool(section: "sip", key: "auto_answer_replacing_calls", value: false)
+		self.mCore.config!.setBool(section: "sip", key: "deliver_imdn", value: false)
+		self.mCore.config!.setString(section: "misc", key: "log_collection_upload_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
+		self.mCore.config!.setString(section: "misc", key: "file_transfer_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
+		self.mCore.config!.setString(section: "misc", key: "version_check_url_root", value: "https://download.linphone.org/releases")
+
+		self.mCore.imdnToEverybodyThreshold = 1
+		self.imdnToEverybodyThreshold = self.mCore.imdnToEverybodyThreshold == 1
+	}
+
+	func runMigration620() {
+		doOnCoreQueueCoreStarted { core in
+			self.mCore.chatMessageFilesDeletionEnabled = true
+			Log.info("[CoreContext] Core is allowed to automatically delete files from previously logged directories when a chat message is deleted")
+		}
+	}
 }
 
 enum AppServices {
-	static let config = Config.newForSharedCore(
-		appGroupId: Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_NAME") as? String
-		?? {
-			fatalError("APP_GROUP_NAME not defined in Info.plist")
-		}(),
-		configFilename: "linphonerc",
-		factoryConfigFilename: FileUtil.bundleFilePath("linphonerc-factory")
-	)!
-	
-	static let corePreferences = CorePreferences(config: config)
+	private static var _config: Config?
+	private static let configLock = NSLock()
+
+	static var configIfAvailable: Config? {
+		configLock.lock()
+		defer { configLock.unlock() }
+
+		if let existing = _config {
+			return existing
+		}
+
+		setupConfigIfNeeded()
+
+		_config = Config.newForSharedCore(
+			appGroupId: Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_NAME") as? String
+			?? {
+				fatalError("APP_GROUP_NAME not defined in Info.plist")
+			}(),
+			configFilename: "linphonerc",
+			factoryConfigFilename: FileUtil.bundleFilePath("linphonerc-factory")
+		)
+
+		return _config
+	}
+
+	static var config: Config {
+		guard let config = configIfAvailable else {
+			fatalError("AppServices.config accessed before it was available")
+		}
+		return config
+	}
+
+	static func setupConfigIfNeeded() {
+		Log.info("Checking if linphonerc file exists already. If not, creating one as a copy of linphonerc-default")
+		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
+			.appendingPathComponent("Library/Preferences/linphone") {
+			let rcFileUrl = rcDir.appendingPathComponent("linphonerc")
+			if !FileManager.default.fileExists(atPath: rcFileUrl.path) {
+				do {
+					try FileManager.default.createDirectory(at: rcDir, withIntermediateDirectories: true)
+					if let pathToDefaultConfig = Bundle.main.path(forResource: "linphonerc-default", ofType: nil) {
+						try FileManager.default.copyItem(at: URL(fileURLWithPath: pathToDefaultConfig), to: rcFileUrl)
+						Log.info("Successfully copied linphonerc-default configuration")
+					}
+				} catch let error {
+					Log.error("Failed to copy default linphonerc file: \(error.localizedDescription)")
+				}
+			} else {
+				Log.info("Found existing linphonerc file, skip copying of linphonerc-default configuration")
+			}
+		}
+	}
+
+	static func resetConfig() {
+		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
+			.appendingPathComponent("Library/Preferences/linphone") {
+			let rcFileUrl = rcDir.appendingPathComponent("linphonerc")
+			do {
+				try FileManager.default.createDirectory(at: rcDir, withIntermediateDirectories: true)
+				if let pathToDefaultConfig = Bundle.main.path(forResource: "linphonerc-default", ofType: nil) {
+					if FileManager.default.fileExists(atPath: rcFileUrl.path) {
+						try FileManager.default.removeItem(at: rcFileUrl)
+					}
+					try FileManager.default.copyItem(at: URL(fileURLWithPath: pathToDefaultConfig), to: rcFileUrl)
+					Log.info("Successfully copied linphonerc-default configuration")
+					configLock.lock()
+					_config = nil
+					configLock.unlock()
+					let _ = configIfAvailable
+					corePreferences = CorePreferences(config: config)
+				}
+			} catch let error {
+				Log.error("Failed to copy default linphonerc file: \(error.localizedDescription)")
+			}
+		}
+	}
+
+	static var corePreferences = CorePreferences(config: config)
 }
 
 // swiftlint:enable line_length

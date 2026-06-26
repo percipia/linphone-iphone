@@ -99,7 +99,7 @@ class ConversationViewModel: ObservableObject {
 	
 	var vrpManager: VoiceRecordPlayerManager?
 	@Published var isPlaying = false
-	@Published var progress: Double = 0.0
+	@Published var isRecording = false
 	
 	@Published var attachments: [Attachment] = []
 	@Published var attachmentTransferInProgress: Attachment?
@@ -111,6 +111,8 @@ class ConversationViewModel: ObservableObject {
 	@Published var canSearchDown = false
 	@Published var searchInProgress = false
 	@Published var highlightedMessageID: String?
+	
+	@Published var peerAddress = ""
 	
 	var latestMatch: EventLogMessage?
 	
@@ -161,7 +163,7 @@ class ConversationViewModel: ObservableObject {
 				if displayedConversation.isGroup {
 					self.getEventMessage(eventLog: eventLog)
 				}
-				let isReadOnly = chatRoom.isReadOnly
+				let isReadOnly = chatRoom.isReadOnly || displayedConversation.isDisabledBecauseNotSecured
 				DispatchQueue.main.async {
 					displayedConversation.isReadOnly = isReadOnly
 				}
@@ -171,7 +173,7 @@ class ConversationViewModel: ObservableObject {
 				if displayedConversation.isGroup {
 					self.getEventMessage(eventLog: eventLog)
 				}
-				let isReadOnly = chatRoom.isReadOnly
+				let isReadOnly = chatRoom.isReadOnly  || displayedConversation.isDisabledBecauseNotSecured
 				DispatchQueue.main.async {
 					displayedConversation.isReadOnly = isReadOnly
 				}
@@ -688,6 +690,16 @@ class ConversationViewModel: ObservableObject {
 			self.getParticipantConversationModel()
 			self.computeComposingLabel()
 			self.getEphemeralTime()
+			
+			if let displayedConversation = self.sharedMainViewModel.displayedConversation {
+				let isReadOnlyTmp = displayedConversation.chatRoom.isReadOnly || displayedConversation.isDisabledBecauseNotSecured
+				let peerAddressTmp = displayedConversation.chatRoom.peerAddress?.asStringUriOnly() ?? ""
+				
+				DispatchQueue.main.async {
+					displayedConversation.isReadOnly = isReadOnlyTmp
+					self.peerAddress = peerAddressTmp
+				}
+			}
 			
 			if self.sharedMainViewModel.displayedConversation != nil {
 				let historyEvents = self.sharedMainViewModel.displayedConversation!.chatRoom.getHistoryRangeEvents(begin: 0, end: 30)
@@ -1507,6 +1519,10 @@ class ConversationViewModel: ObservableObject {
 						
 						if !eventLogMessage.message.isOutgoing {
 							self.displayedConversationUnreadMessagesCount = unreadMessagesCount
+							
+							if !self.isPlaying && !self.isRecording {
+								SoundPlayer.shared.playIncomingMessage()
+							}
 						}
 					}
 				}
@@ -2471,7 +2487,7 @@ class ConversationViewModel: ObservableObject {
 					fileURL = baseURL.appendingPathComponent("\(counter)_\(contentName)")
 					counter += 1
 				}
-
+				
 				content.filePath = fileURL.path
 				Log.info(
 					"[ConversationViewModel] File \(contentName) will be downloaded at \(content.filePath ?? "NIL")"
@@ -2582,9 +2598,17 @@ class ConversationViewModel: ObservableObject {
 							
 							let indexMessageSelected = self.conversationMessagesSection[0].rows.firstIndex(of: self.selectedMessageToDisplayDetails!)
 							
+							var reactionsTmp: [String] = []
+							if let messageToSendReactionTmp = messageToSendReaction {
+								messageToSendReactionTmp.reactions.forEach({ chatMessageReaction in
+									reactionsTmp.append(chatMessageReaction.body)
+								})
+							}
+							
 							DispatchQueue.main.async {
 								if indexMessageSelected != nil {
 									self.conversationMessagesSection[0].rows[indexMessageSelected!].message.ownReaction = ""
+									self.conversationMessagesSection[0].rows[indexMessageSelected!].message.reactions = reactionsTmp
 								}
 								self.selectedMessageToDisplayDetails = nil
 								self.isShowSelectedMessageToDisplayDetails = false
@@ -2610,9 +2634,17 @@ class ConversationViewModel: ObservableObject {
 						
 						let indexMessageSelected = self.conversationMessagesSection[0].rows.firstIndex(of: self.selectedMessage!)
 						
+						var reactionsTmp: [String] = []
+						if let messageToSendReactionTmp = messageToSendReaction {
+							messageToSendReactionTmp.reactions.forEach({ chatMessageReaction in
+								reactionsTmp.append(chatMessageReaction.body)
+							})
+						}
+						
 						DispatchQueue.main.async {
 							if indexMessageSelected != nil {
-								self.conversationMessagesSection[0].rows[indexMessageSelected!].message.ownReaction = messageToSendReaction?.ownReaction?.body == emoji ? "" : emoji
+								self.conversationMessagesSection[0].rows[indexMessageSelected!].message.ownReaction = messageToSendReaction?.ownReaction?.body ?? ""
+								self.conversationMessagesSection[0].rows[indexMessageSelected!].message.reactions = reactionsTmp
 							}
 							self.selectedMessage = nil
 						}
@@ -2764,11 +2796,14 @@ class ConversationViewModel: ObservableObject {
 	func startVoiceRecordPlayer(voiceRecordPath: URL) {
 		coreContext.doOnCoreQueue { core in
 			if self.vrpManager == nil || self.vrpManager!.voiceRecordPath != voiceRecordPath {
-				self.vrpManager = VoiceRecordPlayerManager(core: core, voiceRecordPath: voiceRecordPath)
+				self.vrpManager = VoiceRecordPlayerManager(core: core, voiceRecordPath: voiceRecordPath, isPlaying: self.isPlaying)
 			}
 			
 			if self.vrpManager != nil {
 				self.vrpManager!.startVoiceRecordPlayer()
+				DispatchQueue.main.async {
+					self.isPlaying = true
+				}
 			}
 		}
 	}
@@ -2793,6 +2828,9 @@ class ConversationViewModel: ObservableObject {
 		coreContext.doOnCoreQueue { _ in
 			if self.vrpManager != nil {
 				self.vrpManager!.pauseVoiceRecordPlayer()
+				DispatchQueue.main.async {
+					self.isPlaying = false
+				}
 			}
 		}
 	}
@@ -2801,6 +2839,9 @@ class ConversationViewModel: ObservableObject {
 		coreContext.doOnCoreQueue { _ in
 			if self.vrpManager != nil {
 				self.vrpManager!.stopVoiceRecordPlayer()
+				DispatchQueue.main.async {
+					self.isPlaying = false
+				}
 			}
 		}
 	}
@@ -3133,6 +3174,7 @@ class ConversationViewModel: ObservableObject {
 						}
 					}
 					self.selectedMessage = nil
+					ToastViewModel.shared.show("Success_message_deleted")
 				}
 			}
 		}
@@ -3535,9 +3577,12 @@ class VoiceRecordPlayerManager {
 	//private var voiceRecordPlayerPosition: Double = 0
 	//private var voiceRecordingDuration: TimeInterval = 0
 	
-	init(core: Core, voiceRecordPath: URL) {
+	@State var isPlaying: Bool
+	
+	init(core: Core, voiceRecordPath: URL, isPlaying: Bool) {
 		self.core = core
 		self.voiceRecordPath = voiceRecordPath
+		self.isPlaying = isPlaying
 	}
 	
 	private func initVoiceRecordPlayer() {
@@ -3563,7 +3608,11 @@ class VoiceRecordPlayerManager {
 		if voiceRecordAudioFocusRequest == nil {
 			voiceRecordAudioFocusRequest = AVAudioSession.sharedInstance()
 			if let request = voiceRecordAudioFocusRequest {
-				try? request.setActive(true)
+				do {
+					try configureAudio(.voiceMessage)
+				} catch {
+					print("Audio session error: \(error)")
+				}
 			}
 		}
 		
@@ -3579,6 +3628,7 @@ class VoiceRecordPlayerManager {
 		}
 		
 		do {
+			self.isPlaying = true
 			try voiceRecordPlayer!.start()
 			print("Playing voice record")
 		} catch {
@@ -3596,8 +3646,9 @@ class VoiceRecordPlayerManager {
 	
 	func pauseVoiceRecordPlayer() {
 		if !isPlayerClosed() {
-			print("Pausing voice record")
+			self.isPlaying = false
 			try? voiceRecordPlayer?.pause()
+			print("Pausing voice record")
 		}
 	}
 	
@@ -3607,10 +3658,11 @@ class VoiceRecordPlayerManager {
 	
 	func stopVoiceRecordPlayer() {
 		if !isPlayerClosed() {
-			print("Stopping voice record")
+			self.isPlaying = false
 			try? voiceRecordPlayer?.pause()
 			try? voiceRecordPlayer?.seek(timeMs: 0)
 			voiceRecordPlayer?.close()
+			print("Stopping voice record")
 		}
 		
 		if let request = voiceRecordAudioFocusRequest {
@@ -3674,8 +3726,8 @@ class AudioRecorder: NSObject, ObservableObject {
 		
 		if recordingSession != nil {
 			do {
-				try recordingSession!.setCategory(.playAndRecord, mode: .default)
-				try recordingSession!.setActive(true)
+				try configureAudio(.recording)
+				
 				recordingSession!.requestRecordPermission { allowed in
 					if allowed {
 						self.initVoiceRecorder()
@@ -3684,7 +3736,7 @@ class AudioRecorder: NSObject, ObservableObject {
 					}
 				}
 			} catch {
-				print("Failed to setup recording session.")
+				print("Audio session error: \(error)")
 			}
 		}
 	}

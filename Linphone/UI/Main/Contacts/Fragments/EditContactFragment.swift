@@ -22,39 +22,39 @@ import linphonesw
 
 // swiftlint:disable type_body_length
 struct EditContactFragment: View {
-	
+
 	@Environment(\.dismiss) var dismiss
-	
+
 	private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 	@State private var orientation = UIDevice.current.orientation
-	
+
 	@StateObject private var editContactViewModel: EditContactViewModel
 	@StateObject private var keyboard = KeyboardResponder()
-	
+
 	@Binding var isShowEditContactFragment: Bool
 	@Binding var isShowDismissPopup: Bool
 	let isShowEditContactFragmentAddress: String
-	
+
 	@State private var delayedColor = Color.white
-	
+
 	@FocusState var isFirstNameFocused: Bool
 	@FocusState var isLastNameFocused: Bool
 	@FocusState var isSIPAddressFocused: Int?
 	@FocusState var isPhoneNumberFocused: Int?
 	@FocusState var isCompanyFocused: Bool
 	@FocusState var isJobTitleFocused: Bool
-	
+
 	@State private var showPhotoPicker = false
 	@State private var selectedImage: UIImage?
 	@State private var removedImage = false
-	
+
 	init(contactAvatarModel: ContactAvatarModel? = nil, isShowEditContactFragment: Binding<Bool>, isShowDismissPopup: Binding<Bool>, isShowEditContactFragmentAddress: String = "") {
 		_editContactViewModel = StateObject(wrappedValue: EditContactViewModel(contactAvatarModel: contactAvatarModel))
 		self._isShowEditContactFragment = isShowEditContactFragment
 		self._isShowDismissPopup = isShowDismissPopup
 		self.isShowEditContactFragmentAddress = isShowEditContactFragmentAddress
 	}
-	
+
 	var body: some View {
 		ZStack {
 			VStack(spacing: 1) {
@@ -87,7 +87,7 @@ struct EditContactFragment: View {
 							.frame(height: 1)
 					}
 				}
-				
+
 				HStack {
 					Image("caret-left")
 						.renderingMode(.template)
@@ -126,22 +126,26 @@ struct EditContactFragment: View {
 								}
 							}
 						}
-					
+
 					Text(editContactViewModel.selectedEditFriend == nil ? "contact_new_title" : "contact_edit_title")
 						.multilineTextAlignment(.leading)
 						.default_text_style_orange_800(styleSize: 16)
-					
+
 					Spacer()
-					
+
 					Image("check")
 						.renderingMode(.template)
 						.resizable()
-						.foregroundStyle(editContactViewModel.firstName.isEmpty ? Color.orangeMain500 : Color.orangeMain500)
+						.foregroundStyle(
+							editContactViewModel.firstName.isEmpty
+							? Color.orangeMain100
+							: Color.orangeMain500
+						)
 						.frame(width: 25, height: 25, alignment: .leading)
 						.padding(.all, 10)
 						.padding(.top, 2)
-						.disabled(editContactViewModel.firstName.isEmpty)
 						.onTapGesture {
+							guard !editContactViewModel.firstName.isEmpty else { return }
 							addOrEditFriend()
 						}
 				}
@@ -150,15 +154,15 @@ struct EditContactFragment: View {
 				.padding(.horizontal)
 				.padding(.bottom, 4)
 				.background(.white)
-				
+
 				ScrollView {
 					VStack(spacing: 0) {
 						VStack(spacing: 0) {
 							VStack(spacing: 0) {
 								if editContactViewModel.selectedEditFriend != nil && selectedImage == nil && !removedImage {
-									
+
 									Avatar(contactAvatarModel: editContactViewModel.selectedEditFriend!, avatarSize: 100)
-									
+
 								} else if selectedImage == nil {
 									Image("profil-picture-default")
 										.resizable()
@@ -171,13 +175,13 @@ struct EditContactFragment: View {
 										.frame(width: 100, height: 100)
 										.clipShape(Circle())
 								}
-								
+
 								if editContactViewModel.selectedEditFriend != nil
 									&& !editContactViewModel.selectedEditFriend!.photo.isEmpty
 									&& (editContactViewModel.selectedEditFriend!.photo.suffix(11) != "default.png" || selectedImage != nil) && !removedImage {
 									HStack {
 										Spacer()
-										
+
 										Button(action: {
 											showPhotoPicker = true
 										}, label: {
@@ -185,7 +189,7 @@ struct EditContactFragment: View {
 												Image("pencil-simple")
 													.resizable()
 													.frame(width: 20, height: 20)
-												
+
 												Text("manage_account_edit_picture")
 													.foregroundStyle(Color.grayMain2c700)
 													.multilineTextAlignment(.center)
@@ -211,7 +215,7 @@ struct EditContactFragment: View {
 											}
 											.edgesIgnoringSafeArea(.all)
 										}
-										
+
 										Button(action: {
 											removedImage = true
 											selectedImage = nil
@@ -220,7 +224,7 @@ struct EditContactFragment: View {
 												Image("trash-simple")
 													.resizable()
 													.frame(width: 20, height: 20)
-												
+
 												Text("manage_account_remove_picture")
 													.foregroundStyle(Color.grayMain2c700)
 													.multilineTextAlignment(.center)
@@ -228,7 +232,7 @@ struct EditContactFragment: View {
 											}
 										})
 										.padding(.top, 10)
-										
+
 										Spacer()
 									}
 								} else {
@@ -239,7 +243,7 @@ struct EditContactFragment: View {
 											Image("camera")
 												.resizable()
 												.frame(width: 20, height: 20)
-											
+
 											Text("manage_account_add_picture")
 												.foregroundStyle(Color.grayMain2c700)
 												.multilineTextAlignment(.center)
@@ -270,12 +274,12 @@ struct EditContactFragment: View {
 							.frame(maxWidth: .infinity)
 							.padding(.top, 10)
 							.background(Color.gray100)
-							
+
 							VStack(alignment: .leading) {
 								Text(String(localized: "contact_editor_first_name") + "*")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								TextField("contact_editor_first_name", text: $editContactViewModel.firstName)
 									.default_text_style(styleSize: 15)
 									.frame(height: 25)
@@ -291,12 +295,12 @@ struct EditContactFragment: View {
 									.padding(.bottom)
 									.focused($isFirstNameFocused)
 							}
-							
+
 							VStack(alignment: .leading) {
 								Text("contact_editor_last_name")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								TextField("contact_editor_last_name", text: $editContactViewModel.lastName)
 									.default_text_style(styleSize: 15)
 									.frame(height: 25)
@@ -312,12 +316,12 @@ struct EditContactFragment: View {
 									.padding(.bottom)
 									.focused($isLastNameFocused)
 							}
-							
+
 							VStack(alignment: .leading) {
 								Text("sip_address")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								ForEach(editContactViewModel.sipAddresses.indices, id: \.self) { index in
 									HStack(alignment: .center) {
 										TextField("sip_address", text: $editContactViewModel.sipAddresses[index])
@@ -340,7 +344,7 @@ struct EditContactFragment: View {
 													editContactViewModel.sipAddresses.append("")
 												}
 											}
-										
+
 										Button(action: {
 											guard editContactViewModel.sipAddresses.indices.contains(index) else { return }
 											editContactViewModel.sipAddresses.remove(at: index)
@@ -361,12 +365,12 @@ struct EditContactFragment: View {
 								}
 							}
 							.padding(.bottom)
-							
+
 							VStack(alignment: .leading) {
 								Text("phone_number")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								ForEach(editContactViewModel.phoneNumbers.indices, id: \.self) { index in
 									HStack(alignment: .center) {
 										TextField("phone_number", text: $editContactViewModel.phoneNumbers[index])
@@ -391,7 +395,7 @@ struct EditContactFragment: View {
 													}
 												}
 											}
-										
+
 										Button(action: {
 											guard editContactViewModel.phoneNumbers.indices.contains(index) else { return }
 											editContactViewModel.phoneNumbers.remove(at: index)
@@ -414,12 +418,12 @@ struct EditContactFragment: View {
 								}
 							}
 							.padding(.bottom)
-							
+
 							VStack(alignment: .leading) {
 								Text("contact_editor_company")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								TextField("contact_editor_company", text: $editContactViewModel.company)
 									.default_text_style(styleSize: 15)
 									.frame(height: 25)
@@ -435,12 +439,12 @@ struct EditContactFragment: View {
 									.padding(.bottom)
 									.focused($isCompanyFocused)
 							}
-							
+
 							VStack(alignment: .leading) {
 								Text("contact_editor_job_title")
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
-								
+
 								TextField("contact_editor_job_title", text: $editContactViewModel.jobTitle)
 									.default_text_style(styleSize: 15)
 									.frame(height: 25)
@@ -465,10 +469,10 @@ struct EditContactFragment: View {
 				.background(Color.gray100)
 			}
 			.background(.white)
-			
+
 			if !isShowEditContactFragment {
 				ZStack {
-					
+
 				}.onAppear {
 					if editContactViewModel.selectedEditFriend != nil {
 						dismiss()
@@ -486,12 +490,12 @@ struct EditContactFragment: View {
 			}
 		}
 	}
-	
+
 	@Sendable private func delayColor() async {
 		try? await Task.sleep(nanoseconds: 250_000_000)
 		delayedColor = Color.orangeMain500
 	}
-	
+
 	func delayColorDismiss() {
 		if editContactViewModel.selectedEditFriend == nil {
 			Task {
@@ -500,7 +504,7 @@ struct EditContactFragment: View {
 			}
 		}
 	}
-	
+
 	func addOrEditFriend() {
 		CoreContext.shared.doOnCoreQueue { core in
 			let newContact = Contact(
@@ -514,23 +518,23 @@ struct EditContactFragment: View {
 				phoneNumbers: editContactViewModel.phoneNumbers.map { PhoneNumber(numLabel: "", num: $0) },
 				imageData: ""
 			)
-			
+
 			let existingFriend = editContactViewModel.selectedEditFriend?.friend
 			let friendHasCustomPhoto = existingFriend?.photo?.suffix(11) != "default.png"
-			
+
 			// Case: editing existing friend without changing the image
 			if let existingFriend = existingFriend,
 			   selectedImage == nil,
 			   !removedImage,
 			   friendHasCustomPhoto,
 			   let photo = existingFriend.photo {
-				
+
 				let resultPhoto = String(photo.dropFirst(6))
 				ContactsManager.shared.saveFriend(result: resultPhoto, contact: newContact, existingFriend: existingFriend) { _ in
 					self.updateAvatar(for: existingFriend)
 					self.finishUIUpdate(existingFriend: existingFriend)
 				}
-				
+
 			} else {
 				// Case: creating new friend or updating with a new image
 				let imageToSave = selectedImage ?? ContactsManager.shared.textToImage(
@@ -538,7 +542,7 @@ struct EditContactFragment: View {
 					lastName: editContactViewModel.lastName
 				)
 				let prefix = selectedImage == nil ? "-default" : ""
-				
+
 				saveImageThreadSafe(
 					image: imageToSave,
 					name: editContactViewModel.firstName + editContactViewModel.lastName,
@@ -550,7 +554,7 @@ struct EditContactFragment: View {
 			}
 		}
 	}
-	
+
 	private func saveImageThreadSafe(image: UIImage, name: String, prefix: String, contact: Contact, existingFriend: Friend?, linphoneFriend: String) {
 		ContactsManager.shared.saveImage(
 			image: image,

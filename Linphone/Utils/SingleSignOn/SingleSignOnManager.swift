@@ -22,7 +22,7 @@ import linphonesw
 import AppAuth
 
 class SingleSignOnManager {
-	
+
 	static let shared = SingleSignOnManager()
 
 	private let TAG = "[SSO]"
@@ -34,7 +34,7 @@ class SingleSignOnManager {
 	private var authState: AuthState?
 	private var authService: OIDAuthorizationService?
 	var currentAuthorizationFlow: OIDExternalUserAgentSession?
-	
+
 	func persistedAuthState() -> AuthState? {
 		if let persistentAuthState =  UserDefaults.standard.object(forKey: userDefaultSSOKey), let fromDictionary = persistentAuthState as? [String: Any] {
 			return AuthState(dictionary: fromDictionary)
@@ -42,13 +42,13 @@ class SingleSignOnManager {
 			return nil
 		}
 	}
-	
+
 	func persistAuthState() {
 		if let authState = authState {
 			UserDefaults.standard.set(authState.asDictionary, forKey: userDefaultSSOKey)
 		}
 	}
-	
+
 	func setUp(ssoUrl: String, user: String = "") {
 		singleSignOnUrl = ssoUrl
 		username = user
@@ -56,7 +56,7 @@ class SingleSignOnManager {
 		authState = persistedAuthState()
 		updateTokenInfo()
 	}
-	
+
 	private func updateTokenInfo() {
 		Log.info("\(TAG) Updating token info")
 		if authState?.isAuthorized == true {
@@ -78,7 +78,7 @@ class SingleSignOnManager {
 			singleSignOn()
 		}
 	}
-	
+
 	private func performRefreshToken() {
 		Log.info("\(TAG) Refreshing token")
 		if let issuer = URL(string: singleSignOnUrl) {
@@ -87,6 +87,7 @@ class SingleSignOnManager {
 					Log.error("\(self.TAG) Error retrieving discovery document: \(error?.localizedDescription ?? "Unknown error")")
 					return
 				}
+
 				let request = OIDTokenRequest(
 					configuration: configuration,
 					grantType: OIDGrantTypeRefreshToken,
@@ -98,7 +99,7 @@ class SingleSignOnManager {
 					refreshToken: refreshToken,
 					codeVerifier: nil,
 					additionalParameters: nil)
-				
+
 				OIDAuthorizationService.perform(request) { tokenResponse, error in
 					if error != nil {
 						Log.error("\(self.TAG) Error occured refreshing token \(String(describing: error))")
@@ -119,7 +120,7 @@ class SingleSignOnManager {
 			}
 		}
 	}
-	
+
 	private func singleSignOn() {
 		if let issuer = URL(string: singleSignOnUrl) {
 			OIDAuthorizationService.discoverConfiguration(forIssuer: issuer) { configuration, error in
@@ -127,7 +128,7 @@ class SingleSignOnManager {
 					Log.error("\(self.TAG) Error retrieving discovery document: \(error?.localizedDescription ?? "Unknown error")")
 					return
 				}
-				
+
 				let request = OIDAuthorizationRequest(configuration: configuration,
 													  clientId: self.clientId,
 													  scopes: ["offline_access"],
@@ -154,7 +155,7 @@ class SingleSignOnManager {
 			}
 		}
 	}
-	
+
 	private func storeTokensInAuthInfo() {
 		CoreContext.shared.doOnCoreQueue { core in
 			if let expire = self.authState?.accessTokenExpirationTime?.timeIntervalSince1970,

@@ -41,8 +41,8 @@ class HelpViewModel: ObservableObject {
 		let appGitVersion = AppGitInfo.commit
 		let appGitBranch = AppGitInfo.branch
 		let appGitTag = AppGitInfo.tag
-		let sdkGitVersion = linphonesw.sdkVersion
-		var sdkGitBranch = linphonesw.sdkBranch
+		let sdkGitVersion = linphonesw.LinphoneSdkInfos.version
+		var sdkGitBranch = linphonesw.LinphoneSdkInfos.branch
 		
 		if sdkGitBranch.hasPrefix("remotes/origin/") {
 			sdkGitBranch = String(sdkGitBranch.dropFirst("remotes/origin/".count))
@@ -169,20 +169,6 @@ class HelpViewModel: ObservableObject {
 				} else {
 					Log.e("\(self.TAG) Failed to save .linphonerc string as file in cache folder")
 				}
-			}
-		}
-	}
-
-	func clearNativeFriendsDatabase() {
-		CoreContext.shared.doOnCoreQueue { core in
-			if let list = core.getFriendListByName(NATIVE_ADDRESS_BOOK_FRIEND_LIST) {
-				let friends = list.friends
-				Log.i("\(self.TAG) Friend list to remove found with [\(friends.count)] friends")
-				for friend in friends {
-					list.removeFriend(friend)
-				}
-				core.removeFriendList(list)
-				Log.i("\(self.TAG) Friend list [\(NATIVE_ADDRESS_BOOK_FRIEND_LIST)] removed")
 			}
 		}
 	}

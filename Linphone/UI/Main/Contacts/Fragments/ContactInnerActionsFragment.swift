@@ -23,19 +23,27 @@ import linphonesw
 // swiftlint:disable type_body_length
 struct ContactInnerActionsFragment: View {
 	
-	@ObservedObject var contactsManager = ContactsManager.shared
 	@ObservedObject private var telecomManager = TelecomManager.shared
+	@ObservedObject private var contactsManager = ContactsManager.shared
+	@ObservedObject private var sharedMainViewModel = SharedMainViewModel.shared
 	
 	@EnvironmentObject var contactAvatarModel: ContactAvatarModel
 	@EnvironmentObject var contactsListViewModel: ContactsListViewModel
 	
+	@State private var trustIsOpen = true
 	@State private var informationIsOpen = true
 	
 	@Binding var showingSheet: Bool
 	@Binding var showShareSheet: Bool
 	@Binding var isShowDeletePopup: Bool
 	@Binding var isShowDismissPopup: Bool
+	@Binding var isShowTrustLevelPopup: Bool
+	@Binding var isShowMediaFilesFragment: Bool
+	@Binding var isShowDocumentsFilesFragment: Bool
+	@Binding var isShowIncreaseTrustLevelPopup: Bool
 	@Binding var isShowEditContactFragmentInContactDetails: Bool
+	
+	let geometry: GeometryProxy
 	
 	var actionEditButton: () -> Void
 	
@@ -180,11 +188,13 @@ struct ContactInnerActionsFragment: View {
 				.padding(.horizontal)
 				.zIndex(-1)
 				.transition(.move(edge: .top))
+				.background(Color.gray100)
 			}
 		} else {
 			HStack {}
 				.frame(height: 20)
 		}
+		
 		
 		if !contactAvatarModel.organization.isEmpty || !contactAvatarModel.jobTitle.isEmpty {
 			VStack {
@@ -213,22 +223,274 @@ struct ContactInnerActionsFragment: View {
 			.transition(.move(edge: .top))
 		}
 		
-		// TODO Trust Fragment
+		HStack(alignment: .center) {
+			Button {
+				isShowTrustLevelPopup = true
+			} label: {
+				HStack {
+					Text("contact_details_trust_title")
+						.default_text_style_800(styleSize: 15)
+					
+					Image("question")
+						.renderingMode(.template)
+						.resizable()
+						.foregroundStyle(Color.grayMain2c600)
+						.frame(width: 22, height: 22)
+				}
+			}
+			
+			Spacer()
+			
+			Image(trustIsOpen ? "caret-up" : "caret-down")
+				.renderingMode(.template)
+				.resizable()
+				.foregroundStyle(Color.grayMain2c600)
+				.frame(width: 25, height: 25, alignment: .leading)
+				.padding(.all, 10)
+		}
+		.padding(.vertical, 10)
+		.padding(.horizontal, 16)
+		.background(Color.gray100)
+		.onTapGesture {
+			withAnimation {
+				trustIsOpen.toggle()
+			}
+		}
 		
-		// TODO Medias Fragment
+		if trustIsOpen {
+			VStack(spacing: 0) {
+				if !contactsListViewModel.devices.isEmpty {
+					Text("contact_details_trusted_devices_count")
+						.default_text_style_700(styleSize: 14)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.top, 20)
+						.padding(.horizontal, 20)
+						.padding(.bottom, 10)
+					
+					let radius = geometry.size.height * 0.5
+					let barWidth = min(geometry.size.width - 70, SharedMainViewModel.shared.maxWidth - 70)
+					
+					ZStack(alignment: .leading) {
+						Rectangle()
+							.foregroundColor(Color.blueInfo500.opacity(0.2))
+							.frame(width: barWidth, height: 30)
+							.clipShape(RoundedRectangle(cornerRadius: radius))
+						
+						if contactsListViewModel.trustedDevicesPercentage >= 15 {
+							Rectangle()
+								.foregroundColor(Color.blueInfo500)
+								.frame(width: ((contactsListViewModel.trustedDevicesPercentage / 100) * barWidth) - 6, height: 25)
+								.clipShape(RoundedRectangle(cornerRadius: radius))
+								.padding(.horizontal, 3)
+						} else if contactsListViewModel.trustedDevicesPercentage > 0 {
+							Rectangle()
+								.foregroundColor(Color.blueInfo500)
+								.frame(width: ((10 / 100) * barWidth) - 6, height: 25)
+								.clipShape(RoundedRectangle(cornerRadius: radius))
+								.padding(.horizontal, 3)
+						}
+						
+						if contactsListViewModel.trustedDevicesPercentage >= 30 {
+							Text(String(Int(contactsListViewModel.trustedDevicesPercentage)) + "%")
+								.default_text_style_white_700(styleSize: 14)
+								.frame(width: (contactsListViewModel.trustedDevicesPercentage / 100) * barWidth, height: 25, alignment: .center)
+						} else {
+							Text(String(Int(contactsListViewModel.trustedDevicesPercentage)) + "%")
+								.foregroundStyle(contactsListViewModel.trustedDevicesPercentage == 0 ? Color.redDanger500 : Color.blueInfo500)
+								.default_text_style_white_700(styleSize: 14)
+								.frame(width: barWidth, height: 25, alignment: .center)
+						}
+					}
+					.frame(width: barWidth, height: 30)
+					.contentShape(Rectangle())
+					.padding(.bottom, 10)
+					
+					ForEach(contactsListViewModel.devices) { device in
+						HStack {
+							Text(device.name)
+								.default_text_style(styleSize: 14)
+								.frame(maxWidth: .infinity, alignment: .leading)
+							
+							HStack {
+								if !device.trusted {
+									Button {
+										SharedMainViewModel.shared.increaseTrustLevelPopupDeviceName = device.name
+										SharedMainViewModel.shared.increaseTrustLevelPopupDeviceAddress = device.address
+										isShowIncreaseTrustLevelPopup = true
+									} label: {
+										HStack {
+											Image("warning-circle")
+												.renderingMode(.template)
+												.resizable()
+												.foregroundStyle(Color.orangeMain500)
+												.frame(width: 25, height: 25)
+												.padding(.all, 6)
+											
+											Text("contact_make_call_check_device_trust")
+												.foregroundStyle(Color.orangeMain500)
+												.default_text_style(styleSize: 14)
+												.lineLimit(1)
+												.padding(.leading, -5)
+												.padding(.trailing, 15)
+										}
+									}
+									.background(Color.orangeMain100)
+									.cornerRadius(25)
+								} else {
+									ZStack {
+										Button {
+										} label: {
+											HStack {
+												Image("warning-circle")
+													.renderingMode(.template)
+													.resizable()
+													.foregroundStyle(Color.orangeMain500)
+													.frame(width: 25, height: 25)
+													.padding(.all, 6)
+												
+												Text("contact_make_call_check_device_trust")
+													.foregroundStyle(Color.orangeMain500)
+													.default_text_style(styleSize: 14)
+													.lineLimit(1)
+													.padding(.leading, -5)
+													.padding(.trailing, 15)
+											}
+										}
+										.background(Color.orangeMain100)
+										.cornerRadius(25)
+										.hidden()
+										
+										Image("trusted")
+											.resizable()
+											.frame(width: 28, height: 28)
+									}
+								}
+							}
+							.frame(height: 40)
+						}
+						.background(.white)
+						.padding(.vertical, 10)
+						.padding(.horizontal, 20)
+					}
+				} else {
+					Text("contact_details_no_device_found")
+						.default_text_style_700(styleSize: 14)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.top, 15)
+						.padding(.horizontal, 20)
+						.padding(.bottom, 10)
+				}
+			}
+			.padding(.bottom, 5)
+			.background(.white)
+			.cornerRadius(15)
+			.padding(.horizontal)
+			.zIndex(-2)
+			.transition(.move(edge: .top))
+		}
+		
+		if sharedMainViewModel.displayedFriendExistingChatRoom != nil {
+			HStack(alignment: .center) {
+				Text("conversation_details_media_documents_title")
+					.default_text_style_800(styleSize: 16)
+				
+				Spacer()
+				
+				Image("caret-up")
+					.renderingMode(.template)
+					.resizable()
+					.foregroundStyle(Color.grayMain2c600)
+					.frame(width: 25, height: 25, alignment: .leading)
+					.padding(.all, 10)
+					.hidden()
+			}
+			.padding(.top, 20)
+			.padding(.bottom, 10)
+			.padding(.horizontal, 16)
+			.background(Color.gray100)
+			
+			VStack(spacing: 0) {
+				Button {
+					withAnimation {
+						isShowMediaFilesFragment = true
+					}
+				} label: {
+					HStack {
+						Image("image")
+							.renderingMode(.template)
+							.resizable()
+							.foregroundStyle(Color.grayMain2c600)
+							.frame(width: 25, height: 25)
+							.padding(.all, 10)
+						
+						Text("conversation_menu_media_files")
+							.default_text_style(styleSize: 14)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.lineLimit(1)
+							.fixedSize(horizontal: false, vertical: true)
+						Spacer()
+					}
+					.padding(.vertical, 15)
+					.padding(.horizontal, 20)
+				}
+				
+				VStack {
+					Divider()
+				}
+				.padding(.horizontal)
+				
+				Button {
+					withAnimation {
+						isShowDocumentsFilesFragment = true
+					}
+				} label: {
+					HStack {
+						Image("file-pdf")
+							.renderingMode(.template)
+							.resizable()
+							.foregroundStyle(Color.grayMain2c600)
+							.frame(width: 25, height: 25)
+							.padding(.all, 10)
+						
+						Text("conversation_menu_documents_files")
+							.default_text_style(styleSize: 14)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.lineLimit(1)
+							.fixedSize(horizontal: false, vertical: true)
+						Spacer()
+					}
+					.padding(.vertical, 15)
+					.padding(.horizontal, 20)
+				}
+			}
+			.background(.white)
+			.cornerRadius(15)
+			.padding(.horizontal)
+			.zIndex(-1)
+			.transition(.move(edge: .top))
+		}
 		
 		HStack(alignment: .center) {
 			Text("contact_details_actions_title")
 				.default_text_style_800(styleSize: 16)
 			
 			Spacer()
+			
+			Image("caret-up")
+				.renderingMode(.template)
+				.resizable()
+				.foregroundStyle(Color.grayMain2c600)
+				.frame(width: 25, height: 25, alignment: .leading)
+				.padding(.all, 10)
+				.hidden()
 		}
-		.padding(.vertical, 10)
+		.padding(.top, 20)
+		.padding(.bottom, 10)
 		.padding(.horizontal, 16)
 		.background(Color.gray100)
 		
 		VStack(spacing: 0) {
-			if !contactAvatarModel.isReadOnly {
+			if !contactAvatarModel.isReadOnly && !AppServices.corePreferences.hideContactEdition {
 				if !contactAvatarModel.editable {
 					Button {
 						actionEditButton()
@@ -240,7 +502,7 @@ struct ContactInnerActionsFragment: View {
 								.foregroundStyle(Color.grayMain2c600)
 								.frame(width: 25, height: 25)
 								.padding(.all, 10)
-							
+
 							Text("contact_details_edit")
 								.default_text_style(styleSize: 14)
 								.frame(maxWidth: .infinity, alignment: .leading)
@@ -263,7 +525,7 @@ struct ContactInnerActionsFragment: View {
 									.foregroundStyle(Color.grayMain2c600)
 									.frame(width: 25, height: 25)
 									.padding(.all, 10)
-								
+
 								Text("contact_details_edit")
 									.default_text_style(styleSize: 14)
 									.frame(maxWidth: .infinity, alignment: .leading)
@@ -280,12 +542,12 @@ struct ContactInnerActionsFragment: View {
 							}
 						)
 				}
-				
+
 				VStack {
 					Divider()
 				}
 				.padding(.horizontal)
-				
+
 				Button {
 					contactsListViewModel.toggleStarredSelectedFriend()
 				} label: {
@@ -308,7 +570,7 @@ struct ContactInnerActionsFragment: View {
 					.padding(.vertical, 15)
 					.padding(.horizontal, 20)
 				}
-				
+
 				VStack {
 					Divider()
 				}
@@ -337,12 +599,12 @@ struct ContactInnerActionsFragment: View {
 				.padding(.horizontal, 20)
 			}
 			
-			if !contactAvatarModel.isReadOnly {
+			if !contactAvatarModel.isReadOnly && !AppServices.corePreferences.hideContactEdition {
 				VStack {
 					Divider()
 				}
 				.padding(.horizontal)
-				
+
 				Button {
 					isShowDeletePopup.toggle()
 				} label: {
@@ -353,7 +615,7 @@ struct ContactInnerActionsFragment: View {
 							.foregroundStyle(Color.redDanger500)
 							.frame(width: 25, height: 25)
 							.padding(.all, 10)
-						
+
 						Text("contact_details_delete")
 							.foregroundStyle(Color.redDanger500)
 							.default_text_style(styleSize: 14)
@@ -372,18 +634,6 @@ struct ContactInnerActionsFragment: View {
 		.padding(.horizontal)
 		.zIndex(-1)
 		.transition(.move(edge: .top))
-    }
+	}
 }
-
-#Preview {
-	ContactInnerActionsFragment(
-		showingSheet: .constant(false),
-		showShareSheet: .constant(false),
-		isShowDeletePopup: .constant(false),
-		isShowDismissPopup: .constant(false),
-		isShowEditContactFragmentInContactDetails: .constant(false),
-		actionEditButton: {}
-	)
-}
-
 // swiftlint:enable type_body_length

@@ -18,6 +18,7 @@
  */
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 // swiftlint:disable type_body_length
 struct ConversationInfoFragment: View {
@@ -46,9 +47,14 @@ struct ConversationInfoFragment: View {
 	@Binding var isShowScheduleMeetingFragmentParticipants: [SelectedAddressModel]
 	
 	@State private var participantListIsOpen = true
+	@State private var displayPeerAddress = false
 	
 	@Binding var isShowConversationInfoPopup: Bool
 	@Binding var conversationInfoPopupText: String
+	
+	@Binding var showLeaveConversationPopup: Bool
+	@Binding var showDeleteConversationPopup: Bool
+	@Binding var showDeleteConversationHistoryPopup: Bool
 	
 	var body: some View {
 		let accountModel = CoreContext.shared.accounts[accountProfileViewModel.accountModelIndex ?? 0]
@@ -77,6 +83,13 @@ struct ConversationInfoFragment: View {
 								}
 							
 							Spacer()
+							
+							Rectangle()
+								.foregroundColor(.white)
+								.frame(width: 45, height: 45)
+								.onLongPressGesture(minimumDuration: 0.3) {
+									displayPeerAddress = true
+								}
 						}
 						.frame(maxWidth: .infinity)
 						.frame(height: 50)
@@ -107,12 +120,53 @@ struct ConversationInfoFragment: View {
 												.padding(.top, 10)
 											
 											if !AppServices.corePreferences.hideSipAddresses {
-												Text(conversationViewModel.participantConversationModel.first?.address ?? "")
-													.foregroundStyle(Color.grayMain2c700)
-													.multilineTextAlignment(.center)
-													.default_text_style(styleSize: 14)
-													.frame(maxWidth: .infinity)
-													.padding(.top, 5)
+												Button {
+													UIPasteboard.general.setValue(
+														conversationViewModel.participantConversationModel.first?.address ?? "",
+														forPasteboardType: UTType.plainText.identifier
+													)
+													
+													ToastViewModel.shared.show("Success_address_copied_into_clipboard")
+												} label: {
+													HStack {
+														Text(conversationViewModel.participantConversationModel.first?.address ?? "")
+															.foregroundStyle(Color.grayMain2c700)
+															.default_text_style(styleSize: 14)
+															.padding(.top, 5)
+														
+														Image("copy")
+															.renderingMode(.template)
+															.resizable()
+															.foregroundStyle(Color.grayMain2c500)
+															.frame(width: 25, height: 25)
+													}
+												}
+												.padding(.horizontal, 10)
+											}
+											
+											if displayPeerAddress {
+												Button {
+													UIPasteboard.general.setValue(
+														conversationViewModel.peerAddress,
+														forPasteboardType: UTType.plainText.identifier
+													)
+													
+													ToastViewModel.shared.show("Success_address_copied_into_clipboard")
+												} label: {
+													HStack {
+														Text(conversationViewModel.peerAddress)
+															.foregroundStyle(Color.grayMain2c700)
+															.default_text_style(styleSize: 14)
+															.padding(.top, 5)
+														
+														Image("copy")
+															.renderingMode(.template)
+															.resizable()
+															.foregroundStyle(Color.grayMain2c500)
+															.frame(width: 25, height: 25, alignment: .leading)
+													}
+												}
+												.padding(.horizontal, 10)
 											}
 											
 											if !SharedMainViewModel.shared.displayedConversation!.avatarModel.lastPresenceInfo.isEmpty {
@@ -160,6 +214,31 @@ struct ConversationInfoFragment: View {
 												}
 											}
 											.padding(.leading, conversationViewModel.isUserAdmin ? 20 : 0)
+											
+											if displayPeerAddress {
+												Button {
+													UIPasteboard.general.setValue(
+														conversationViewModel.peerAddress,
+														forPasteboardType: UTType.plainText.identifier
+													)
+													
+													ToastViewModel.shared.show("Success_address_copied_into_clipboard")
+												} label: {
+													HStack {
+														Text(conversationViewModel.peerAddress)
+															.foregroundStyle(Color.grayMain2c700)
+															.default_text_style(styleSize: 14)
+															.padding(.top, 5)
+														
+														Image("copy")
+															.renderingMode(.template)
+															.resizable()
+															.foregroundStyle(Color.grayMain2c500)
+															.frame(width: 25, height: 25, alignment: .leading)
+													}
+												}
+												.padding(.horizontal, 10)
+											}
 										}
 									}
 									.frame(minHeight: 150)
@@ -361,12 +440,13 @@ struct ConversationInfoFragment: View {
 																				where: {$0.friend!.addresses.contains(where: {$0.asStringUriOnly() == addressConv})})
 																
 																let disableAddContact = AppServices.corePreferences.disableAddContact
-																
-																if (!disableAddContact || (disableAddContact && friendIndex != nil)) {
+																let hideContactEdition = AppServices.corePreferences.hideContactEdition
+
+																if (!disableAddContact || (disableAddContact && friendIndex != nil)) && !hideContactEdition {
 																	Button(
 																		action: {
 																			let addressConv = participantConversationModel.address
-																			
+
 																			let friendIndex = contactsManager.avatarListModel.first(
 																				where: {$0.addresses.contains(where: {$0 == addressConv})})
 																			
@@ -604,8 +684,9 @@ struct ConversationInfoFragment: View {
 												where: {$0.friend!.addresses.contains(where: {$0.asStringUriOnly() == addressConv})})
 											
 											let disableAddContact = AppServices.corePreferences.disableAddContact
-											
-											if !SharedMainViewModel.shared.displayedConversation!.isGroup && (!disableAddContact || (disableAddContact && friendIndex != nil)) {
+											let hideContactEdition = AppServices.corePreferences.hideContactEdition
+
+											if !SharedMainViewModel.shared.displayedConversation!.isGroup && (!disableAddContact || (disableAddContact && friendIndex != nil)) && !hideContactEdition {
 												Button(
 													action: {
 														if SharedMainViewModel.shared.displayedConversation != nil {
@@ -693,8 +774,8 @@ struct ConversationInfoFragment: View {
 											if SharedMainViewModel.shared.displayedConversation!.isGroup {
 												Button(
 													action: {
-														SharedMainViewModel.shared.displayedConversation!.leave()
-														SharedMainViewModel.shared.displayedConversation!.isReadOnly = true
+														conversationsListViewModel.targetConversation = SharedMainViewModel.shared.displayedConversation!
+							 							showLeaveConversationPopup = true
 														isShowInfoConversationFragment = false
 													},
 													label: {
@@ -721,8 +802,9 @@ struct ConversationInfoFragment: View {
 										
 										Button(
 											action: {
-												SharedMainViewModel.shared.displayedConversation!.deleteChatRoom()
-												SharedMainViewModel.shared.displayedConversation = nil
+												conversationsListViewModel.targetConversation = SharedMainViewModel.shared.displayedConversation!
+												showDeleteConversationHistoryPopup = true
+												isShowInfoConversationFragment = false
 											},
 											label: {
 												HStack {
@@ -785,7 +867,10 @@ struct ConversationInfoFragment: View {
 		isShowScheduleMeetingFragmentSubject: .constant(""),
 		isShowScheduleMeetingFragmentParticipants: .constant([]),
 		isShowConversationInfoPopup: .constant(false),
-		conversationInfoPopupText: .constant("")
+		conversationInfoPopupText: .constant(""),
+		showLeaveConversationPopup: .constant(false),
+		showDeleteConversationPopup: .constant(false),
+		showDeleteConversationHistoryPopup: .constant(false)
 	)
 }
 // swiftlint:enable type_body_length

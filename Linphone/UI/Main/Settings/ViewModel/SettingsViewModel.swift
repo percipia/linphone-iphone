@@ -37,6 +37,7 @@ class SettingsViewModel: ObservableObject {
 	
 	// Conversations settings
 	@Published var autoDownload: Bool = false
+	@Published var hideNotificationContent: Bool = false
 	
 	// Contacts settings
 	@Published var ldapServers: [String] = []
@@ -44,6 +45,7 @@ class SettingsViewModel: ObservableObject {
 	
 	// Meetings settings
 	@Published var defaultLayout: String = ""
+	@Published var showPastMeetings: Bool = false
 	
 	// Network settings
 	@Published var useWifiOnly: Bool = false
@@ -56,7 +58,6 @@ class SettingsViewModel: ObservableObject {
 	@Published var acceptEarlyMedia: Bool = false
 	@Published var allowOutgoingEarlyMedia: Bool = false
 	@Published var deviceId: String = ""
-	@Published var uploadServerUrl: String = ""
 	@Published var remoteProvisioningUrl: String = ""
 	
 	@Published var inputAudioDeviceLabels: [String] = []
@@ -70,6 +71,13 @@ class SettingsViewModel: ObservableObject {
 	@Published var audioCodecs: [CodecModel] = []
 	@Published var videoCodecs: [CodecModel] = []
 	
+	
+	// Developer settings
+	@Published var showDeveloperSettings: Bool = false
+	@Published var printLogsInLogcat: Bool = false
+	@Published var uploadServerUrl: String = ""
+	@Published var logsUploadServerUrl: String = ""
+	
 	init() {
 		CoreContext.shared.doOnCoreQueue { core in
 			
@@ -80,8 +88,10 @@ class SettingsViewModel: ObservableObject {
 			let autoRecordTmp = AppServices.corePreferences.automaticallyStartCallRecording
 			
 			let autoDownloadTmp = core.maxSizeForAutoDownloadIncomingFiles == 0
+			let hideNotificationContentTmp = !AppServices.corePreferences.showChatMessageContentInNotification
 			
 			let defaultLayoutTmp = core.defaultConferenceLayout.rawValue == 0 ? String(localized: "settings_meetings_layout_mosaic_label") : String(localized: "settings_meetings_layout_active_speaker_label")
+			let showPastMeetingsTmp = AppServices.corePreferences.showPastMeetings
 			
 			let useWifiOnlyTmp = core.wifiOnlyEnabled
 			let allowIpv6Tmp = core.ipv6Enabled
@@ -103,8 +113,13 @@ class SettingsViewModel: ObservableObject {
 			let acceptEarlyMediaTmp = AppServices.corePreferences.acceptEarlyMedia
 			let allowOutgoingEarlyMediaTmp = AppServices.corePreferences.allowOutgoingEarlyMedia
 			let deviceIdTmp = AppServices.corePreferences.deviceName
-			let fileSharingServerUrlTmp = core.fileTransferServer
    			let remoteProvisioningUrlTmp = core.provisioningUri
+			
+			// Developer settings
+			let showDeveloperSettingsTmp = AppServices.corePreferences.showDeveloperSettings
+			let printLogsInLogcatTmp = AppServices.corePreferences.printLogsInLogcat
+			let fileSharingServerUrlTmp = core.fileTransferServer
+			let logsTransferServerTmp = core.logCollectionUploadServerUrl
 			
 			DispatchQueue.main.async {
 				self.enableVfs = enableVfsTmp
@@ -114,8 +129,10 @@ class SettingsViewModel: ObservableObject {
 				self.autoRecord = autoRecordTmp
 				
 				self.autoDownload = autoDownloadTmp
+				self.hideNotificationContent = hideNotificationContentTmp
 				
 				self.defaultLayout = defaultLayoutTmp
+				self.showPastMeetings = showPastMeetingsTmp
 				
 				self.useWifiOnly = useWifiOnlyTmp
 				self.allowIpv6 = allowIpv6Tmp
@@ -128,8 +145,13 @@ class SettingsViewModel: ObservableObject {
 				self.allowOutgoingEarlyMedia = allowOutgoingEarlyMediaTmp
 				
 				self.deviceId = deviceIdTmp
-				self.uploadServerUrl = fileSharingServerUrlTmp ?? ""
 				self.remoteProvisioningUrl = remoteProvisioningUrlTmp ?? ""
+				
+				// Developer settings
+				self.showDeveloperSettings = showDeveloperSettingsTmp
+				self.printLogsInLogcat = printLogsInLogcatTmp
+				self.uploadServerUrl = fileSharingServerUrlTmp ?? ""
+				self.logsUploadServerUrl = logsTransferServerTmp ?? ""
 				
 				/*
 				self.setupAudioDevices()
@@ -340,6 +362,59 @@ class SettingsViewModel: ObservableObject {
 		}
 	}
 	
+	func clearNativeFriendsDatabase() {
+		CoreContext.shared.doOnCoreQueue { core in
+			let nativeAddressBookFriendList = "Native address-book"
+			if let list = core.getFriendListByName(name: nativeAddressBookFriendList) {
+				let friends = list.friends
+				Log.info("\(SettingsViewModel.TAG) Friend list to remove found with \(friends.count) friends")
+				for friend in friends {
+					_ = list.removeFriend(linphoneFriend: friend)
+				}
+				core.removeFriendList(list: list)
+				Log.info("\(SettingsViewModel.TAG) Friend list \(nativeAddressBookFriendList) removed")
+			}
+			
+			DispatchQueue.main.async {
+				ToastViewModel.shared.show("Success_cleared_native_friends_toast")
+			}
+		}
+	}
+	
+	func clearOrphanAuthInfo() {
+		CoreContext.shared.doOnCoreQueue { core in
+			var count = 0
+			
+			for authInfo in core.authInfoList {
+				if let username = authInfo.username {
+					let account = core.accountList.first {
+						$0.params?.identityAddress?.username == username
+					}
+					
+					if account == nil {
+						Log.info("\(SettingsViewModel.TAG) Removing auth info \(authInfo) with username \(username) for which no account was found")
+						core.removeAuthInfo(info: authInfo)
+						count += 1
+					}
+				} else {
+					Log.info("\(SettingsViewModel.TAG) Removing auth info \(authInfo) without username")
+					core.removeAuthInfo(info: authInfo)
+					count += 1
+				}
+			}
+			
+			if count == 0 {
+				DispatchQueue.main.async {
+					ToastViewModel.shared.show("Success_no_auth_info_removed_toast")
+				}
+			} else {
+				DispatchQueue.main.async {
+					ToastViewModel.shared.show("Success_cleared_auth_info_toast")
+				}
+			}
+		}
+	}
+	
 	func saveChangesWhenLeaving() {
 		CoreContext.shared.doOnCoreQueue { core in
 			if AppServices.corePreferences.vfsEnabled != self.enableVfs {
@@ -363,8 +438,16 @@ class SettingsViewModel: ObservableObject {
 				core.maxSizeForAutoDownloadIncomingFiles = self.autoDownload ? 0 : -1
 			}
 			
+			if AppServices.corePreferences.showChatMessageContentInNotification == self.hideNotificationContent {
+				AppServices.corePreferences.showChatMessageContentInNotification = !self.hideNotificationContent
+			}
+			
 			if (core.defaultConferenceLayout.rawValue == 0) != (self.defaultLayout == String(localized: "settings_meetings_layout_mosaic_label")) {
 				core.defaultConferenceLayout = self.defaultLayout == String(localized: "settings_meetings_layout_mosaic_label") ? .Grid : .ActiveSpeaker
+			}
+			
+			if AppServices.corePreferences.showPastMeetings != self.showPastMeetings {
+				AppServices.corePreferences.showPastMeetings = self.showPastMeetings
 			}
 			
 			if core.wifiOnlyEnabled != self.useWifiOnly {
@@ -414,8 +497,21 @@ class SettingsViewModel: ObservableObject {
 				AppServices.corePreferences.deviceName = self.deviceId
 			}
 			
+			// Developer settings
+			if AppServices.corePreferences.showDeveloperSettings != self.showDeveloperSettings {
+				AppServices.corePreferences.showDeveloperSettings = self.showDeveloperSettings
+			}
+			
+			if AppServices.corePreferences.printLogsInLogcat != self.printLogsInLogcat {
+				AppServices.corePreferences.printLogsInLogcat = self.printLogsInLogcat
+			}
+			
 			if core.fileTransferServer != self.uploadServerUrl && !(core.fileTransferServer == nil && self.uploadServerUrl.isEmpty) {
 				core.fileTransferServer = self.uploadServerUrl
+			}
+			
+			if core.logCollectionUploadServerUrl != self.logsUploadServerUrl && !(core.logCollectionUploadServerUrl == nil && self.logsUploadServerUrl.isEmpty) {
+				core.logCollectionUploadServerUrl = self.logsUploadServerUrl
 			}
 		}
 	}
