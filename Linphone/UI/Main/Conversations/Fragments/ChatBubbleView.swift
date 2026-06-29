@@ -1162,16 +1162,16 @@ struct CustomSlider: View {
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
 
 	let eventLogMessage: EventLogMessage
-
+	
 	@State private var timer: Timer?
 	@State private var value: Double = 0.0
 	@State private var isPlaying: Bool = false
 	@State private var cancellable: AnyCancellable?
-
+	
 	var minTrackColor: Color = .white.opacity(0.5)
 	var maxTrackGradient: Gradient = Gradient(colors: [Color.orangeMain500.opacity(0.5), Color.orangeMain500])
-
-
+	
+	
 	var body: some View {
 		GeometryReader { geometry in
 			let radius = geometry.size.height * 0.5
@@ -1245,7 +1245,7 @@ struct CustomSlider: View {
 			.onDisappear {
 				cancellable?.cancel()
 				cancellable = nil
-
+				
 				resetProgress()
 			}
 		}
@@ -1270,10 +1270,10 @@ struct CustomSlider: View {
 				}
 			} else {
 				self.resetProgress()
-
+				
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 					let rows = conversationViewModel.conversationMessagesSection[0].rows
-
+					
 					if let index = rows.firstIndex(where: { $0.eventModel.eventLogId == eventLogMessage.message.id }),
 					   rows.indices.contains(index - 1) {
 						let nextRow = rows[index - 1]

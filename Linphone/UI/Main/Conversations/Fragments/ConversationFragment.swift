@@ -24,88 +24,88 @@ import ElegantEmojiPicker
 // swiftlint:disable line_length
 // swiftlint:disable type_body_length
 struct ConversationFragment: View {
-
+	
 	@Environment(\.scenePhase) var scenePhase
 	@State private var orientation = UIDevice.current.orientation
 	private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
-
+	
 	@EnvironmentObject var navigationManager: NavigationManager
-
+	
 	@ObservedObject var contactsManager = ContactsManager.shared
-
+    
     @EnvironmentObject var conversationsListViewModel: ConversationsListViewModel
 	@EnvironmentObject var accountProfileViewModel: AccountProfileViewModel
-
+    
     @StateObject private var conversationViewModel = ConversationViewModel()
-
+	
 	@State var isMenuOpen = false
 	@State private var isMuted: Bool = false
-
+	
 	@FocusState var isSearchTextFocused: Bool
 	@FocusState var isMessageTextFocused: Bool
-
+	
 	@State var offset: CGPoint = .zero
-
+	
 	private let ids: [String] = []
-
+	
 	@State private var displayFloatingButton = false
-
+	
 	@State private var areFilePickersOpen = false
-
+	
 	@State private var isShowPhotoLibrary = false
 	@State private var isShowCamera = false
 	@State private var isShowFilePicker = false
-
+	
 	@State private var mediasIsLoading = false
 	@State private var voiceRecordingInProgress = false
-
+	
 	@State private var isShowEphemeralFragment = false
 	@State private var isShowMediaFilesFragment = false
 	@State private var isShowDocumentsFilesFragment = false
 	@State private var isShowInfoConversationFragment = false
 	@State private var isShowConversationForwardMessageFragment = false
-
+	
 	@Binding var isShowConversationFragment: Bool
 	@Binding var isShowStartCallGroupPopup: Bool
 	@Binding var isShowDeleteMessagePopup: Bool
-
+	
 	@State private var selectedCategoryIndex = 0
-
+	
 	@Binding var isShowEditContactFragment: Bool
 	@Binding var isShowEditContactFragmentAddress: String
-
+	
 	@Binding var isShowScheduleMeetingFragment: Bool
-
+    
     @State private var cachedConversation: ConversationModel?
-
+	
 	@Binding var isShowScheduleMeetingFragmentSubject: String
 	@Binding var isShowScheduleMeetingFragmentParticipants: [SelectedAddressModel]
-
+	
 	@Binding var isShowConversationInfoPopup: Bool
 	@Binding var conversationInfoPopupText: String
-
+	
 	@Binding var showLeaveConversationPopup: Bool
 	@Binding var showDeleteConversationPopup: Bool
 	@Binding var showDeleteConversationHistoryPopup: Bool
-
+	
 	@Binding var securitySheet: Bool
-
+	
 	@State var searchText: String = ""
 	@State var messageText: String = ""
-
+	
 	@State private var chosen: String?
  	@State private var showPicker = false
 	@State private var isSheetVisible = false
 	@State private var isSearchVisible = false
-
+	
 	@State private var isImdnOrReactionsSheetVisible = false
-
+	
 	@State var mentionIsOpen: Bool = false
 	@State var mentionQuery: String = ""
-
+	
 	private let rowHeight: CGFloat = 60
 	private let maxVisibleRows: CGFloat = 3.5
-
+	
 	private var filteredParticipants: [ContactAvatarModel] {
 		conversationViewModel.participantConversationModel.filter {
 			mentionQuery.isEmpty
@@ -113,7 +113,7 @@ struct ConversationFragment: View {
 			|| String($0.address.dropFirst(4).split(separator: "@").first ?? "").localizedCaseInsensitiveContains(mentionQuery)
 		}
 	}
-
+	
 	var body: some View {
 		NavigationView {
 			GeometryReader { geometry in
@@ -160,11 +160,11 @@ struct ConversationFragment: View {
 										if let error = errorOrNil {
 											print(error)
 										}
-
+										
 										if let medias = mediasOrNil {
 											conversationViewModel.mediasToSend.append(contentsOf: medias)
 										}
-
+										
 										self.mediasIsLoading = false
 									}
 								}
@@ -182,7 +182,7 @@ struct ConversationFragment: View {
 										if let error = errorOrNil {
 											print(error)
 										}
-
+										
 										if let medias = mediasOrNil {
 											conversationViewModel.mediasToSend.append(contentsOf: medias)
 										}
@@ -245,11 +245,11 @@ struct ConversationFragment: View {
 									if let error = errorOrNil {
 										print(error)
 									}
-
+									
 									if let medias = mediasOrNil {
 										conversationViewModel.mediasToSend.append(contentsOf: medias)
 									}
-
+									
 									self.mediasIsLoading = false
 								}
 							}
@@ -287,28 +287,28 @@ struct ConversationFragment: View {
 			if let conv = SharedMainViewModel.shared.displayedConversation {
 				cachedConversation = conv
 			}
-
+			
 			if !SharedMainViewModel.shared.fileUrlsToShare.isEmpty {
 				var urlList: [URL] = []
 				SharedMainViewModel.shared.fileUrlsToShare.forEach { urlFile in
 					urlList.append(URL(fileURLWithPath: urlFile))
 				}
-
+				
 				FilePicker.convertToAttachmentArray(fromResults: urlList) { mediasOrNil, errorOrNil in
 					if let error = errorOrNil {
 						print(error)
 					}
-
+					
 					if let medias = mediasOrNil {
 						conversationViewModel.mediasToSend.append(contentsOf: medias)
 					}
 				}
-
+				
 				SharedMainViewModel.shared.fileUrlsToShare.removeAll()
 			}
 		}
 	}
-
+	
 	// swiftlint:disable cyclomatic_complexity
 	// swiftlint:disable function_body_length
 	@ViewBuilder
@@ -320,7 +320,7 @@ struct ConversationFragment: View {
 						.foregroundColor(Color.orangeMain500)
 						.edgesIgnoringSafeArea(.top)
 						.frame(height: 0)
-
+					
 					if !isSearchVisible {
 						HStack {
 							if (!(orientation == .landscapeLeft || orientation == .landscapeRight
@@ -342,17 +342,17 @@ struct ConversationFragment: View {
 										}
 									}
 							}
-
+							
 							Avatar(contactAvatarModel: SharedMainViewModel.shared.displayedConversation?.avatarModel ?? cachedConversation!.avatarModel, avatarSize: 50)
 								.padding(.top, 4)
-
+							
 							VStack(spacing: 1) {
 								Text(SharedMainViewModel.shared.displayedConversation?.subject ?? cachedConversation!.subject)
 									.default_text_style(styleSize: 16)
 									.frame(maxWidth: .infinity, alignment: .leading)
 									.padding(.top, 4)
 									.lineLimit(1)
-
+								
 								if isMuted || conversationViewModel.ephemeralTime != NSLocalizedString("conversation_ephemeral_messages_duration_disabled", comment: "") || ((SharedMainViewModel.shared.displayedConversation?.encryptionEnabled ?? cachedConversation!.encryptionEnabled) == false && (SharedMainViewModel.shared.displayedConversation?.isEndToEndEncryptionAvailable ?? cachedConversation!.isEndToEndEncryptionAvailable) == true) {
 									HStack {
 										if isMuted {
@@ -362,21 +362,21 @@ struct ConversationFragment: View {
 												.foregroundStyle(Color.orangeMain500)
 												.frame(width: 16, height: 16, alignment: .trailing)
 										}
-
+										
 										if conversationViewModel.ephemeralTime != NSLocalizedString("conversation_ephemeral_messages_duration_disabled", comment: "") {
 											Image("clock-countdown")
 												.renderingMode(.template)
 												.resizable()
 												.foregroundStyle(Color.orangeMain500)
 												.frame(width: 16, height: 16, alignment: .trailing)
-
+											
 											Text(conversationViewModel.ephemeralTime)
 												.default_text_style(styleSize: 12)
 												.padding(.leading, -2)
 												.frame(maxWidth: .infinity, alignment: .leading)
 												.lineLimit(1)
 										}
-
+										
 										if (SharedMainViewModel.shared.displayedConversation?.encryptionEnabled ?? cachedConversation!.encryptionEnabled) == false
 											&& (SharedMainViewModel.shared.displayedConversation?.isEndToEndEncryptionAvailable ?? cachedConversation!.isEndToEndEncryptionAvailable) == true {
 											HStack {
@@ -385,7 +385,7 @@ struct ConversationFragment: View {
 													.resizable()
 													.foregroundStyle(Color.orangeWarning600)
 													.frame(width: 16, height: 16, alignment: .trailing)
-
+												
 												Text("conversation_warning_disabled_because_not_secured_title")
 													.foregroundStyle(Color.orangeWarning600)
 													.default_text_style(styleSize: 12)
@@ -393,7 +393,7 @@ struct ConversationFragment: View {
 													.lineLimit(1)
 											}
 										}
-
+										
 										Spacer()
 									}
 								}
@@ -405,9 +405,9 @@ struct ConversationFragment: View {
 								}
 							}
 							.padding(.vertical, 10)
-
+							
 							Spacer()
-
+							
 							if !(SharedMainViewModel.shared.displayedConversation?.isReadOnly ?? cachedConversation!.isReadOnly) {
 								Button {
 									if SharedMainViewModel.shared.displayedConversation!.isGroup {
@@ -425,7 +425,7 @@ struct ConversationFragment: View {
 										.padding(.top, 4)
 								}
 							}
-
+							
 							Menu {
 								Button {
 									isMenuOpen = false
@@ -444,7 +444,7 @@ struct ConversationFragment: View {
 											.padding(.all, 10)
 									}
 								}
-
+								
 								Button {
 									isMenuOpen = false
 									withAnimation {
@@ -463,7 +463,7 @@ struct ConversationFragment: View {
 											.padding(.all, 10)
 									}
 								}
-
+								
 								if !(SharedMainViewModel.shared.displayedConversation?.isReadOnly ?? cachedConversation!.isReadOnly) {
 									Button {
 										isMenuOpen = false
@@ -481,7 +481,7 @@ struct ConversationFragment: View {
 												.padding(.all, 10)
 										}
 									}
-
+									
 									Button {
 										isMenuOpen = false
 										withAnimation {
@@ -500,7 +500,7 @@ struct ConversationFragment: View {
 										}
 									}
 								}
-
+								
 								Button {
 									isMenuOpen = false
 									withAnimation {
@@ -518,7 +518,7 @@ struct ConversationFragment: View {
 											.padding(.all, 10)
 									}
 								}
-
+								
 								Button {
 									isMenuOpen = false
 									withAnimation {
@@ -578,7 +578,7 @@ struct ConversationFragment: View {
 										isSearchVisible = false
 									}
 								}
-
+							
 							TextField("conversation_menu_search_in_messages", text: $searchText)
 								.default_text_style(styleSize: 15)
 								.focused($isSearchTextFocused)
@@ -587,7 +587,7 @@ struct ConversationFragment: View {
 								.onSubmit {
 									conversationViewModel.searchChatMessage(direction: .Up, textToSearch: searchText)
 								}
-
+							
 							Button {
 								conversationViewModel.searchChatMessage(direction: .Up, textToSearch: searchText)
 							} label: {
@@ -600,7 +600,7 @@ struct ConversationFragment: View {
 									.padding(.top, 4)
 							}
 							.disabled(searchText.isEmpty)
-
+							
 							Button {
 								conversationViewModel.searchChatMessage(direction: .Down, textToSearch: searchText)
 							} label: {
@@ -613,7 +613,7 @@ struct ConversationFragment: View {
 									.padding(.top, 4)
 							}
 							.disabled(searchText.isEmpty || !conversationViewModel.canSearchDown)
-
+							
 						}
 						.frame(maxWidth: .infinity)
 						.frame(height: 50)
@@ -621,7 +621,7 @@ struct ConversationFragment: View {
 						.padding(.bottom, 4)
 						.background(.white)
 					}
-
+					
 					if #available(iOS 16.0, *) {
 						ZStack(alignment: .bottomTrailing) {
 							UIList(
@@ -666,7 +666,7 @@ struct ConversationFragment: View {
 															conversationViewModel.getOldMessages()
 														}
 													}
-
+													
 													if index == 0 {
 														displayFloatingButton = false
 														conversationViewModel.markAsRead()
@@ -685,7 +685,7 @@ struct ConversationFragment: View {
 								.onAppear {
 									conversationViewModel.markAsRead()
 								}
-
+								
 								if displayFloatingButton {
 									Button {
 										if conversationViewModel.conversationMessagesSection.first != nil && conversationViewModel.conversationMessagesSection.first!.rows.first != nil {
@@ -695,7 +695,7 @@ struct ConversationFragment: View {
 										}
 									} label: {
 										ZStack {
-
+											
 											Image("caret-double-down")
 												.renderingMode(.template)
 												.foregroundStyle(.white)
@@ -703,12 +703,12 @@ struct ConversationFragment: View {
 												.background(Color.orangeMain500)
 												.clipShape(Circle())
 												.shadow(color: .black.opacity(0.2), radius: 4)
-
+											
 											if conversationViewModel.displayedConversationUnreadMessagesCount > 0 {
 												VStack {
 													HStack {
 														Spacer()
-
+														
 														HStack {
 															Text(
 																conversationViewModel.displayedConversationUnreadMessagesCount < 99
@@ -718,18 +718,18 @@ struct ConversationFragment: View {
 															.foregroundStyle(.white)
 															.default_text_style(styleSize: 10)
 															.lineLimit(1)
-
+															
 														}
 														.frame(width: 18, height: 18)
 														.background(Color.redDanger500)
 														.cornerRadius(50)
 													}
-
+													
 													Spacer()
 												}
 											}
 										}
-
+										
 									}
 									.frame(width: 50, height: 50)
 									.padding()
@@ -744,7 +744,7 @@ struct ConversationFragment: View {
 							}
 						}
 					}
-
+					
 					if !conversationViewModel.composingLabel.isEmpty {
 						HStack {
 							Text(conversationViewModel.composingLabel)
@@ -758,7 +758,7 @@ struct ConversationFragment: View {
 						}
 						.transition(.move(edge: .bottom))
 					}
-
+					
                     if !(SharedMainViewModel.shared.displayedConversation?.isReadOnly ?? cachedConversation!.isReadOnly) && !isSearchVisible {
 						if conversationViewModel.messageToReply != nil {
 							ZStack(alignment: .top) {
@@ -771,7 +771,7 @@ struct ConversationFragment: View {
 										.frame(maxWidth: .infinity, alignment: .leading)
 										.padding(.bottom, 1)
 										.lineLimit(1)
-
+										
 										if conversationViewModel.messageToReply!.message.text.isEmpty {
 											Text(conversationViewModel.messageToReply!.message.attachmentsNames)
 												.default_text_style_300(styleSize: 15)
@@ -788,10 +788,10 @@ struct ConversationFragment: View {
 								.frame(maxWidth: .infinity)
 								.padding(.all, 20)
 								.background(Color.gray100)
-
+								
 								HStack {
 									Spacer()
-
+									
 									Button(action: {
 										withAnimation {
 											conversationViewModel.messageToReply = nil
@@ -814,7 +814,7 @@ struct ConversationFragment: View {
 											.frame(maxWidth: .infinity, alignment: .leading)
 											.padding(.bottom, 1)
 											.lineLimit(1)
-
+										
 										Text("\(conversationViewModel.messageToEdit!.message.text)")
 											.default_text_style_300(styleSize: 15)
 											.frame(maxWidth: .infinity, alignment: .leading)
@@ -824,10 +824,10 @@ struct ConversationFragment: View {
 								.frame(maxWidth: .infinity)
 								.padding(.all, 20)
 								.background(Color.gray100)
-
+								
 								HStack {
 									Spacer()
-
+									
 									Button(action: {
 										messageText = ""
 										withAnimation {
@@ -843,21 +843,21 @@ struct ConversationFragment: View {
 							}
 							.transition(.move(edge: .bottom))
 						}
-
+						
 						if !conversationViewModel.mediasToSend.isEmpty || mediasIsLoading {
 							ZStack(alignment: .top) {
 								HStack {
 									if mediasIsLoading {
 										HStack {
 											Spacer()
-
+											
 											ProgressView()
-
+											
 											Spacer()
 										}
 										.frame(height: 120)
 									}
-
+									
 									if !mediasIsLoading {
 										LazyVGrid(columns: [
 											GridItem(.adaptive(minimum: 100), spacing: 1)
@@ -867,7 +867,7 @@ struct ConversationFragment: View {
 													Rectangle()
 														.fill(Color(.white))
 														.frame(width: 100, height: 100)
-
+													
 													VStack {
 														ZStack {
 															if attachment.type == .image || attachment.type == .gif || attachment.type == .video {
@@ -877,7 +877,7 @@ struct ConversationFragment: View {
 																			.resizable()
 																			.interpolation(.medium)
 																			.aspectRatio(contentMode: .fill)
-
+																		
 																		if attachment.type == .video {
 																			Image("play-fill")
 																				.renderingMode(.template)
@@ -903,11 +903,11 @@ struct ConversationFragment: View {
 																}
 																.background(Color.grayMain2c200)
 															}
-
+															
 															VStack {
 																HStack {
 																	Spacer()
-
+																	
 																	Image("x")
 																		.renderingMode(.template)
 																		.resizable()
@@ -918,7 +918,7 @@ struct ConversationFragment: View {
 																		.frame(width: 20, height: 20)
 																		.padding(4)
 																}
-
+																
 																Spacer()
 															}
 															.frame(width: 100, height: 100)
@@ -950,11 +950,11 @@ struct ConversationFragment: View {
 								.frame(maxWidth: .infinity)
 								.padding(.all, conversationViewModel.mediasToSend.isEmpty ? 0 : 10)
 								.background(Color.gray100)
-
+								
 								if !mediasIsLoading {
 									HStack {
 										Spacer()
-
+										
 										Button(action: {
 											withAnimation {
 												conversationViewModel.mediasToSend.removeAll()
@@ -970,7 +970,7 @@ struct ConversationFragment: View {
 							}
 							.transition(.move(edge: .bottom))
 						}
-
+						
 						if areFilePickersOpen {
 							ZStack(alignment: .top) {
 								HStack {
@@ -984,7 +984,7 @@ struct ConversationFragment: View {
 												.resizable()
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.frame(width: 25, height: 25, alignment: .leading)
-
+											
 											Text("conversation_take_picture_label")
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.default_text_style_300(styleSize: 15)
@@ -993,7 +993,7 @@ struct ConversationFragment: View {
 										}
 									}
 									.disabled(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading)
-
+									
 									Button {
 										self.areFilePickersOpen.toggle()
 										self.isShowPhotoLibrary = true
@@ -1005,7 +1005,7 @@ struct ConversationFragment: View {
 												.resizable()
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.frame(width: 25, height: 25, alignment: .leading)
-
+											
 											Text("conversation_pick_file_from_gallery_label")
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.default_text_style_300(styleSize: 15)
@@ -1014,7 +1014,7 @@ struct ConversationFragment: View {
 										}
 									}
 									.disabled(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading)
-
+									
 									Button {
 										self.areFilePickersOpen.toggle()
 										self.isShowFilePicker = true
@@ -1026,7 +1026,7 @@ struct ConversationFragment: View {
 												.resizable()
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.frame(width: 25, height: 25, alignment: .leading)
-
+											
 											Text("conversation_pick_any_file_label")
 												.foregroundStyle(conversationViewModel.maxMediaCount <= conversationViewModel.mediasToSend.count || mediasIsLoading ? Color.grayMain2c300 : Color.grayMain2c500)
 												.default_text_style_300(styleSize: 15)
@@ -1042,7 +1042,7 @@ struct ConversationFragment: View {
 							}
 							.transition(.move(edge: .bottom))
 						}
-
+						
 						if mentionIsOpen && SharedMainViewModel.shared.displayedConversation!.isGroup {
 							ZStack(alignment: .top) {
 								ScrollView {
@@ -1053,7 +1053,7 @@ struct ConversationFragment: View {
 											.frame(height: 14)
 											.padding(.vertical, 8)
 											.padding(.horizontal, 10)
-
+										
 											if filteredParticipants.isEmpty {
 												VStack {
 													Text("conversation_participants_list_empty")
@@ -1108,7 +1108,7 @@ struct ConversationFragment: View {
 							}
 							.transition(.move(edge: .bottom))
 						}
-
+						
 						HStack(spacing: 0) {
 							if !voiceRecordingInProgress {
 								Button {
@@ -1127,7 +1127,7 @@ struct ConversationFragment: View {
 										.animation(.none, value: areFilePickersOpen)
 								}
 								.padding(.horizontal, isMessageTextFocused ? 0 : 2)
-
+								
 								HStack {
 									if #available(iOS 16.0, *) {
 										TextField("conversation_text_field_hint", text: $messageText, axis: .vertical)
@@ -1149,7 +1149,7 @@ struct ConversationFragment: View {
 												.onChange(of: messageText) { text in
 													conversationViewModel.compose(stop: text.isEmpty)
 												}
-
+											
 											if messageText.isEmpty {
 												Text("conversation_text_field_hint")
 													.padding(.leading, 4)
@@ -1163,7 +1163,7 @@ struct ConversationFragment: View {
 											isMessageTextFocused = true
 										}
 									}
-
+									
 									if conversationViewModel.messageToEdit == nil {
 										if messageText.isEmpty && conversationViewModel.mediasToSend.isEmpty {
 											Button {
@@ -1182,13 +1182,13 @@ struct ConversationFragment: View {
 												if conversationViewModel.displayedConversationHistorySize > 1 {
 													NotificationCenter.default.post(name: .onScrollToBottom, object: nil)
 												}
-
+												
 												let messageTextTmp = self.messageText
 												messageText = " "
 												DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
 													messageText = ""
 													isMessageTextFocused = true
-
+													
 													conversationViewModel.sendMessage(messageText: messageTextTmp)
 												}
 											} label: {
@@ -1210,7 +1210,7 @@ struct ConversationFragment: View {
 											DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
 												messageText = ""
 												isMessageTextFocused = true
-
+												
 												conversationViewModel.sendMessage(messageText: messageTextTmp)
 											}
 										} label: {
@@ -1253,21 +1253,21 @@ struct ConversationFragment: View {
 				}
 			}
 			.blur(radius: conversationViewModel.selectedMessage != nil ? 8 : 0)
-
+			
 			if conversationViewModel.selectedMessage != nil && SharedMainViewModel.shared.displayedConversation != nil {
 				let iconSize = ((geometry.size.width - (SharedMainViewModel.shared.displayedConversation!.isGroup ? 43 : 10) - 10) / 6) - 30
-
+				
 				ScrollView {
 					VStack {
 						Spacer()
-
+						
 						VStack {
 							if !isSheetVisible && !isImdnOrReactionsSheetVisible {
 								HStack {
 									if conversationViewModel.selectedMessage!.message.isOutgoing {
 										Spacer()
 									}
-
+									
 									HStack {
 										Button {
 											conversationViewModel.sendReaction(emoji: "👍")
@@ -1278,7 +1278,7 @@ struct ConversationFragment: View {
 										.padding(.horizontal, 8)
 										.background(conversationViewModel.selectedMessage?.message.ownReaction == "👍" ? Color.gray200 : .white)
 										.cornerRadius(10)
-
+										
 										Button {
 											conversationViewModel.sendReaction(emoji: "❤️")
 										} label: {
@@ -1288,7 +1288,7 @@ struct ConversationFragment: View {
 										.padding(.horizontal, 8)
 										.background(conversationViewModel.selectedMessage?.message.ownReaction == "❤️" ? Color.gray200 : .white)
 										.cornerRadius(10)
-
+										
 										Button {
 											conversationViewModel.sendReaction(emoji: "😂")
 										} label: {
@@ -1298,7 +1298,7 @@ struct ConversationFragment: View {
 										.padding(.horizontal, 8)
 										.background(conversationViewModel.selectedMessage?.message.ownReaction == "😂" ? Color.gray200 : .white)
 										.cornerRadius(10)
-
+										
 										Button {
 											conversationViewModel.sendReaction(emoji: "😮")
 										} label: {
@@ -1308,7 +1308,7 @@ struct ConversationFragment: View {
 										.padding(.horizontal, 8)
 										.background(conversationViewModel.selectedMessage?.message.ownReaction == "😮" ? Color.gray200 : .white)
 										.cornerRadius(10)
-
+										
 										Button {
 											conversationViewModel.sendReaction(emoji: "😢")
 										} label: {
@@ -1318,7 +1318,7 @@ struct ConversationFragment: View {
 										.padding(.horizontal, 8)
 										.background(conversationViewModel.selectedMessage?.message.ownReaction == "😢" ? Color.gray200 : .white)
 										.cornerRadius(10)
-
+										
 										Button {
 											showPicker = true
 											isSheetVisible = true
@@ -1338,7 +1338,7 @@ struct ConversationFragment: View {
 									.padding(.horizontal, 10)
 									.background(.white)
 									.cornerRadius(20)
-
+									
 									if !conversationViewModel.selectedMessage!.message.isOutgoing {
 										Spacer()
 									}
@@ -1348,20 +1348,20 @@ struct ConversationFragment: View {
 								.padding(.leading, SharedMainViewModel.shared.displayedConversation!.isGroup ? 43 : 0)
 								.shadow(color: .black.opacity(0.1), radius: 10)
 							}
-
+							
 							ChatBubbleView(eventLogMessage: conversationViewModel.selectedMessage!, geometryProxy: geometry)
 								.environmentObject(conversationViewModel)
 								.padding(.horizontal, 10)
 								.padding(.vertical, 1)
 								.shadow(color: .black.opacity(0.1), radius: 10)
 								.offset(y: isSheetVisible || isImdnOrReactionsSheetVisible ? -(UIScreen.main.bounds.height * 0.5) - 10 : 0)
-
+							
 							if !isSheetVisible && !isImdnOrReactionsSheetVisible {
 								HStack {
 									if conversationViewModel.selectedMessage!.message.isOutgoing {
 										Spacer()
 									}
-
+									
 									VStack {
 										if conversationViewModel.selectedMessage!.message.status == .error {
 											Button {
@@ -1372,7 +1372,7 @@ struct ConversationFragment: View {
 													Text("menu_resend_chat_message")
 														.default_text_style(styleSize: 15)
 													Spacer()
-
+													
 													Image("paper-plane-tilt")
 														.resizable()
 														.frame(width: 20, height: 20, alignment: .leading)
@@ -1381,10 +1381,10 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+										
 										if !(CoreContext.shared.imdnToEverybodyThreshold && !conversationViewModel.selectedMessage!.message.isOutgoing) {
 											Button {
 												conversationViewModel.selectedMessageToDisplayDetails = conversationViewModel.selectedMessage
@@ -1401,10 +1401,10 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+										
 										if conversationViewModel.selectedMessage!.message.isOutgoing
 											&& !(SharedMainViewModel.shared.displayedConversation?.isReadOnly ?? cachedConversation!.isReadOnly)
 											&& conversationViewModel.selectedMessage!.message.isEditable {
@@ -1413,7 +1413,7 @@ struct ConversationFragment: View {
 													if voiceRecordingInProgress {
 														voiceRecordingInProgress = false
 													}
-
+													
 													messageText = chatMessage.message.text
 													conversationViewModel.selectedMessage = nil
 													conversationViewModel.editMessage(
@@ -1438,10 +1438,10 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+									
 										if !conversationViewModel.selectedMessage!.message.isRetracted {
 											Button {
 												let indexMessage = conversationViewModel.conversationMessagesSection[0].rows.firstIndex(where: {$0.message.id == conversationViewModel.selectedMessage!.message.id})
@@ -1462,19 +1462,19 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+										
 										if !conversationViewModel.selectedMessage!.message.text.isEmpty {
 											Button {
 												UIPasteboard.general.setValue(
 													conversationViewModel.selectedMessage?.message.text ?? "Error_message_not_available",
 													forPasteboardType: UTType.plainText.identifier
 												)
-
+												
 												ToastViewModel.shared.show("Success_message_copied_into_clipboard")
-
+												
 												conversationViewModel.selectedMessage = nil
 											} label: {
 												HStack {
@@ -1488,10 +1488,10 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+										
 										if !conversationViewModel.selectedMessage!.message.isRetracted {
 											Button {
 												withAnimation {
@@ -1509,10 +1509,10 @@ struct ConversationFragment: View {
 												.padding(.vertical, 5)
 												.padding(.horizontal, 20)
 											}
-
+											
 											Divider()
 										}
-
+										
 										Button {
 											if conversationViewModel.selectedMessage!.message.isOutgoing
 												&& !(SharedMainViewModel.shared.displayedConversation?.isReadOnly ?? cachedConversation!.isReadOnly) && !conversationViewModel.selectedMessage!.message.isRetracted {
@@ -1540,7 +1540,7 @@ struct ConversationFragment: View {
 									.padding(.vertical, 8)
 									.background(.white)
 									.cornerRadius(20)
-
+									
 									if !conversationViewModel.selectedMessage!.message.isOutgoing {
 										Spacer()
 									}
@@ -1578,7 +1578,7 @@ struct ConversationFragment: View {
 					conversationViewModel.deleteMessageForEveryone()
 				}
 			}
-
+			
 			if isShowConversationForwardMessageFragment {
 				ConversationForwardMessageFragment(
 					conversationsList: conversationsListViewModel.conversationsList,
@@ -1593,7 +1593,7 @@ struct ConversationFragment: View {
 					conversationViewModel.selectedMessage = nil
 				}
 			}
-
+			
 			if isShowInfoConversationFragment {
 				ConversationInfoFragment(
 					isMuted: $isMuted,
@@ -1617,7 +1617,7 @@ struct ConversationFragment: View {
 				.zIndex(5)
 				.transition(.move(edge: .trailing))
 			}
-
+            
 			if isShowEphemeralFragment {
 				EphemeralFragment(
 					isShowEphemeralFragment: $isShowEphemeralFragment
@@ -1626,7 +1626,7 @@ struct ConversationFragment: View {
 				.zIndex(5)
 				.transition(.move(edge: .trailing))
 			}
-
+			
 			if isShowMediaFilesFragment {
 				ConversationMediaListFragment(
 					isShowMediaFilesFragment: $isShowMediaFilesFragment
@@ -1634,7 +1634,7 @@ struct ConversationFragment: View {
 				.zIndex(5)
 				.transition(.move(edge: .trailing))
 			}
-
+			
 			if isShowDocumentsFilesFragment {
 				ConversationDocumentsListFragment(
 					isShowDocumentsFilesFragment: $isShowDocumentsFilesFragment
@@ -1642,7 +1642,7 @@ struct ConversationFragment: View {
 				.zIndex(5)
 				.transition(.move(edge: .trailing))
 			}
-
+			
 			if conversationViewModel.searchInProgress {
 				PopupLoadingView()
 					.background(.black.opacity(0.65))
@@ -1653,20 +1653,20 @@ struct ConversationFragment: View {
 								object: nil,
 								userInfo: ["index": conversationViewModel.targetIndex, "animated": true]
 							)
-
+							
 							conversationViewModel.targetIndex = -1
 						}
 					}
 			}
 		}
 	}
-
+	
 	func updateMentionState(from text: String) {
 		guard let atIndex = text.lastIndex(of: "@") else {
 			closeMention()
 			return
 		}
-
+		
 		if atIndex > text.startIndex {
 			let before = text[text.index(before: atIndex)]
 			if before != " " && before != "\n" {
@@ -1674,14 +1674,14 @@ struct ConversationFragment: View {
 				return
 			}
 		}
-
+		
 		let query = String(text[text.index(after: atIndex)...])
-
+		
 		if query.contains(" ") || query.contains("\n") {
 			closeMention()
 			return
 		}
-
+		
 		withAnimation {
 			mentionQuery = query
 			mentionIsOpen = true
@@ -1694,17 +1694,17 @@ struct ConversationFragment: View {
 			mentionQuery = ""
 		}
 	}
-
+	
 	// swiftlint:enable cyclomatic_complexity
 	// swiftlint:enable function_body_length
 }
 
 struct ImdnOrReactionsSheet: View {
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
-
+	
 	@Binding var selectedCategoryIndex: Int
 	@Binding var isImdnOrReactionsSheetVisible: Bool
-
+	
 	var body: some View {
 		VStack {
 			Picker("picker_categories", selection: $selectedCategoryIndex) {
@@ -1714,7 +1714,7 @@ struct ImdnOrReactionsSheet: View {
 			}
 			.pickerStyle(SegmentedPickerStyle())
 			.padding()
-
+			
 			ScrollView {
 				LazyVStack {
 					if selectedCategoryIndex < conversationViewModel.sheetCategories.count && !conversationViewModel.sheetCategories[selectedCategoryIndex].innerCategory.isEmpty {
@@ -1727,14 +1727,14 @@ struct ImdnOrReactionsSheet: View {
 								},
 								label: {
 									Avatar(contactAvatarModel: participant.contact, avatarSize: 50)
-
+									
 									VStack {
-
+										
 										Text(participant.contact.name)
 											.default_text_style(styleSize: 16)
 											.frame(maxWidth: .infinity, alignment: .leading)
 											.lineLimit(1)
-
+										
 										if participant.isMe {
 											Text("message_reaction_click_to_remove_label")
 												.foregroundStyle(Color.grayMain2c400)
@@ -1743,9 +1743,9 @@ struct ImdnOrReactionsSheet: View {
 												.lineLimit(1)
 										}
 									}
-
+									
 									Spacer()
-
+									
 									Text(participant.detail)
 										.default_text_style(styleSize: 16)
 										.lineLimit(1)
@@ -1760,7 +1760,7 @@ struct ImdnOrReactionsSheet: View {
 				}
 			}
 			.listStyle(.plain)
-
+			
 			WillDisappearNotifierView {
 				isImdnOrReactionsSheetVisible = false
 			}
@@ -1779,28 +1779,28 @@ struct ImagePicker: UIViewControllerRepresentable {
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
 	@Binding var selectedMedia: [Attachment]
 	@Environment(\.presentationMode) private var presentationMode
-
+ 
 	final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+	 
 		var parent: ImagePicker
-
+	 
 		init(_ parent: ImagePicker) {
 			self.parent = parent
 		}
-
+	 
 		func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 			let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String
 			switch mediaType {
 			case "public.image":
 				let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
-
+				
 				let date = Date()
 				let dformater = DateFormatter()
 				dformater.dateFormat = "yyyy-MM-dd-HHmmss"
 				let dateString = dformater.string(from: date)
-
+				
 				let path = FileManager.default.temporaryDirectory.appendingPathComponent((dateString.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "") + ".jpeg")
-
+				
 				if image != nil {
 					let data  = image!.jpegData(compressionQuality: 1)
 					if data != nil {
@@ -1818,7 +1818,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 					let name = videoUrl!.lastPathComponent
 					let path = videoUrl!.deletingLastPathComponent()
 					let pathThumbnail = URL(string: parent.conversationViewModel.generateThumbnail(name: name, pathThumbnail: path))
-
+					
 					if pathThumbnail != nil {
 						let attachment =
 						Attachment(
@@ -1834,24 +1834,24 @@ struct ImagePicker: UIViewControllerRepresentable {
 			default:
 				Log.info("Mismatched type: \(mediaType ?? "mediaType is nil")")
 			}
-
+	 
 			parent.presentationMode.wrappedValue.dismiss()
 		}
 	}
-
+	
 	func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
 		let imagePicker = UIImagePickerController()
 		imagePicker.sourceType = .camera
 		imagePicker.mediaTypes = ["public.image", "public.movie"]
 		imagePicker.delegate = context.coordinator
-
+ 
 		return imagePicker
 	}
-
+ 
 	func updateUIViewController(_ uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext<ImagePicker>) {
-
+ 
 	}
-
+	
 	func makeCoordinator() -> Coordinator {
 		Coordinator(self)
 	}
@@ -1859,19 +1859,19 @@ struct ImagePicker: UIViewControllerRepresentable {
 
 struct VoiceRecorderPlayer: View {
 	@EnvironmentObject var conversationViewModel: ConversationViewModel
-
+	
 	@Binding var voiceRecordingInProgress: Bool
-
+	
 	@StateObject var audioRecorder = AudioRecorder()
-
+	
 	@State private var value: Double = 0.0
 	@State private var isPlaying: Bool = false
 	@State private var isRecording: Bool = true
 	@State private var timer: Timer?
-
+	
 	var minTrackColor: Color = .white.opacity(0.5)
 	var maxTrackGradient: Gradient = Gradient(colors: [Color.orangeMain500.opacity(0.5), Color.orangeMain500])
-
+	
 	var body: some View {
 		GeometryReader { geometry in
 			let radius = geometry.size.height * 0.5
@@ -1892,7 +1892,7 @@ struct VoiceRecorderPlayer: View {
 				.padding(10)
 				.background(.white)
 				.clipShape(RoundedRectangle(cornerRadius: 25))
-
+				
 				ZStack(alignment: .leading) {
 					LinearGradient(
 						gradient: maxTrackGradient,
@@ -1911,7 +1911,7 @@ struct VoiceRecorderPlayer: View {
 								.frame(width: CGFloat(audioRecorder.soundPower) * (geometry.size.width - 110) / 100, height: 50)
 						}
 					}
-
+					
 					HStack {
 						Button(
 							action: {
@@ -1939,9 +1939,9 @@ struct VoiceRecorderPlayer: View {
 						.padding(8)
 						.background(.white)
 						.clipShape(RoundedRectangle(cornerRadius: 25))
-
+						
 						Spacer()
-
+						
 						HStack {
 							if isRecording {
 								Image("record-fill")
@@ -1950,7 +1950,7 @@ struct VoiceRecorderPlayer: View {
 								 .foregroundStyle(isRecording ? Color.redDanger500 : Color.orangeMain500)
 								 .frame(width: 18, height: 18)
 							}
-
+							
 							Text(Int(audioRecorder.recordingTime).convertDurationToString())
 								.default_text_style(styleSize: 16)
 								.padding(.horizontal, 5)
@@ -1962,7 +1962,7 @@ struct VoiceRecorderPlayer: View {
 					.padding(.horizontal, 10)
 				}
 				.clipShape(RoundedRectangle(cornerRadius: radius))
-
+				
 				Button {
 					if conversationViewModel.displayedConversationHistorySize > 0 {
 						NotificationCenter.default.post(name: .onScrollToBottom, object: nil)
@@ -1996,7 +1996,7 @@ struct VoiceRecorderPlayer: View {
 			}
 		}
 	}
-
+	
 	private func playProgress() {
 		isPlaying = true
 		if audioRecorder.audioFilename != nil {
@@ -2021,13 +2021,13 @@ struct VoiceRecorderPlayer: View {
 			}
 		}
 	}
-
+	
 	// Pause the progress
 	private func pauseProgress() {
 		isPlaying = false
 		stopProgress()
 	}
-
+	
 	// Reset the progress
 	private func resetProgress() {
 		conversationViewModel.stopVoiceRecordPlayer()
@@ -2035,7 +2035,7 @@ struct VoiceRecorderPlayer: View {
 		value = 0.0
 		isPlaying = false
 	}
-
+	
 	// Stop the progress and invalidate the timer
 	private func stopProgress() {
 		timer?.invalidate()
@@ -2045,25 +2045,25 @@ struct VoiceRecorderPlayer: View {
 
 struct WillDisappearNotifierView: UIViewControllerRepresentable {
 	let onWillDisappear: () -> Void
-
+	
 	func makeUIViewController(context: Context) -> UIViewController {
 		Controller(onWillDisappear: onWillDisappear)
 	}
-
+	
 	func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
+	
 	class Controller: UIViewController {
 		let onWillDisappearCallback: () -> Void
-
+		
 		init(onWillDisappear: @escaping () -> Void) {
 			self.onWillDisappearCallback = onWillDisappear
 			super.init(nibName: nil, bundle: nil)
 		}
-
+		
 		required init?(coder: NSCoder) {
 			fatalError("init(coder:) has not been implemented")
 		}
-
+		
 		override func viewWillDisappear(_ animated: Bool) {
 			super.viewWillDisappear(animated)
 			onWillDisappearCallback()

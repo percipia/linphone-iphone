@@ -122,7 +122,7 @@ class CoreContext: ObservableObject {
 			}
 		}
 	}
-
+	
 	func doOnCoreQueueCoreStarted(synchronous: Bool = false, lambda: @escaping (Core) -> Void) {
 		let isOnQueue = DispatchQueue.getSpecific(key: coreQueueKey) != nil
 
@@ -133,7 +133,7 @@ class CoreContext: ObservableObject {
 			}
 			lambda(self.mCore)
 		}
-
+		
 		switch (synchronous, isOnQueue) {
 		case (true, true), (false, true):
 			// Already on the queue → run directly
@@ -185,8 +185,8 @@ class CoreContext: ObservableObject {
 
 			MDMManager.shared.applyMdmConfigToCore(core: self.mCore)
 			self.startObservingMDMConfigurationUpdates()
-
-
+			
+			
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
 
@@ -195,7 +195,7 @@ class CoreContext: ObservableObject {
 			let appGitTag = AppGitInfo.tag
 			let sdkGitVersion = linphonesw.LinphoneSdkInfos.version
 			var sdkGitBranch = linphonesw.LinphoneSdkInfos.branch
-
+			
 			if sdkGitBranch.hasPrefix("remotes/origin/") {
 				sdkGitBranch = String(sdkGitBranch.dropFirst("remotes/origin/".count))
 			}
@@ -207,12 +207,12 @@ class CoreContext: ObservableObject {
 
 			self.mCore.videoPreviewEnabled = false
 			self.mCore.fecEnabled = true
-
+			
 			let filesDirectoriesURL = FileUtil.sharedContainerUrl().appendingPathComponent("Library/Images")
 			self.mCore.chatMessageFilesDirectories = [filesDirectoriesURL.path]
-
+			
 			//self.copyDatabaseFileToDocumentsDirectory()
-
+			
 			let shortcutsCount = self.mCore.config!.getInt(section: "ui", key: "shortcut_count", defaultValue: 0)
 			if shortcutsCount > 0 {
 				var shortcuts: [ShortcutModel] = []
@@ -243,9 +243,9 @@ class CoreContext: ObservableObject {
 			for acc in self.mCore.accountList {
 				self.forceRemotePushToMatchVoipPushSettings(account: acc)
 			}
-
+			
 			let fm = FileManager.default
-
+			
 			let folderURL = FileUtil.sharedContainerUrl().appendingPathComponent("Library/Images")
 			if !fm.fileExists(atPath: folderURL.path) {
 				do {
@@ -261,10 +261,10 @@ class CoreContext: ObservableObject {
 			} else {
 				print("Images directory already exists.")
 			}
-
+			
 			let container = FileUtil.sharedContainerUrl()
 			let recordingsDir = container.appendingPathComponent("Library/Recordings")
-
+			
 			if !fm.fileExists(atPath: recordingsDir.path) {
 				do {
 					try fm.createDirectory(
@@ -305,9 +305,9 @@ class CoreContext: ObservableObject {
 					for account in self.mCore.accountList {
 						accountModels.append(AccountModel(account: account, core: self.mCore))
 					}
-
+					
 					self.runMigration()
-
+					
 					DispatchQueue.main.async {
 						self.coreHasStartedOnce = true
 						self.coreIsStarted = true
@@ -335,7 +335,7 @@ class CoreContext: ObservableObject {
                     Log.warn("[CoreContext] Authentication requested while device is offline, ignoring")
                     return
                 }
-
+                
 				if method == .Bearer {
 					if let server = authInfo.authorizationServer, !server.isEmpty {
 						Log.info("Authentication requested method is Bearer, starting Single Sign On activity with server URL \(server) and username \(authInfo.username ?? "")")
@@ -543,7 +543,7 @@ class CoreContext: ObservableObject {
 	func crashForCrashlytics() {
 		fatalError("Crashing app to test crashlytics")
 	}
-
+	
 	func doOnCoreQueue(synchronous: Bool = false, action: @escaping (_ core: Core) -> Void ) {
 		if coreIsStarted {
 			doOnCoreQueueCoreStarted(synchronous: synchronous) { core in
@@ -612,32 +612,32 @@ class CoreContext: ObservableObject {
 			UserDefaults.standard.set(new, forKey: "lastMigrationVersion")
 		}
 	}
-
+	
 	func runMigration() {
 		// Migration
 		let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
 		let lastMigration = UserDefaults.standard.string(forKey: "lastMigrationVersion") ?? "0"
-
+		
 		if lastMigration.compare("6.2.0", options: .numeric) == .orderedAscending &&
 			currentVersion.compare("6.2.0", options: .numeric) != .orderedAscending {
-
+			
 			self.runMigration620()
-
+			
 			UserDefaults.standard.set("6.2.0", forKey: "lastMigrationVersion")
 		}
 	}
-
+	
 	func runMigration600() {
 		self.mCore.config!.setBool(section: "sip", key: "auto_answer_replacing_calls", value: false)
 		self.mCore.config!.setBool(section: "sip", key: "deliver_imdn", value: false)
 		self.mCore.config!.setString(section: "misc", key: "log_collection_upload_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
 		self.mCore.config!.setString(section: "misc", key: "file_transfer_server_url", value: "https://files.linphone.org:443/http-file-transfer-server/hft.php")
 		self.mCore.config!.setString(section: "misc", key: "version_check_url_root", value: "https://download.linphone.org/releases")
-
+		
 		self.mCore.imdnToEverybodyThreshold = 1
 		self.imdnToEverybodyThreshold = self.mCore.imdnToEverybodyThreshold == 1
 	}
-
+	
 	func runMigration620() {
 		doOnCoreQueueCoreStarted { core in
 			self.mCore.chatMessageFilesDeletionEnabled = true
@@ -678,7 +678,7 @@ enum AppServices {
 		}
 		return config
 	}
-
+	
 	static func setupConfigIfNeeded() {
 		Log.info("Checking if linphonerc file exists already. If not, creating one as a copy of linphonerc-default")
 		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
@@ -699,7 +699,7 @@ enum AppServices {
 			}
 		}
 	}
-
+	
 	static func resetConfig() {
 		if let rcDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName)?
 			.appendingPathComponent("Library/Preferences/linphone") {
