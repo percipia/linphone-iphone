@@ -145,6 +145,37 @@ final class MagicSearchSingleton: ObservableObject {
 					}
 				}
 				
+				if let linphoneFriendList = self.contactsManager.linphoneFriendList {
+					let filter = self.currentFilter.lowercased().folding(options: .diacriticInsensitive, locale: .current)
+					linphoneFriendList.friends.forEach { friend in
+						let friendAddress = friend.address?.clone()?.asStringUriOnly() ?? ""
+						let friendPhone = friend.phoneNumbers.first ?? ""
+						let searchValues = ([friend.name, friendAddress, friendPhone].compactMap { $0 })
+							.map { $0.lowercased().folding(options: .diacriticInsensitive, locale: .current) }
+
+						if !filter.isEmpty && !searchValues.contains(where: { $0.contains(filter) }) {
+							return
+						}
+
+						let alreadyAdded = addedAvatarListModel.contains {
+							$0.friend === friend ||
+							(!friendAddress.isEmpty && ($0.address == friendAddress || $0.addresses.contains(friendAddress))) ||
+							(!friendPhone.isEmpty && $0.phoneNumbersWithLabel.contains(where: { $0.phoneNumber == friendPhone }))
+						}
+
+						if !alreadyAdded {
+							addedAvatarListModel.append(
+								ContactAvatarModel(
+									friend: friend,
+									name: friend.name ?? "",
+									address: friendAddress.isEmpty ? friendPhone : friendAddress,
+									withPresence: true
+								)
+							)
+						}
+					}
+				}
+
 				self.contactsManager.avatarListModel.forEach { contactAvatarModel in
 					contactAvatarModel.removeFriendDelegate()
 				}
