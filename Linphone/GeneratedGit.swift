@@ -1,7 +1,7 @@
 import Foundation
 
 public enum AppGitInfo {
-    public static let branch = "fix/remote_video"
-    public static let commit = "adcfd1e3f"
+    public static let branch = "master"
+    public static let commit = "ad805cd45"
     public static let tag = "6.3.0-alpha"
 }
