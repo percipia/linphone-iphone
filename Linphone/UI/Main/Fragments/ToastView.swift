@@ -203,6 +203,14 @@ struct ToastView: View {
 							.foregroundStyle(Color.redDanger500)
 							.default_text_style(styleSize: 15)
 							.padding(8)
+
+					case let message where message.hasPrefix("Registration_failed:"):
+						let detail = String(message.dropFirst("Registration_failed:".count))
+						Text(String(format: String(localized: "assistant_account_registration_failed_error"), detail))
+							.multilineTextAlignment(.center)
+							.foregroundStyle(Color.redDanger500)
+							.default_text_style(styleSize: 15)
+							.padding(8)
 						
 					case "Unavailable_network":
 						Text("network_not_reachable")

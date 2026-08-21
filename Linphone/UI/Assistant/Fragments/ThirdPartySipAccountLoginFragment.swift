@@ -144,6 +144,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				
 				TextField("username", text: $accountLoginViewModel.username)
 					.default_text_style(styleSize: 15)
+					.textContentType(.username)
 					.disableAutocorrection(true)
 					.autocapitalization(.none)
 					.frame(height: 25)
@@ -167,11 +168,13 @@ struct ThirdPartySipAccountLoginFragment: View {
 						if isSecured {
 							SecureField("password", text: $accountLoginViewModel.passwd)
 								.default_text_style(styleSize: 15)
+								.textContentType(.password)
 								.frame(height: 25)
 								.focused($isPasswordFocused)
 						} else {
 							TextField("password", text: $accountLoginViewModel.passwd)
 								.default_text_style(styleSize: 15)
+								.textContentType(.password)
 								.disableAutocorrection(true)
 								.autocapitalization(.none)
 								.frame(height: 25)
@@ -204,6 +207,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				
 				TextField("sip.example.com", text: $accountLoginViewModel.domain)
 					.default_text_style(styleSize: 15)
+					.keyboardType(.URL)
 					.disableAutocorrection(true)
 					.autocapitalization(.none)
 					.frame(height: 25)
@@ -323,6 +327,7 @@ struct ThirdPartySipAccountLoginFragment: View {
                         TextField("account_settings_sip_proxy_url_title", text: $accountLoginViewModel.sipProxyUrl)
 							.id(2)
                             .default_text_style(styleSize: 15)
+							.keyboardType(.URL)
                             .disableAutocorrection(true)
 							.autocapitalization(.none)
                             .frame(height: 25)
@@ -362,6 +367,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 						TextField("account_settings_outbound_proxy_title", text: $accountLoginViewModel.outboundProxy)
 							.id(3)
 							.default_text_style(styleSize: 15)
+							.keyboardType(.URL)
 							.frame(height: 25)
 							.padding(.horizontal, 20)
 							.padding(.vertical, 15)

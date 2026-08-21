@@ -33,8 +33,6 @@ class AccountLoginViewModel: ObservableObject {
 	@Published var sipProxyUrl: String = ""
 	@Published var outboundProxy: String = ""
 	
-	private var mCoreDelegate: CoreDelegate!
-	
 	init() {}
 	
 	func login() {
@@ -132,26 +130,10 @@ class AccountLoginViewModel: ObservableObject {
 				let pushEnvironment = ""
 #endif
 				accountParams.pushNotificationConfig?.provider = "apns" + pushEnvironment
-				
-				self.mCoreDelegate = CoreDelegateStub(onAccountRegistrationStateChanged: { (core: Core, account: Account, state: RegistrationState, message: String) in
-					
-					Log.info("New registration state is \(state) for user id " +
-							 "\( String(describing: account.params?.identityAddress?.asString())) = \(message)\n")
-					
-					switch state {
-					case .Failed:  // If registration failed, remove account from core
-						if let authInfo = account.findAuthInfo() {
-							core.removeAuthInfo(info: authInfo)
-						}
-						
-						Log.warn("Registration failed for account \(account.displayName()), deleting it from core")
-						core.removeAccountWithData(account: account)
-					default:
-						break
-					}
-				})
-				
-				self.coreContext.mCore.addDelegate(delegate: self.mCoreDelegate)
+
+				// Registration failures are reported by CoreContext. Keep the account and
+				// auth info so the user can correct the registrar, route, transport, or
+				// credentials without re-entering the entire account.
 				
 				// Now that our AccountParams is configured, we can create the Account object
 				let account = try core.createAccount(params: accountParams)

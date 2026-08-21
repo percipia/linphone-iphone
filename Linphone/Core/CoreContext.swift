@@ -439,7 +439,9 @@ class CoreContext: ObservableObject {
 						self.loggedIn = false
 						if self.networkStatusIsConnected {
 							// If network is disconnected, a toast message with key "Unavailable_network" should already be displayed
-							ToastViewModel.shared.show("Registration_failed")
+							let detail = message.trimmingCharacters(in: .whitespacesAndNewlines)
+							let toastMessage = detail.isEmpty ? "Registration_failed" : "Registration_failed:\(detail)"
+							ToastViewModel.shared.show(toastMessage, duration: 6.0)
 						}
 
 					}
