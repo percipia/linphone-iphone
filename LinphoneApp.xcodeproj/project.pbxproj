@@ -2246,18 +2246,18 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		C618BF542D75CA03005A00E0 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://gitlab.linphone.org/BC/public/linphone-sdk-swift-ios.git";
+			repositoryURL = "https://github.com/BelledonneCommunications/linphone-sdk-swift-ios.git";
 			requirement = {
-				branch = stable;
-				kind = branch;
+				kind = revision;
+				revision = 859ffa75fe7118f861aec8baf0d9696671d349f5;
 			};
 		};
 		D73DD7FF2EE6FF6A00654313 /* XCRemoteSwiftPackageReference "linphone-sdk-swift-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://gitlab.linphone.org/BC/public/linphone-sdk-swift-ios.git";
+			repositoryURL = "https://github.com/BelledonneCommunications/linphone-sdk-swift-ios.git";
 			requirement = {
-				branch = alpha;
-				kind = branch;
+				kind = revision;
+				revision = 859ffa75fe7118f861aec8baf0d9696671d349f5;
 			};
 		};
 		D7D5AD7B2DD34E4D00016721 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {

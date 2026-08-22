@@ -120,9 +120,8 @@
     {
       "identity" : "linphone-sdk-swift-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://gitlab.linphone.org/BC/public/linphone-sdk-swift-ios.git",
+      "location" : "https://github.com/BelledonneCommunications/linphone-sdk-swift-ios.git",
       "state" : {
-        "branch" : "alpha",
         "revision" : "859ffa75fe7118f861aec8baf0d9696671d349f5"
       }
     },
