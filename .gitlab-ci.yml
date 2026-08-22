@@ -4,7 +4,12 @@
   before_script:
     - xcodebuild -version
     - xcodebuild -showsdks
-    - gem install fastlane
+    - export PATH="/opt/homebrew/opt/ruby@3.3/bin:$PATH"
+    - export GEM_HOME="$CI_PROJECT_DIR/.gem"
+    - export PATH="$GEM_HOME/bin:$PATH"
+    - gem install bundler -v 2.4.19 --no-document
+    - bundle config set --local path "$CI_PROJECT_DIR/vendor/bundle"
+    - bundle install --jobs 4 --retry 3
     - |
       if [ -n "$VAR_APPLE_API_KEY" ]; then
         mkdir -p ~/.appstoreconnect
@@ -33,7 +38,7 @@ build-debug:
     - .runners
   stage: debug
   script:
-    - fastlane ios build_debug
+    - bundle exec fastlane ios build_debug
   artifacts:
     paths:
       - build/
@@ -47,7 +52,7 @@ build-prod:
     - .runners
   stage: prod
   script:
-    - fastlane ios build_prod
+    - bundle exec fastlane ios build_prod
   artifacts:
     paths:
       - build/
@@ -61,7 +66,7 @@ upload-testflight:
     - .runners
   stage: upload
   script:
-    - fastlane ios upload_testflight
+    - bundle exec fastlane ios upload_testflight
   dependencies:
     - build-prod
   only:
