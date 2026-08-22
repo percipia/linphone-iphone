@@ -175,8 +175,7 @@ struct AccountSettingsFragment: View {
 							}
 							
 							if natPolicySettingsIsOpen {
-								if accountSettingsViewModel.accountModel.avatarModel != nil {
-									VStack(spacing: 0) {
+								VStack(spacing: 0) {
 										VStack(spacing: 30) {
 											VStack(alignment: .leading) {
 												Text("account_settings_stun_server_url_title")
@@ -275,7 +274,6 @@ struct AccountSettingsFragment: View {
 									.padding(.horizontal)
 									.zIndex(-1)
 									.transition(.move(edge: .top))
-								}
 							}
 							
 							HStack(alignment: .center) {
@@ -303,8 +301,7 @@ struct AccountSettingsFragment: View {
 							}
 							
 							if advancedSettingsIsOpen {
-								if accountSettingsViewModel.accountModel.avatarModel != nil {
-									VStack(spacing: 0) {
+								VStack(spacing: 0) {
 										VStack(spacing: 30) {
 											VStack(alignment: .leading) {
 												Text("assistant_sip_account_transport_protocol")
@@ -516,7 +513,6 @@ struct AccountSettingsFragment: View {
 									.padding(.horizontal)
 									.zIndex(-2)
 									.transition(.move(edge: .top))
-								}
 							}
 						}
 						.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
