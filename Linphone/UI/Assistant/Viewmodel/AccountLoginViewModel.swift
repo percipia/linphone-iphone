@@ -94,9 +94,14 @@ class AccountLoginViewModel: ObservableObject {
 				let identity = try Factory.Instance.createAddress(addr: String("sip:" + self.username + "@" + self.domain))
 				try accountParams.setIdentityaddress(newValue: identity)
 				
-				// We also need to configure where the proxy server is located
+				// Registration must follow the proxy the user supplied. In particular,
+				// the outbound proxy field historically represented the Percipia edge
+				// proxy, so it takes precedence over the registrar and identity domain.
 				var serverAddress: Address
-				if (!self.sipProxyUrl.isEmpty) {
+				if !self.outboundProxy.isEmpty {
+					let server = self.outboundProxy.starts(with: "sip:") ? self.outboundProxy : String("sip:" + self.outboundProxy)
+					serverAddress = try Factory.Instance.createAddress(addr: server)
+				} else if !self.sipProxyUrl.isEmpty {
 					let server = self.sipProxyUrl.starts(with: "sip:") ? self.sipProxyUrl : String("sip:" + self.sipProxyUrl)
 					serverAddress = try Factory.Instance.createAddress(addr: server)
 				} else {
@@ -118,7 +123,7 @@ class AccountLoginViewModel: ObservableObject {
 
 				let registrar = serverAddress.asStringUriOnly()
 				let route = accountParams.routesAddresses.first?.asStringUriOnly() ?? "<none>"
-				Log.info("[AccountLoginViewModel] Creating SIP account for domain \(self.domain), registrar \(registrar), outbound route \(route), transport \(self.transportType)")
+				Log.info("[AccountLoginViewModel] Creating SIP account for domain \(self.domain), registration destination \(registrar), outbound route \(route), transport \(self.transportType)")
 				// And we ensure the account will start the registration process
 				accountParams.registerEnabled = true
 				

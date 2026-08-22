@@ -116,50 +116,39 @@ class AccountSettingsViewModel: ObservableObject {
 			print("\(AccountSettingsViewModel.TAG) Saving changes...")
 			
 			if let newParams = self.accountModel.account.params?.clone() {
+				var transportTmp: TransportType = .Tls
+				if self.transport == "TCP" {
+					transportTmp = .Tcp
+				} else if self.transport == "UDP" {
+					transportTmp = .Udp
+				} else if self.transport == "DTLS" {
+					transportTmp = .Dtls
+				}
+
 				newParams.pushNotificationAllowed = self.pushNotification
 				newParams.remotePushNotificationAllowed = self.pushNotification
 				
 				newParams.instantMessagingEncryptionMandatory = self.imEncryptionMandatory
-				
-				if !self.sipProxyUrl.isEmpty {
-					if let serverAddress = core.interpretUrl(url: self.sipProxyUrl, applyInternationalPrefix: false) {
-						
-						var transportTmp: TransportType = .Tls
-						
-						if self.transport == "TLS" {
-							transportTmp = .Tls
-						} else if self.transport == "TCP" {
-							transportTmp = .Tcp
-						} else if self.transport == "UDP" {
-							transportTmp = .Udp
-						} else {
-							transportTmp = .Dtls
-						}
-						
-						try? serverAddress.setTransport(newValue: transportTmp)
-						try? newParams.setServeraddress(newValue: serverAddress)
-					}
-				}
 
 				if !self.outboundProxy.isEmpty {
-					Log.info("\(AccountSettingsViewModel.TAG) Outbound proxy server set to \(self.outboundProxy)")
+					Log.info("\(AccountSettingsViewModel.TAG) Registration and outbound proxy set to \(self.outboundProxy)")
 					if let outboundProxyAddress = core.interpretUrl(url: self.outboundProxy, applyInternationalPrefix: false) {
-						var transportTmp: TransportType = .Tls
-						if self.transport == "TCP" {
-							transportTmp = .Tcp
-						} else if self.transport == "UDP" {
-							transportTmp = .Udp
-						} else if self.transport == "DTLS" {
-							transportTmp = .Dtls
-						}
-
 						try? outboundProxyAddress.setTransport(newValue: transportTmp)
+						// Linphone sends REGISTER to serverAddress. Setting only a route
+						// allowed registration to bypass the proxy and hit the identity
+						// domain directly, so the explicit proxy controls both values.
+						try? newParams.setServeraddress(newValue: outboundProxyAddress)
 						try? newParams.setRoutesaddresses(newValue: [outboundProxyAddress])
 					} else {
 						Log.error("\(AccountSettingsViewModel.TAG) Failed to parse outbound proxy server!")
 					}
 				} else {
 					try? newParams.setRoutesaddresses(newValue: [])
+					if !self.sipProxyUrl.isEmpty,
+					   let serverAddress = core.interpretUrl(url: self.sipProxyUrl, applyInternationalPrefix: false) {
+						try? serverAddress.setTransport(newValue: transportTmp)
+						try? newParams.setServeraddress(newValue: serverAddress)
+					}
 				}
 				
 				if let natPolicy = self.natPolicy {
