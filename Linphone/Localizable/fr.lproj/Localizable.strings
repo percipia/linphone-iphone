@@ -49,10 +49,10 @@
 "account_settings_apply_international_prefix_title" = "Formater les numéros en utilisant l'indicatif international";
 "account_settings_replace_plus_by_00_title" = "Remplacer + par 00 lors du formatage des numéros de téléphone";
 "account_settings_nat_policy_title" = "Paramètres de politique NAT";
-"account_settings_outbound_proxy_title" = "Serveur mandataire sortant";
+"account_settings_outbound_proxy_title" = "URI du serveur mandataire SIP sortant";
 "account_settings_push_notification_not_available_title" = "Notifications push non disponibles";
 "account_settings_push_notification_title" = "Activer les notifications";
-"account_settings_sip_proxy_url_title" = "URL du serveur mandataire";
+"account_settings_sip_proxy_url_title" = "URI du serveur d’enregistrement";
 "account_settings_stun_server_url_title" = "URL du serveur STUN/TURN";
 "account_settings_title" = "Paramètres de compte";
 "account_settings_turn_password_title" = "Mot de passe TURN";
@@ -64,6 +64,7 @@
 "assistant_account_creation_wrong_phone_number" = "Numéro incorrect ?";
 "assistant_account_login" = "Connexion";
 "assistant_account_login_forbidden_error" = "Mauvais nom d’utilisateur ou mot de passe";
+"assistant_account_registration_failed_error" = "Échec de l’enregistrement : %@";
 "assistant_account_register" = "S’inscrire";
 "assistant_account_register_push_notification_not_received_error" = "Notification push non reçue, merci de réessayer plus tard";
 "assistant_account_register_unexpected_error" = "Un erreur inattendue est survenue, merci de réessayer plus tard";
@@ -529,7 +530,7 @@
 "sip_address" = "Adresse SIP";
 "sip_address_copied_to_clipboard_toast" = "Adresse copiée";
 "sip_address_display_name" = "Nom d'affichage";
-"sip_address_domain" = "Domaine";
+"sip_address_domain" = "Domaine d’identité SIP";
 "SRTP" = "SRTP";
 "start" = "Commencer";
 "TCP" ="TCP";

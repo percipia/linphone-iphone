@@ -30,9 +30,8 @@ class AccountLoginViewModel: ObservableObject {
 	@Published var displayName: String = ""
 	@Published var transportType: String = "TLS"
 	@Published var authId: String = ""
+	@Published var sipProxyUrl: String = ""
 	@Published var outboundProxy: String = ""
-	
-	private var mCoreDelegate: CoreDelegate!
 	
 	init() {}
 	
@@ -97,18 +96,29 @@ class AccountLoginViewModel: ObservableObject {
 				
 				// We also need to configure where the proxy server is located
 				var serverAddress: Address
-				if (!self.outboundProxy.isEmpty) {
-					let server = self.outboundProxy.starts(with: "sip:") ? self.outboundProxy : String("sip:" + self.outboundProxy)
+				if (!self.sipProxyUrl.isEmpty) {
+					let server = self.sipProxyUrl.starts(with: "sip:") ? self.sipProxyUrl : String("sip:" + self.sipProxyUrl)
 					serverAddress = try Factory.Instance.createAddress(addr: server)
 				} else {
 					serverAddress = try Factory.Instance.createAddress(addr: String("sip:" + self.domain))
 				}
 				
-				let address = serverAddress
-				
 				// We use the Address object to easily set the transport protocol
-				try address.setTransport(newValue: transport)
-				try accountParams.setServeraddress(newValue: address)
+				try serverAddress.setTransport(newValue: transport)
+				try accountParams.setServeraddress(newValue: serverAddress)
+
+				if !self.outboundProxy.isEmpty {
+					let route = self.outboundProxy.starts(with: "sip:") ? self.outboundProxy : String("sip:" + self.outboundProxy)
+					let routeAddress = try Factory.Instance.createAddress(addr: route)
+					try routeAddress.setTransport(newValue: transport)
+					try accountParams.setRoutesaddresses(newValue: [routeAddress])
+				} else {
+					try accountParams.setRoutesaddresses(newValue: [])
+				}
+
+				let registrar = serverAddress.asStringUriOnly()
+				let route = accountParams.routesAddresses.first?.asStringUriOnly() ?? "<none>"
+				Log.info("[AccountLoginViewModel] Creating SIP account for domain \(self.domain), registrar \(registrar), outbound route \(route), transport \(self.transportType)")
 				// And we ensure the account will start the registration process
 				accountParams.registerEnabled = true
 				
@@ -123,25 +133,8 @@ class AccountLoginViewModel: ObservableObject {
 #endif
 				accountParams.pushNotificationConfig?.provider = "apns" + pushEnvironment
 				
-				self.mCoreDelegate = CoreDelegateStub(onAccountRegistrationStateChanged: { (core: Core, account: Account, state: RegistrationState, message: String) in
-					
-					Log.info("New registration state is \(state) for user id " +
-							 "\( String(describing: account.params?.identityAddress?.asString())) = \(message)\n")
-					
-					switch state {
-					case .Failed:  // If registration failed, remove account from core
-						if let authInfo = account.findAuthInfo() {
-							core.removeAuthInfo(info: authInfo)
-						}
-						
-						Log.warn("Registration failed for account \(account.displayName()), deleting it from core")
-						core.removeAccountWithData(account: account)
-					default:
-						break
-					}
-				})
-				
-				self.coreContext.mCore.addDelegate(delegate: self.mCoreDelegate)
+				// CoreContext reports registration failures. Keep the account and auth
+				// information so the user can correct the configuration in settings.
 				
 				// Now that our AccountParams is configured, we can create the Account object
 				let account = try core.createAccount(params: accountParams)

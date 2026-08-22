@@ -49,10 +49,10 @@
 "account_settings_apply_international_prefix_title" = "Format phone numbers using international prefix";
 "account_settings_replace_plus_by_00_title" = "Replace + by 00 when formatting phone numbers";
 "account_settings_nat_policy_title" = "NAT policy settings";
-"account_settings_outbound_proxy_title" = "Outbound proxy";
+"account_settings_outbound_proxy_title" = "Outbound SIP Proxy URI";
 "account_settings_push_notification_not_available_title" = "Push notifications aren't available!";
 "account_settings_push_notification_title" = "Allow push notifications";
-"account_settings_sip_proxy_url_title" = "SIP proxy server URL";
+"account_settings_sip_proxy_url_title" = "Registrar URI";
 "account_settings_stun_server_url_title" = "STUN/TURN server URL";
 "account_settings_title" = "Account settings";
 "account_settings_turn_password_title" = "TURN password";
@@ -64,6 +64,7 @@
 "assistant_account_creation_wrong_phone_number" = "Wrong number?";
 "assistant_account_login" = "Login";
 "assistant_account_login_forbidden_error" = "Wrong username or password";
+"assistant_account_registration_failed_error" = "Registration failed: %@";
 "assistant_account_register" = "Register";
 "assistant_account_register_push_notification_not_received_error" = "Push notification with auth token not received in 5 seconds, please try again later";
 "assistant_account_register_unexpected_error" = "Unexpected error occurred, please try again later";
@@ -532,7 +533,7 @@
 "sip_address" = "SIP Address";
 "sip_address_copied_to_clipboard_toast" = "SIP address copied into clipboard";
 "sip_address_display_name" = "Display name";
-"sip_address_domain" = "Domain & port";
+"sip_address_domain" = "SIP identity domain";
 "SRTP" = "SRTP";
 "start" = "Start";
 "TCP" = "TCP";
