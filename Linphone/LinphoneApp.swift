@@ -273,7 +273,8 @@ struct RootView: View {
 	}
 
 	var showAssistant: Bool {
-		(coreContext.coreIsStarted && coreContext.accounts.isEmpty)
+		(coreContext.codeScannerIsOpen && coreContext.accounts.isEmpty)
+		|| (coreContext.coreIsStarted && coreContext.accounts.isEmpty)
 		|| sharedMainViewModel.displayProfileMode
 	}
 }
