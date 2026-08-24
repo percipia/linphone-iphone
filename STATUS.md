@@ -8,16 +8,15 @@
   explicit-proxy fixes in builds 12–13. QR provisioning is prepared as version
   `6.2.0` build `14`.
 
-## QR provisioning — in progress 2026-08-23
+## QR provisioning — accepted 2026-08-24
 
 - Live registration evidence showed QR-provisioned extension `107` reaching
   Kamailio as `107@sip.percipia.net`; the served tenant identity is
   `107@sheboyg.percipia.net`, so digest authentication could not complete.
-- Fusion's stored device fields are correct. The installed Linphone provisioning
-  template conflates `server_address` (the Kamailio edge) with the identity and
-  digest domain and calculates HA1 against the wrong realm. The server-side POC
-  is in `/Users/ghost/Projects/sip-proxy/poc/fusionpbx-linphone-qr/` and has not
-  been deployed.
+- Fusion's stored device fields were correct, but the former Linphone template
+  conflated `server_address` (the Kamailio edge) with the tenant identity and
+  digest domain. The corrected server package is deployed and documented under
+  `/Users/ghost/Projects/sip-proxy/poc/fusionpbx-linphone-qr/`.
 - Restored the applicable source changes from upstream commit `6f012274` (`Fix
   qr code scanner`): preserve the assistant while scanning, listen for the
   actual provisioning completion state, and show success only after Linphone
@@ -25,13 +24,14 @@
 - Verification: `git diff --check` passes and a Debug generic iOS Simulator
   build of scheme `Linphone` succeeds. Existing unrelated compiler/build-setting
   warnings remain.
+- App commit `b2273fc0` is pushed to `origin/fix/account-contract-restoration`
+  as Frequency Connect `6.2.0` build `14`. Merl removed the failed account,
+  scanned the live Fusion QR, and confirmed immediate provisioning success;
+  Kamailio challenged `107@sheboyg.percipia.net` and stored its push token.
 
-## Next acceptance step
+## Next release step
 
-1. Review, add backup/hash guards, and install the Fusion Linphone template
-   change.
-2. Render extension 107 provisioning XML and verify identity/realm
-   `sheboyg.percipia.net`, edge route `sip.percipia.net:5061;transport=tls`, and
-   no clear-text password.
-3. Build/install Frequency Connect on a device, scan a newly generated QR code,
-   and confirm Kamailio records a successful 107 registration.
+1. Complete the normal archive/TestFlight workflow for build 14.
+2. Perform a TestFlight QR scan regression after installation.
+3. Package the Fusion template and the broader Frequency server delta into the
+   durable Frequency deployment repository.
