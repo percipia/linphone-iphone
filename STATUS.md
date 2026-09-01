@@ -31,7 +31,8 @@
 
 ## Next release step
 
-1. Complete the normal archive/TestFlight workflow for build 14.
+1. Complete the normal archive/TestFlight workflow for build 15, which adds
+   Table Mountain private-CA trust to the accepted build-14 baseline.
 2. Perform a TestFlight QR scan regression after installation.
 3. Package the Fusion template and the broader Frequency server delta into the
    durable Frequency deployment repository.
@@ -54,6 +55,6 @@
   the live `:5061` listener presents the expected replacement fingerprint
   beginning `EA:16:AF:B7`.
 - The app trust change is included on branch
-  `fix/account-contract-restoration` for Frequency Connect `6.2.0` build `14`.
+  `fix/account-contract-restoration` for Frequency Connect `6.2.0` build `15`.
   Archive/TestFlight installation and a real Table Mountain TLS registration
   test remain pending.
