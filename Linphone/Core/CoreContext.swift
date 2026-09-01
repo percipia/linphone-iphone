@@ -146,6 +146,7 @@ class CoreContext: ObservableObject {
 			}
 			
 			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
+			self.configureTrustedRootCertificates()
 			
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
@@ -465,6 +466,36 @@ class CoreContext: ObservableObject {
 			
 			try? self.mCore.start()
 		}
+	}
+
+	private func configureTrustedRootCertificates() {
+		guard let tmcRootURL = Bundle.main.url(forResource: "TMC-CERT-CA", withExtension: "pem"),
+			  let tmcRoot = try? String(contentsOf: tmcRootURL, encoding: .utf8) else {
+			Log.error("Unable to load the bundled TMC-CERT-CA trust anchor")
+			return
+		}
+
+		var defaultRootURLs: [URL] = []
+		if let configuredRootPath = self.mCore.rootCa, !configuredRootPath.isEmpty {
+			defaultRootURLs.append(URL(fileURLWithPath: configuredRootPath))
+		}
+		defaultRootURLs.append(contentsOf: Bundle.allFrameworks.compactMap { framework in
+			framework.url(forResource: "rootca", withExtension: "pem")
+		})
+
+		guard let defaultRoots = defaultRootURLs.compactMap({ url in
+			try? String(contentsOf: url, encoding: .utf8)
+		}).first else {
+			Log.error("Unable to load Liblinphone's bundled public root CA set; leaving the existing trust configuration unchanged")
+			return
+		}
+
+		let combinedRoots = defaultRoots.trimmingCharacters(in: .whitespacesAndNewlines)
+			+ "\n"
+			+ tmcRoot.trimmingCharacters(in: .whitespacesAndNewlines)
+			+ "\n"
+		self.mCore.rootCaData = combinedRoots
+		Log.info("Configured Liblinphone with its bundled public roots plus TMC-CERT-CA")
 	}
 	
 	func updatePresence(core: Core, presence: ConsolidatedPresence) {

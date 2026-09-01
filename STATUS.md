@@ -35,3 +35,25 @@
 2. Perform a TestFlight QR scan regression after installation.
 3. Package the Fusion template and the broader Frequency server delta into the
    durable Frequency deployment repository.
+
+## Table Mountain private-CA trust — staged 2026-09-01
+
+- Extracted and verified the public `TMC-CERT-CA` root from Table Mountain's
+  returned PKCS#7 package. Its SHA-256 fingerprint is
+  `BD:22:86:F7:C1:E5:68:4D:C8:BD:3C:2C:79:6B:76:AE:7A:0C:FD:41:95:5C:B3:65:AA:86:10:BD:68:45:66:EE`.
+- Bundled that public root as `TMC-CERT-CA.pem`. `CoreContext` now combines it
+  with Liblinphone's existing public root set through `Core.rootCaData` before
+  starting the core. Certificate and hostname verification remain enabled.
+- A Debug generic iOS Simulator build succeeds, and the built app contains
+  both the SDK `rootca.pem` and the exact TMC root resource.
+- The replacement server leaf is valid for
+  `frequency-connect.tmcasino.local` and verifies directly against the TMC
+  root. Its public key differs from the earlier wrong-name leaf, so Percipia05
+  required a matching replacement private key. Douglas restored the matching
+  August 27 key on Percipia05, started Kamailio successfully, and verified that
+  the live `:5061` listener presents the expected replacement fingerprint
+  beginning `EA:16:AF:B7`.
+- The app trust change is included on branch
+  `fix/account-contract-restoration` for Frequency Connect `6.2.0` build `14`.
+  Archive/TestFlight installation and a real Table Mountain TLS registration
+  test remain pending.
