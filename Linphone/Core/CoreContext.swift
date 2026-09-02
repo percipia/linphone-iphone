@@ -146,7 +146,6 @@ class CoreContext: ObservableObject {
 			}
 			
 			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
-			self.configureTrustedRootCertificates()
 			
 			self.mCore.callkitEnabled = true
 			self.mCore.pushNotificationEnabled = true
@@ -464,8 +463,13 @@ class CoreContext: ObservableObject {
 			
 			self.mCore.autoIterateEnabled = true
 			
-			try? self.mCore.start()
+			try? self.startCoreWithTrustedRootCertificates()
 		}
+	}
+
+	func startCoreWithTrustedRootCertificates() throws {
+		self.configureTrustedRootCertificates()
+		try self.mCore.start()
 	}
 
 	private func configureTrustedRootCertificates() {
@@ -508,7 +512,7 @@ class CoreContext: ObservableObject {
 		coreQueue.async {
 			Log.info("[onEnterForegroundOrBackground] Entering foreground")
 			
-			try? self.mCore.start()
+			try? self.startCoreWithTrustedRootCertificates()
 		}
 	}
 
