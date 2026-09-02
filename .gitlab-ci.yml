@@ -17,6 +17,8 @@
         chmod 600 ~/.appstoreconnect/AuthKey.p8
         export APPLE_API_KEY_PATH="$HOME/.appstoreconnect/AuthKey.p8"
       fi
+  after_script:
+    - /Users/Shared/cleanup-fastlane-keychain.sh
 
 variables:
   HOMEBREW_NO_AUTO_UPDATE: 1

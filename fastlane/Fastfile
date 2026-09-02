@@ -1,10 +1,6 @@
 platform :ios do
   ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
 
-  before_all do
-    setup_ci
-  end
-
   desc "Match development certificates"
   lane :match_development do
     match(
@@ -35,6 +31,7 @@ platform :ios do
 
   desc "Build debug app"
   lane :build_debug do
+    setup_ci
     match_development
     
     update_project_provisioning(
@@ -79,6 +76,7 @@ platform :ios do
 
   desc "Build production app"
   lane :build_prod do
+    setup_ci
     match_appstore
     
     update_project_provisioning(
