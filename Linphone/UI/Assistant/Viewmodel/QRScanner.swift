@@ -77,8 +77,7 @@ class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
 						lastResult = result
 						coreContext.doOnCoreQueue { core in
 							try? core.setProvisioninguri(newValue: result)
-							core.stop()
-							try? self.coreContext.startCoreWithTrustedRootCertificates()
+							self.coreContext.restartCoreWithTrustedRootCertificates()
 						}
 					} else {
 						DispatchQueue.main.async {

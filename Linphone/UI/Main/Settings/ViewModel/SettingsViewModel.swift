@@ -206,10 +206,7 @@ class SettingsViewModel: ObservableObject {
 				try? core.setProvisioninguri(newValue: self.remoteProvisioningUrl)
 				
 				Log.info("\(SettingsViewModel.TAG) Restarting the Core to apply configuration changes")
-				core.stop()
-				Log.info("\(SettingsViewModel.TAG) Core has been stopped, restarting it")
-				try? CoreContext.shared.startCoreWithTrustedRootCertificates()
-				Log.info("\(SettingsViewModel.TAG) Core has been restarted")
+				CoreContext.shared.restartCoreWithTrustedRootCertificates()
 			}
 		}
 	}

@@ -108,8 +108,7 @@ class URIHandler {
 					
 					core.config?.setString(section: "misc", key: "config-uri", value: urlString)
 					try core.setProvisioninguri(newValue: urlString)
-					core.stop()
-					try CoreContext.shared.startCoreWithTrustedRootCertificates()
+					CoreContext.shared.restartCoreWithTrustedRootCertificates()
 				} catch {
 					Log.error("[URIHandler] unable to configure the app with \(url.resourceSpecifier) \(error)")
 					toast("Failed_uri_handler_bad_config_address")

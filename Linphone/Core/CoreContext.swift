@@ -57,6 +57,7 @@ class CoreContext: ObservableObject {
 	private var actionsToPerformOnCoreQueueWhenCoreIsStarted: [((Core) -> Void)] = []
 	private var callStateCallBacks: [((Call.State) -> Void)] = []
 	private var configuringStateCallBacks: [((ConfiguringState) -> Void)] = []
+	private var trustedRootRestartPending = false
 	
 	var digestAuthInfoPendingPasswordUpdate: AuthInfo?
 	
@@ -267,7 +268,16 @@ class CoreContext: ObservableObject {
 						self.coreIsStarted = state == GlobalState.On
 					}
 				}
-				
+
+				if self.trustedRootRestartPending && (state == .On || state == .Off || state == .Ready) {
+					// Defer until the current Liblinphone state callback has returned. In
+					// particular, do not restart recursively from the Off callback raised
+					// by Core.stop().
+					coreQueue.async {
+						self.continueTrustedRootRestart()
+					}
+				}
+
 			}, onCallStateChanged: { (core: Core, call: Call, cstate: Call.State, message: String) in
 				TelecomManager.shared.onCallStateChanged(core: core, call: call, state: cstate, message: message)
 				
@@ -468,8 +478,45 @@ class CoreContext: ObservableObject {
 	}
 
 	func startCoreWithTrustedRootCertificates() throws {
+		guard self.mCore.globalState == .Off || self.mCore.globalState == .Ready else {
+			Log.info("Skipping trusted-root Core start while state is \(self.mCore.globalState)")
+			return
+		}
+
 		self.configureTrustedRootCertificates()
 		try self.mCore.start()
+	}
+
+	func restartCoreWithTrustedRootCertificates() {
+		coreQueue.async {
+			if self.trustedRootRestartPending {
+				Log.info("Trusted-root Core restart is already pending")
+				return
+			}
+
+			self.trustedRootRestartPending = true
+			self.continueTrustedRootRestart()
+		}
+	}
+
+	private func continueTrustedRootRestart() {
+		guard self.trustedRootRestartPending else { return }
+
+		switch self.mCore.globalState {
+		case .On:
+			Log.info("Stopping Core before trusted-root restart")
+			self.mCore.stop()
+		case .Off, .Ready:
+			self.trustedRootRestartPending = false
+			do {
+				try self.startCoreWithTrustedRootCertificates()
+				Log.info("Trusted-root Core restart started")
+			} catch {
+				Log.error("Unable to restart Core with trusted roots: \(error)")
+			}
+		default:
+			Log.info("Waiting for Core state transition before trusted-root restart (state=\(self.mCore.globalState))")
+		}
 	}
 
 	private func configureTrustedRootCertificates() {
@@ -479,13 +526,9 @@ class CoreContext: ObservableObject {
 			return
 		}
 
-		var defaultRootURLs: [URL] = []
-		if let configuredRootPath = self.mCore.rootCa, !configuredRootPath.isEmpty {
-			defaultRootURLs.append(URL(fileURLWithPath: configuredRootPath))
-		}
-		defaultRootURLs.append(contentsOf: Bundle.allFrameworks.compactMap { framework in
+		let defaultRootURLs = Bundle.allFrameworks.compactMap { framework in
 			framework.url(forResource: "rootca", withExtension: "pem")
-		})
+		}
 
 		guard let defaultRoots = defaultRootURLs.compactMap({ url in
 			try? String(contentsOf: url, encoding: .utf8)
