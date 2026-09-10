@@ -145,6 +145,8 @@ class CoreContext: ObservableObject {
 					Log.info("Found existing linphonerc file, skip copying of linphonerc-default configuration")
 				}
 			}
+
+			self.configureTrustedRootCertificatePath(config: AppServices.config)
 			
 			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
 			
@@ -483,7 +485,9 @@ class CoreContext: ObservableObject {
 			return
 		}
 
-		self.configureTrustedRootCertificates()
+		if let config = self.mCore.config {
+			self.configureTrustedRootCertificatePath(config: config)
+		}
 		try self.mCore.start()
 	}
 
@@ -519,7 +523,7 @@ class CoreContext: ObservableObject {
 		}
 	}
 
-	private func configureTrustedRootCertificates() {
+	private func configureTrustedRootCertificatePath(config: Config) {
 		guard let tmcRootURL = Bundle.main.url(forResource: "TMC-CERT-CA", withExtension: "pem"),
 			  let tmcRoot = try? String(contentsOf: tmcRootURL, encoding: .utf8) else {
 			Log.error("Unable to load the bundled TMC-CERT-CA trust anchor")
@@ -541,8 +545,25 @@ class CoreContext: ObservableObject {
 			+ "\n"
 			+ tmcRoot.trimmingCharacters(in: .whitespacesAndNewlines)
 			+ "\n"
-		self.mCore.rootCaData = combinedRoots
-		Log.info("Configured Liblinphone with its bundled public roots plus TMC-CERT-CA")
+
+		guard let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedMainViewModel.appGroupName) else {
+			Log.error("Unable to resolve the app-group container for the combined trusted-root file")
+			return
+		}
+
+		let trustedRootsDirectory = appGroupURL.appendingPathComponent("Library/Application Support/linphone", isDirectory: true)
+		let trustedRootsURL = trustedRootsDirectory.appendingPathComponent("trusted-root-ca.pem")
+
+		do {
+			try FileManager.default.createDirectory(at: trustedRootsDirectory, withIntermediateDirectories: true)
+			if (try? String(contentsOf: trustedRootsURL, encoding: .utf8)) != combinedRoots {
+				try combinedRoots.write(to: trustedRootsURL, atomically: true, encoding: .utf8)
+			}
+			config.setString(section: "sip", key: "root_ca", value: trustedRootsURL.path)
+			Log.info("Configured Liblinphone to load its bundled public roots plus TMC-CERT-CA from disk")
+		} catch {
+			Log.error("Unable to prepare the combined trusted-root file: \(error.localizedDescription)")
+		}
 	}
 	
 	func updatePresence(core: Core, presence: ConsolidatedPresence) {
