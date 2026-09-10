@@ -58,6 +58,8 @@ class CoreContext: ObservableObject {
 	private var callStateCallBacks: [((Call.State) -> Void)] = []
 	private var configuringStateCallBacks: [((ConfiguringState) -> Void)] = []
 	private var trustedRootRestartPending = false
+	private var digestAuthPendingIdentity: String?
+	private var digestAuthPromptPresented = false
 	
 	var digestAuthInfoPendingPasswordUpdate: AuthInfo?
 	
@@ -314,18 +316,31 @@ class CoreContext: ObservableObject {
 						return
 					}
 
-					let identity = "\(authInfo.username ?? "username")@\(authInfo.domain ?? "domain")"
-					Log.info("[CoreContext] Authentication requested method is HttpDigest, showing dialog asking user for password for identity [\(identity)]")
-					
-					DispatchQueue.main.async {
-						NotificationCenter.default.post(
-							name: NSNotification.Name("PasswordUpdate"),
-							object: nil,
-							userInfo: ["address": "sip:" + identity]
-						)
-					}
-					
+					let identity = "sip:\(username)@\(domain)"
 					self.digestAuthInfoPendingPasswordUpdate = authInfo
+					self.digestAuthPendingIdentity = identity
+					self.digestAuthPromptPresented = false
+
+					if accountFound.state == .Ok {
+						Log.info("[CoreContext] Ignoring stale HttpDigest authentication request for a registered account")
+						self.clearPendingDigestAuthenticationOnCoreQueue()
+						return
+					}
+
+					let storedAuthInfo = accountFound.findAuthInfo()
+					let hasStoredCredential = storedAuthInfo?.password?.isEmpty == false || storedAuthInfo?.ha1?.isEmpty == false
+					let storedRealm = storedAuthInfo?.realm
+					let storedCredentialMatchesRealm = storedRealm == nil || storedRealm?.isEmpty == true || storedRealm == realm
+
+					guard hasStoredCredential && storedCredentialMatchesRealm else {
+						self.presentPendingDigestAuthenticationPrompt(identity: identity)
+						return
+					}
+
+					// A digest challenge is normal while a saved account wakes back up.
+					// Wait for registration to confirm that the saved credential was
+					// actually rejected instead of alarming the user during the retry.
+					Log.info("[CoreContext] Suppressing HttpDigest password prompt while stored credentials are retried")
 				}
 			}, onTransferStateChanged: { (_: Core, transferred: Call, callState: Call.State) in
 				Log.info("[CoreContext] Transferred call \(transferred.remoteAddress!.asStringUriOnly()) state changed \(callState)")
@@ -365,6 +380,8 @@ class CoreContext: ObservableObject {
 				Log.info("New registration state is \(state) for user id " +
 						 "\( String(describing: account.params?.identityAddress?.asString())) = \(message)\n")
 				
+				self.resolvePendingDigestAuthentication(for: account, state: state)
+
 				switch state {
 				case .Ok:
 					DispatchQueue.main.async {
@@ -477,6 +494,56 @@ class CoreContext: ObservableObject {
 			
 			try? self.startCoreWithTrustedRootCertificates()
 		}
+	}
+
+	private func resolvePendingDigestAuthentication(for account: Account, state: RegistrationState) {
+		guard let pendingIdentity = self.digestAuthPendingIdentity,
+			  account.params?.identityAddress?.asStringUriOnly() == pendingIdentity else { return }
+
+		switch state {
+		case .Ok, .Cleared:
+			self.clearPendingDigestAuthenticationOnCoreQueue()
+		case .Failed:
+			if account.errorInfo?.reason == .Unauthorized || account.errorInfo?.reason == .Forbidden {
+				self.presentPendingDigestAuthenticationPrompt(identity: pendingIdentity)
+			} else {
+				self.clearPendingDigestAuthenticationOnCoreQueue()
+			}
+		default:
+			break
+		}
+	}
+
+	private func presentPendingDigestAuthenticationPrompt(identity: String) {
+		guard !self.digestAuthPromptPresented,
+			  self.digestAuthPendingIdentity == identity,
+			  self.digestAuthInfoPendingPasswordUpdate != nil else { return }
+
+		self.digestAuthPromptPresented = true
+		Log.info("[CoreContext] Showing HttpDigest password prompt after credential validation failed")
+		DispatchQueue.main.async {
+			NotificationCenter.default.post(
+				name: NSNotification.Name("PasswordUpdate"),
+				object: nil,
+				userInfo: ["address": identity]
+			)
+		}
+	}
+
+	func clearPendingDigestAuthentication() {
+		if DispatchQueue.getSpecific(key: self.coreQueueKey) != nil {
+			self.clearPendingDigestAuthenticationOnCoreQueue()
+		} else {
+			coreQueue.async {
+				self.clearPendingDigestAuthenticationOnCoreQueue()
+			}
+		}
+	}
+
+	private func clearPendingDigestAuthenticationOnCoreQueue() {
+		self.digestAuthPromptPresented = false
+		self.digestAuthPendingIdentity = nil
+		self.digestAuthInfoPendingPasswordUpdate = nil
 	}
 
 	func startCoreWithTrustedRootCertificates() throws {

@@ -1460,6 +1460,7 @@ struct ContentView: View {
 						.background(.black.opacity(0.65))
 						.zIndex(3)
 						.onTapGesture {
+							CoreContext.shared.clearPendingDigestAuthentication()
 							self.isShowUpdatePasswordPopup.toggle()
 						}
 					}

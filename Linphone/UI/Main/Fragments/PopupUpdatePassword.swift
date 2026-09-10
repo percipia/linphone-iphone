@@ -84,6 +84,7 @@ struct PopupUpdatePassword: View {
 				}
 				
 				Button(action: {
+					CoreContext.shared.clearPendingDigestAuthentication()
 					isShowUpdatePasswordPopup = false
 				}, label: {
 					Text("dialog_cancel")
@@ -165,7 +166,7 @@ struct PopupUpdatePassword: View {
 					)
 					authInfo!.password = passwordPopupText
 					core.addAuthInfo(info: authInfo!)
-					CoreContext.shared.digestAuthInfoPendingPasswordUpdate = nil
+					CoreContext.shared.clearPendingDigestAuthentication()
 					core.refreshRegisters()
 				} else {
 					Log.warn(
